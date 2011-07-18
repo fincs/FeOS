@@ -10,6 +10,7 @@ Build prerequisites
 -------------------
 
 You need the following in order to build FeOS:
+
 - devkitARM r34 or higher
 - libnds 1.5.2 or higher
 - libfat 1.0.10 or higher
@@ -21,6 +22,7 @@ How to build the FeOS SDK
 -------------------------
 
 `cd` to the following directories and run `make` on them:
+
 - `/sdk/bin/fxe2tool_src/` (ELF to FXE2 converter)
 - `/sdk/` (libfeos, for use in user programs)
 
@@ -28,6 +30,7 @@ How to build FeOS
 -----------------
 
 `cd` to the following directories and run `make` on them:
+
 - `/kernel` (FeOS kernel)
 - `/testbin` (Test executable)
 
