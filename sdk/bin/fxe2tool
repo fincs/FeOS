@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# This file is only for Windows. It is overwritten by the SDK build process on every other OS.
+
+fxe2tool.exe $@

@@ -1,0 +1,7 @@
+build/
+/sdk/lib/
+*.exe
+*.nds
+*.elf
+*.fx2
+*.a
