@@ -1,5 +1,6 @@
 build/
 /sdk/lib/
+/sdk/bin/fxe2tool
 *.exe
 *.nds
 *.elf
