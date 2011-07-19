@@ -87,9 +87,21 @@ typedef struct
 
 typedef struct
 {
+	int count;
+	fxe2_import_t* table;
+} fxe_inmem_imports;
+
+typedef struct tag_fxe_runtime_header
+{
+	instance_t hThis;
+	const char* name;
+	int refcount;
 	int file;
 	FeOSMain entrypoint;
 	fxe_inmem_exports exp;
+	fxe_inmem_imports imp;
+	struct tag_fxe_runtime_header* next;
+	struct tag_fxe_runtime_header* prev;
 } fxe_runtime_header;
 
 static inline fxe_runtime_header* GetRuntimeData(instance_t hinst)
@@ -101,4 +113,10 @@ instance_t LoadModule(const char* aFilename);
 void FreeModule(instance_t hInst);
 
 int ResolveImports(fxe2_import_t* imptbl, int count);
+void FreeImports(fxe2_import_t* imptbl, int count);
 void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name);
+
+void FeOS_ModuleListAdd(fxe_runtime_header* pModule);
+void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
+int FeOS_ModuleListCount();
+fxe_runtime_header* FeOS_ModuleListFind(const char* name);

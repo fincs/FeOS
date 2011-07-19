@@ -7,14 +7,10 @@
 #define BEGIN_TABLE(_NAME_) static const fxe2_export_t _exp_##_NAME_##_tbl[] = {
 #define ADD_FUNC(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
 #define ADD_FUNC_ALIAS(FUNC, NAME) {{(word_t)#NAME}, {(word_t)FUNC}}
-#define END_TABLE(_NAME_) }; const fxe_inmem_exports _exp_##_NAME_ = { sizeof(_exp_##_NAME_##_tbl) / sizeof(fxe2_export_t), (fxe2_export_t*) _exp_##_NAME_##_tbl};
+#define END_TABLE(_NAME_) };
+#define MAKE_EXPORTSTRUCT(_NAME_) { sizeof(_exp_##_NAME_##_tbl) / sizeof(fxe2_export_t), (fxe2_export_t*) _exp_##_NAME_##_tbl }
 
 void FeOS_swi_DebugPrint(const char*);
-
-void ImpFunc()
-{
-	FeOS_swi_DebugPrint("Hey, this actually WORKED!\n");
-}
 
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 {
@@ -24,7 +20,6 @@ void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 }
 
 BEGIN_TABLE(FEOSBASE)
-	ADD_FUNC(ImpFunc),
 	ADD_FUNC(FeOS_FindSymbol),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
@@ -58,6 +53,24 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(iprintf, printf),
 	ADD_FUNC_ALIAS(siprintf, sprintf)
 END_TABLE(FEOSBASE)
+
+extern void* _inst_FEOSBASE;
+
+fxe_runtime_header _header_FEOSBASE =
+{
+	&_inst_FEOSBASE, // hThis
+	"FEOSBASE", // name
+	1, // refcount
+	-1, // file
+	NULL, // entrypoint
+	MAKE_EXPORTSTRUCT(FEOSBASE), // exp
+	{ 0, NULL }, // imp
+	NULL, // next
+	NULL // prev
+};
+
+void* _inst_FEOSBASE = &_header_FEOSBASE;
+
 
 /*
 int FeOS_LoadExecutable(const char* path, const char* cmdline)

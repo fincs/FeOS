@@ -3,6 +3,8 @@
 
 #define ITCM_DATA __attribute__((section(".itcm")))
 
+#define FeOS_AllocStack(a) __builtin_alloca(a)
+
 typedef unsigned int word_t;
 typedef unsigned short hword_t;
 typedef unsigned char byte_t;

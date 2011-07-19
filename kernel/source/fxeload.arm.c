@@ -2,9 +2,80 @@
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName);
 
 instance_t LoadModule(const char* aFilename)
 {
+	if (*aFilename == '/')
+	{
+		// Path was specified, we have to extract the module name.
+
+		int name_len = strlen(aFilename);
+		int ext_pos = name_len;
+		int i;
+		for (i = name_len-1; i >= 0; i --)
+		{
+			if (aFilename[i] == '.' && ext_pos == name_len)
+			{
+				ext_pos = i;
+				continue;
+			}
+			if (aFilename[i] == '/')
+			{
+				i ++;
+				break;
+			}
+		}
+		if (!i) return NULL;
+
+		name_len = ext_pos - i;
+
+		char* aModuleName = FeOS_AllocStack(name_len+1);
+		memcpy(aModuleName, aFilename + i, name_len);
+		aModuleName[name_len] = '\0';
+
+		return _LoadModule_imp(aFilename, aModuleName);
+	}else
+	{
+		// Check if the module is already loaded
+		{
+			fxe_runtime_header* header = FeOS_ModuleListFind(aFilename);
+			if (header)
+			{
+				header->refcount ++;
+				return header->hThis;
+			}
+		}
+
+		// The module name was specified, we have to find the path to the module itself
+		{
+			char buf[PATH_MAX+1];
+			struct stat st;
+
+			// First look at the lib folder
+			snprintf(buf, sizeof(buf), "/data/FeOS/lib/%s.fx2", aFilename);
+			if (stat(buf, &st) == 0) goto __LM_win;
+
+			// Then at the bin folder
+			snprintf(buf, sizeof(buf), "/data/FeOS/bin/%s.fx2", aFilename);
+			if (stat(buf, &st) == 0) goto __LM_win;
+
+			// Fail; we can't find the module
+			return NULL;
+
+__LM_win:
+			return _LoadModule_imp(buf, aFilename);
+		}
+	}
+}
+
+static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName)
+{
+	int aModuleNameLen = strlen(aModuleName)+1;
+
 	int fd = open(aFilename, O_RDONLY);
 	if(fd == -1)
 		return NULL;
@@ -18,7 +89,7 @@ instance_t LoadModule(const char* aFilename)
 		return NULL;
 	}
 
-	totalsize = head.loadsize + head.bsssize + sizeof(fxe_runtime_header);
+	totalsize = head.loadsize + head.bsssize + sizeof(fxe_runtime_header) + aModuleNameLen;
 	if(totalsize > 0x200000)
 	{
 		close(fd);
@@ -80,9 +151,15 @@ instance_t LoadModule(const char* aFilename)
 	}
 
 	// Build the runtime header
-	fxe_runtime_header* rh = (fxe_runtime_header*)(pMemUncached + totalsize - sizeof(fxe_runtime_header));
+	char* namebuf = (char*)(pMemUncached + totalsize - aModuleNameLen);
+	fxe_runtime_header* rh = (fxe_runtime_header*)(namebuf - sizeof(fxe_runtime_header));
+	rh->hThis = pMem;
+	rh->name = namebuf;
+	rh->refcount = 1;
 	rh->file = fd;
 	rh->entrypoint = (FeOSMain) (pMem + head.entrypoint);
+
+	strcpy(namebuf, aModuleName);
 
 	// Read exports
 	if (head.nexports && head.sexports)
@@ -90,7 +167,6 @@ instance_t LoadModule(const char* aFilename)
 		word_t sexports = head.sexports;
 		word_t nexports = head.nexports;
 		
-		rh->exp.count = nexports;
 		fxe2_export_t* exptbl = (fxe2_export_t*) malloc(sexports);
 		if (!exptbl)
 		{
@@ -112,7 +188,8 @@ instance_t LoadModule(const char* aFilename)
 			exptbl[i].address += (word_t) pMem;
 		}
 
-		rh->exp.table = exptbl; // That's it...
+		rh->exp.count = nexports;
+		rh->exp.table = exptbl;
 	}
 
 	// Read imports
@@ -150,11 +227,15 @@ instance_t LoadModule(const char* aFilename)
 			return NULL;
 		}
 
-		free(imptbl);
+		rh->imp.count = nimports;
+		rh->imp.table = imptbl;
 	}
 
 	// Write the pointer to the runtime header
 	*(word_t*)pMemUncached = (word_t) rh;
+
+	// Add this module to the list of loaded modules
+	FeOS_ModuleListAdd(rh);
 
 	// Run the constructors
 	rh->entrypoint(FEOS_EP_INIT, 0, 0, 0);
@@ -166,12 +247,22 @@ void FreeModule(instance_t hInst)
 {
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
+	rh->refcount --;
+	if (rh->refcount) return;
+
 	// Run the destructors
 	rh->entrypoint(FEOS_EP_FINI, 0, 0, 0);
 
 	// Free the export table
 	if (rh->exp.count)
 		free(rh->exp.table);
+
+	// Free the import table
+	if (rh->imp.count)
+	{
+		FreeImports(rh->imp.table, rh->imp.count);
+		free(rh->imp.table);
+	}
 
 	// Close the file
 	close(rh->file);
@@ -194,26 +285,46 @@ void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name)
 int ResolveImports(fxe2_import_t* imptbl, int count)
 {
 	register int i;
+	fxe_inmem_exports* exptable = NULL;
+
 	for(i = 0; i < count; i ++)
 	{
 		fxe2_import_t* imp = imptbl + i;
 		void* sym = NULL;
 
-		// TEMPTEMPTEMP HACKHACKHACK
 		if(imp->address == FX2_IMP_SELECT_MODULE)
-			continue;
-
-		// MORE TEMPTEMPTEMP HACKHACKHACK
-		//if(strcmp(imp->name, "ImpFunc") == 0) sym = ImpFunc;
-		sym = FindInTbl(&_exp_FEOSBASE, imp->name);
-
-		if (!sym)
 		{
-			iprintf("Can't resolve sym: %s\n", imp->name);
-			return 0;
+			instance_t hModule = LoadModule(imp->name);
+			if (!hModule) return 0;
+
+			exptable = &GetRuntimeData(hModule)->exp;
+			continue;
 		}
+
+		if (!exptable) return 0;
+
+		sym = FindInTbl(exptable, imp->name);
+
+		if (!sym) return 0;
 
 		*(imp->addr) = sym;
 	}
 	return 1;
+}
+
+void FreeImports(fxe2_import_t* imptbl, int count)
+{
+	register int i;
+
+	for(i = 0; i < count; i ++)
+	{
+		fxe2_import_t* imp = imptbl + i;
+
+		if(imp->address != FX2_IMP_SELECT_MODULE) continue;
+
+		fxe_runtime_header* header = FeOS_ModuleListFind(imp->name);
+		if (!header) continue; // oops, memory corruption? (shouldn't happen)
+
+		FreeModule(header->hThis);
+	}
 }
