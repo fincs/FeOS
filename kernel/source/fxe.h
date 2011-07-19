@@ -112,6 +112,8 @@ static inline fxe_runtime_header* GetRuntimeData(instance_t hinst)
 instance_t LoadModule(const char* aFilename);
 void FreeModule(instance_t hInst);
 
+int FeOS_Execute(int, const char*[]);
+
 int ResolveImports(fxe2_import_t* imptbl, int count);
 void FreeImports(fxe2_import_t* imptbl, int count);
 void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name);

@@ -20,7 +20,10 @@ void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 }
 
 BEGIN_TABLE(FEOSBASE)
+	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
+	ADD_FUNC_ALIAS(FreeModule, FeOS_FreeModule),
+	ADD_FUNC(FeOS_Execute),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
 
@@ -87,6 +90,18 @@ int FeOS_LoadExecutable(const char* path, const char* cmdline)
 	return GetRuntimeData(inst)->entrypoint(cmdline);
 }
 */
+
+int FeOS_Execute(int argc, const char* argv[])
+{
+	if (argc == 0) return -1;
+	instance_t hInst = LoadModule(argv[0]);
+	if (!hInst) return -1;
+
+	int rc = GetRuntimeData(hInst)->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
+	FreeModule(hInst);
+
+	return rc;
+}
 
 void FeOS_DataCacheFlush(const void* mem, size_t size)
 {

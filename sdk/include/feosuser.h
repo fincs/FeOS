@@ -10,13 +10,14 @@
 #define FeOS_GetInstance() FeOS_hInstance
 #define CALL_FP(a) ((fp_t)(a))()
 
+instance_t FeOS_LoadModule(const char*);
+void* FeOS_FindSymbol(instance_t, const char*);
+void FeOS_FreeModule(instance_t);
+
+int FeOS_Execute(int, const char*[]);
+
 void FeOS_DebugPrint(const char*);
 void FeOS_WaitForVBlank();
-
-/*
-void* FeOS_Malloc(word_t);
-void FeOS_Free(void*);
-*/
 
 #define FEOS_EP_INIT 0x00000001
 #define FEOS_EP_FINI 0x00000002

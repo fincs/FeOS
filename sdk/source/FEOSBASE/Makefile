@@ -3,7 +3,10 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
+FeOS_LoadModule \
 FeOS_FindSymbol \
+FeOS_FreeModule \
+FeOS_Execute \
 FeOS_WaitForVBlank \
 FeOS_DebugPrint \
 atoi \
