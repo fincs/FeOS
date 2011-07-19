@@ -21,10 +21,7 @@ Before building, you must set the `FEOSSDK` environment variable to point to the
 How to build the FeOS SDK
 -------------------------
 
-`cd` to the following directories and run `make` on them:
-
-- `/sdk/bin/fxe2tool_src/` (ELF to FXE2 converter)
-- `/sdk/` (libfeos, for use in user programs)
+`cd` to the `/sdk` directory and run `make` on it.
 
 How to build FeOS
 -----------------

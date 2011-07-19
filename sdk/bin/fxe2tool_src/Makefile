@@ -21,7 +21,7 @@ ifneq (,$(findstring MINGW,$(shell uname -s)))
 	EXEEXT := .exe
 endif
 
-export OUTPUT := $(CURDIR)/$(TARGET)$(EXEEXT)
+export OUTPUT := $(CURDIR)/../$(TARGET)$(EXEEXT)
 export DEPSDIR := $(CURDIR)/$(BUILD)
 export VPATH := $(foreach dir,$(SOURCES),$(CURDIR)/$(dir))
 
@@ -41,7 +41,6 @@ export OFILES := $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@cp $(OUTPUT) ..
 
 clean:
 	@rm -fr $(BUILD) $(OUTPUT)

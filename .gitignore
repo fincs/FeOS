@@ -1,6 +1,8 @@
 build/
 /sdk/lib/
 /sdk/bin/fxe2tool
+/sdk/source/FEOSBASE/*
+!/sdk/source/FEOSBASE/Makefile
 *.exe
 *.nds
 *.elf

@@ -91,6 +91,10 @@ export INCLUDE  := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
+ifeq ($(strip $(THIS_MAKEFILE)),)
+	THIS_MAKEFILE := Makefile
+endif
+
 .PHONY: $(BUILD) clean all
 
 #---------------------------------------------------------------------------------
@@ -101,7 +105,7 @@ $(BUILD):
 ifeq ($(strip $(CONF_TARGET)),staticlib)
 	@mkdir -p lib
 endif
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/$(THIS_MAKEFILE)
 ifneq ($(strip $(CONF_TARGET)),staticlib)
 	@arm-eabi-nm -CSn $(OUTPUT).elf > $(BUILD)/$(TARGET).alt.map
 else

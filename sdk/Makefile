@@ -1,34 +1,13 @@
-#---------------------------------------------------------------------------------
 .SUFFIXES:
-#---------------------------------------------------------------------------------
 
-ifeq ($(strip $(DEVKITPRO)),)
-$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro)
-endif
+.PHONY: all clean
 
-ifeq ($(strip $(DEVKITARM)),)
-$(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
-endif
+all:
+	@make -C bin/fxe2tool_src
+	@make -C source/FEOSBASE
+	@make -f libfeos.mk
 
-ifeq ($(strip $(FEOSSDK)),)
-$(error "Please set FEOSSDK in your environment. export FEOSSDK=<path to>FeOS/sdk")
-endif
-
-FEOSMK = $(FEOSSDK)/mk
-
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# DATA is a list of directories containing data files
-# INCLUDES is a list of directories containing header files
-#---------------------------------------------------------------------------------
-TARGET        := feos
-BUILD         := build
-SOURCES       := source source/FEOSBASE
-DATA          := data
-INCLUDES      := include
-
-CONF_NOSTDLIB = 1
-
-include $(FEOSMK)/staticlib.mk
+clean:
+	@make -C bin/fxe2tool_src clean
+	@make -C source/FEOSBASE clean
+	@make -f libfeos.mk clean
