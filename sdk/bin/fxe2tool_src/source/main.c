@@ -229,8 +229,8 @@ int WriteRelocations(elf2fx2_cnvstruct_t* cs)
 		reloc.patch = 0;
 		while((i < nwords) && !loaddata[i]) i ++, reloc.skip ++;
 		while((i < nwords) && loaddata[i]) i ++, reloc.patch ++;
-		reloc.skip = eswap_word(reloc.skip);
-		reloc.patch = eswap_word(reloc.patch);
+		reloc.skip = eswap_hword(reloc.skip);
+		reloc.patch = eswap_hword(reloc.patch);
 		safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
 	}
 
