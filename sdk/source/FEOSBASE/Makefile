@@ -4,6 +4,8 @@ MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
 FeOS_FindSymbol \
+FeOS_WaitForVBlank \
+FeOS_DebugPrint \
 atoi \
 rand \
 srand \
@@ -27,7 +29,7 @@ memmove \
 memset \
 memcmp \
 printf \
-sprintf \
+sprintf
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

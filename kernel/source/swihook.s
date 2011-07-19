@@ -130,13 +130,6 @@ FeOS_WaitForVBlank:
 	swi 0x11
 	bx lr
 
-.align 2
-.global FeOS_swi_DebugPrint
-.thumb_func
-FeOS_swi_DebugPrint:
-	swi 0x10
-	bx lr
-
 .macro swiimp name num
 .align 2
 .global FeOS_swi_\name
@@ -146,6 +139,7 @@ FeOS_swi_\name\():
 	bx lr
 .endm
 
+swiimp DebugPrint 0x10
 swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
 swiimp InstrCacheInvalidate 0x07

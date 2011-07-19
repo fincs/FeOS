@@ -15,9 +15,7 @@ FEOSFINI void foobar_fini()
 	FeOS_DebugPrint("[FINI]\n");
 }
 
-int getNumber();
 void TestCpp();
-void ImpFunc();
 
 int main(int argc, const char** argv)
 {

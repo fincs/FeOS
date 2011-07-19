@@ -26,6 +26,8 @@ void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(ImpFunc),
 	ADD_FUNC(FeOS_FindSymbol),
+	ADD_FUNC(FeOS_WaitForVBlank),
+	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
 
 	// stdlib.h
 	ADD_FUNC(atoi),
@@ -45,7 +47,6 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(strcpy),
 	ADD_FUNC(strcat),
 	ADD_FUNC(strcmp),
-	ADD_FUNC(strlen),
 	ADD_FUNC(strncpy),
 	ADD_FUNC(strncat),
 	ADD_FUNC(strncmp),
