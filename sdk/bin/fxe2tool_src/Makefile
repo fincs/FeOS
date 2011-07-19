@@ -63,7 +63,7 @@ $(OUTPUT): $(OFILES)
 $(OUTPUT):
 	@echo Linking...
 	@$(LD) $(OSXLDFLAGS) $(LDFLAGS) $(OFILES) -o $@
-	@$(STRIP) --strip-all $@
+	@$(STRIP) $@
 
 %.o: %.c
 	@echo $(notdir $<)
