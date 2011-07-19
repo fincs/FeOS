@@ -120,25 +120,15 @@ int main()
 	DoTheUserMode();
 	iprintf("User mode OK\n\n");
 
-	iprintf("Loading test executable...\n");
-	instance_t hTest = LoadModule("/data/FeOS/sys/testbin.fx2");
-	if(!hTest)
+	iprintf("Executing test executable...\n");
+
+	const char* argv[] =
 	{
-		iprintf("Failure!\n");
-		for(;;)
-			FeOS_WaitForVBlank();
-	}
+		"/data/FeOS/sys/testbin.fx2",
+		"This works!"
+	};
 
-	FeOSMain entrypoint = GetRuntimeData(hTest)->entrypoint;
-
-	const char* aCmdLine = "This works!";
-
-	iprintf("Press Start to begin...\n\n");
-	for(;;){ if(keysDown() & KEY_START) break; FeOS_WaitForVBlank(); }
-
-	entrypoint(FEOS_EP_MAIN, 1, (word_t)&aCmdLine, 0);
-	
-	FreeModule(hTest);
+	FeOS_Execute(2, argv);
 
 	for(;;)
 		FeOS_WaitForVBlank();
