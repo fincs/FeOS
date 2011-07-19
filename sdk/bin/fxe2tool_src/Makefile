@@ -15,11 +15,20 @@ CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions
 
 LDFLAGS := -g0 -static-libgcc
 
-ifneq ($(BUILD),$(notdir $(CURDIR)))
+UNAME := $(shell uname -s)
 
-ifneq (,$(findstring MINGW,$(shell uname -s)))
+ifneq (,$(findstring MINGW,$(UNAME)))
 	EXEEXT := .exe
 endif
+
+ifneq (,$(findstring Darwin,$(UNAME)))
+	SDK         := /Developer/SDKs/MacOSX10.4u.sdk
+	OSXCFLAGS   := -mmacosx-version-min=10.4 -isysroot $(SDK) -arch i386 -arch ppc
+	OSXCXXFLAGS := -fvisibility=hidden -mmacosx-version-min=10.4 -isysroot $(SDK) -arch i386 -arch ppc
+	OSXLDFLAGS  := -mmacosx-version-min=10.4 -Wl,-syslibroot,$(SDK) -arch i386 -arch ppc
+endif
+
+ifneq ($(BUILD),$(notdir $(CURDIR)))
 
 export OUTPUT := $(CURDIR)/../$(TARGET)$(EXEEXT)
 export DEPSDIR := $(CURDIR)/$(BUILD)
@@ -53,15 +62,17 @@ $(OUTPUT): $(OFILES)
 
 $(OUTPUT):
 	@echo Linking...
-	@$(LD) $(LDFLAGS) $(OFILES) -o $@
+	@$(LD) $(OSXLDFLAGS) $(LDFLAGS) $(OFILES) -o $@
 	@$(STRIP) --strip-all $@
 
 %.o: %.c
 	@echo $(notdir $<)
-	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	@$(CC) -E -MMD -MF $(DEPSDIR)/$(*).d $(CFLAGS) $< > /dev/null
+	@$(CC) $(OSXCFLAGS) $(CFLAGS) -o $@ -c $<
 
 %.o: %.cpp
 	@echo $(notdir $<)
-	@$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	@$(CXX) -E -MMD -MF $(DEPSDIR)/$(*).d $(CXXFLAGS) $< > /dev/null
+	@$(CXX) $(OSXCXXFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 endif
