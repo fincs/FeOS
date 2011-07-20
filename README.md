@@ -38,6 +38,12 @@ How to transfer FeOS to the SD card
 - Copy `/kernel/FeOS.nds` to the root of the SD card.
 - Copy `/testbin/testbin.fx2` to `/data/FeOS/sys/` in the SD card.
 
+How to transfer a FeOS application to the SD card
+-------------------------------------------------
+
+Just copy the fx2 file to the `/data/FeOS/bin/` folder. If said folder does not exist, create it.
+The application might have dependencies on some libraries. If so, then copy the libraries to the `/data/FeOS/lib/` folder. Again, if the folder does not exist, create it.
+
 Opening the source in Programmers Notepad
 -----------------------------------------
 
