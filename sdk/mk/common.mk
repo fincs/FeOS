@@ -137,7 +137,7 @@ $(OUTPUT).elf: $(OFILES)
 #---------------------------------------------------------------------------------
 %.fx2:
 	@fxe2tool $(OUTPUT)
-	@echo Built: $(TARGET)
+	@echo Built: $(notdir $@)
 
 #---------------------------------------------------------------------------------
 %.elf:
@@ -155,7 +155,7 @@ $(OUTPUT).a: $(OFILES)
 	@echo Linking...
 	@rm -f $@
 	@$(AR) -rc $@ $^
-	@echo Built: $(TARGET)
+	@echo Built: $(notdir $@)
 
 endif
 
