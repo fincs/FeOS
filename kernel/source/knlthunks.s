@@ -22,6 +22,8 @@ _\name\()hook_addr:
 .endm
 
 makehook conwrite, 0x13
+makehook conread, 0x14
+makehook conerr, 0x15
 
 @ FAT hooks
 

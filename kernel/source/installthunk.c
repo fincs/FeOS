@@ -13,6 +13,8 @@
 }while(0)
 
 DECLAREHOOK(ssize_t, conwrite, (struct _reent*, int, const char*, size_t));
+DECLAREHOOK(ssize_t, conread, (struct _reent*, int, char* ptr, size_t));
+DECLAREHOOK(ssize_t, conerr, (struct _reent*, int, const char*, size_t));
 
 // FAT hooks
 DECLAREHOOK(int, fatopen, (struct _reent*, void*, const char*, int, int));
@@ -39,6 +41,8 @@ void InstallThunks()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
 	HOOK(dotabs[STD_OUT]->write_r, conwrite);
+	HOOK(dotabs[STD_IN]->read_r, conread);
+	HOOK(dotabs[STD_ERR]->write_r, conerr);
 
 	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("fat"); // force non-constness
 	HOOK(dotab->open_r, fatopen);

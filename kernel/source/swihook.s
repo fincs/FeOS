@@ -64,7 +64,9 @@ __SVCTable:
 	.word swiWaitForVBlank
 	.word FeOS_IsValidName
 	writehook conwrite
-	.space 4*12
+	writehook conread
+	writehook conerr
+	.space 4*10
 
 	@ FAT hooks
 

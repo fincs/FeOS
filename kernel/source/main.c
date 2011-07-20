@@ -52,8 +52,11 @@ void videoInit()
 	videoSetMode(MODE_3_2D | DISPLAY_BG_EXT_PALETTE);
 	// Set up the sub engine
 	videoSetModeSub(MODE_0_2D);
-	// Allocate some VRAM for our backgrounds
+
+	// Set the VRAM layout
 	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_LCD);
+	dmaFillWords(0, VRAM_C, 128*1024); // keyboardInit() does not clear the full tilemap...
 	vramSetBankC(VRAM_C_SUB_BG);
 
 	// Initialize three backgrounds: console, text and bitmap
