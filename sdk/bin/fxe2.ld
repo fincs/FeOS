@@ -36,12 +36,7 @@ SECTIONS
 		*(.gnu.warning)
 		*(.gnu.linkonce.t*)
 		. = ALIGN(4);
-/*
-	} : loadable
 
-	.init_fini ALIGN(4) :
-	{
-*/
 		__feos_init_array =  . ;
 		KEEP( *(.preinit_array) )
 		KEEP( *(SORT(.init_array.*)) )

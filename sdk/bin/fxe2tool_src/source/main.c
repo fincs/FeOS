@@ -266,6 +266,7 @@ typedef struct tag_elf2fx2_expimp_t
 	const char* name;
 	word_t addr;
 	struct tag_elf2fx2_expimp_t* next;
+	struct tag_elf2fx2_expimp_t* prev;
 } elf2fx2_expimp_t;
 
 enum { AEI_EXPORT, AEI_IMPORT };
@@ -276,17 +277,18 @@ int AddExpImp(elf2fx2_cnvstruct_t* cs, elf2fx2_expimp_t** pexp, const char* name
 	if(!exp)
 		die("Out of memory!");
 
-	// FIXME: This is a very inefficent way to do this!
 	exp->name = name;
 	exp->addr = addr;
 	exp->next = NULL;
-	if (!*pexp) *pexp = exp;
-	else if (!(*pexp)->next) (*pexp)->next = exp;
-	else
+	if (!*pexp)
 	{
-		elf2fx2_expimp_t* f;
-		for(f = (*pexp)->next; f->next; f = f->next);
-		f->next = exp;
+		*pexp = exp;
+		exp->prev = exp;
+	}else
+	{
+		elf2fx2_expimp_t* lexp = (*pexp)->prev;
+		lexp->next = exp;
+		(*pexp)->prev = exp;
 	}
 
 	if (which == AEI_EXPORT)
@@ -329,6 +331,19 @@ int CheckForImport(elf2fx2_cnvstruct_t* cs, Elf32_Sym* sym, elf2fx2_expimp_t** p
 
 	safe_call(AddExpImp(cs, pimp, impsymname, symaddr, AEI_IMPORT));
 
+	return 0;
+}
+
+int cmp_sym(const void* _a, const void* _b)
+{
+	const Elf32_Sym* a = (const Elf32_Sym*) _a;
+	const Elf32_Sym* b = (const Elf32_Sym*) _b;
+	return eswap_word(a->st_value) - eswap_word(b->st_value);
+}
+
+int SortSymbols(elf2fx2_cnvstruct_t* cs)
+{
+	qsort(cs->syms, cs->nsyms, sizeof(Elf32_Sym), cmp_sym);
 	return 0;
 }
 
@@ -500,6 +515,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 
 	// Write the relocations to the file
 	safe_call(WriteRelocations(&cs));
+
+	// Sort the ELF symbols for the following stage
+	safe_call(SortSymbols(&cs));
 
 	// Process imports and exports
 	safe_call(ProcessSymbols(&cs));
