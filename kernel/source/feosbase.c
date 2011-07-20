@@ -84,9 +84,9 @@ int FeOS_LoadExecutable(const char* path, const char* cmdline)
 
 int FeOS_Execute(int argc, const char* argv[])
 {
-	if (argc == 0) return -1;
+	if (argc == 0) return E_INVALIDARG;
 	instance_t hInst = LoadModule(argv[0]);
-	if (!hInst) return -1;
+	if (!hInst) return E_FILENOTFOUND;
 
 	int rc = GetRuntimeData(hInst)->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
 	FreeModule(hInst);

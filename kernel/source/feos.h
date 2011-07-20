@@ -25,6 +25,9 @@ static inline bool AddressCheckMainRAM(const void* addr)
 	return (word_t)addr >= 0x02000000 && (word_t)addr <= 0x03000000;
 }
 
+#define E_FILENOTFOUND (-10)
+#define E_INVALIDARG (-11)
+
 int FeOS_IsValidName(const char* path);
 
 void FeOS_WaitForVBlank();
