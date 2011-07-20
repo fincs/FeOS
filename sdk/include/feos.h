@@ -12,6 +12,7 @@ extern "C"
 #endif
 
 #include <feosbase.h>
+#include <feoserror.h>
 #include <feosuser.h>
 #include <feoscrt.h>
 
