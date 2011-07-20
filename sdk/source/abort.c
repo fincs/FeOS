@@ -1,8 +1,9 @@
 #include <feos.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 void abort()
 {
-	FeOS_DebugPrint("abort() called!\n");
+	fprintf(stderr, "abort() called!\n");
 	exit(-1);
 }
