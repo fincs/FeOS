@@ -5,6 +5,12 @@
 
 #define FeOS_AllocStack(a) __builtin_alloca(a)
 
+#define BEGIN_TABLE(_NAME_) static const fxe2_export_t _exp_##_NAME_##_tbl[] = {
+#define ADD_FUNC(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
+#define ADD_FUNC_ALIAS(FUNC, NAME) {{(word_t)#NAME}, {(word_t)FUNC}}
+#define END_TABLE(_NAME_) };
+#define MAKE_EXPORTSTRUCT(_NAME_) { sizeof(_exp_##_NAME_##_tbl) / sizeof(fxe2_export_t), (fxe2_export_t*) _exp_##_NAME_##_tbl }
+
 typedef unsigned int word_t;
 typedef unsigned short hword_t;
 typedef unsigned char byte_t;

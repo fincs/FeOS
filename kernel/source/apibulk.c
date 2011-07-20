@@ -4,12 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BEGIN_TABLE(_NAME_) static const fxe2_export_t _exp_##_NAME_##_tbl[] = {
-#define ADD_FUNC(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
-#define ADD_FUNC_ALIAS(FUNC, NAME) {{(word_t)#NAME}, {(word_t)FUNC}}
-#define END_TABLE(_NAME_) };
-#define MAKE_EXPORTSTRUCT(_NAME_) { sizeof(_exp_##_NAME_##_tbl) / sizeof(fxe2_export_t), (fxe2_export_t*) _exp_##_NAME_##_tbl }
-
 void FeOS_swi_DebugPrint(const char*);
 
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
@@ -51,10 +45,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(memcpy),
 	ADD_FUNC(memmove),
 	ADD_FUNC(memset),
-	ADD_FUNC(memcmp),
-
-	ADD_FUNC_ALIAS(iprintf, printf),
-	ADD_FUNC_ALIAS(siprintf, sprintf)
+	ADD_FUNC(memcmp)
 END_TABLE(FEOSBASE)
 
 extern void* _inst_FEOSBASE;

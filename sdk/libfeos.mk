@@ -25,7 +25,7 @@ FEOSMK = $(FEOSSDK)/mk
 #---------------------------------------------------------------------------------
 TARGET        := feos
 BUILD         := build
-SOURCES       := source source/FEOSBASE
+SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/stdio
 DATA          := data
 INCLUDES      := include
 

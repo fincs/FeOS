@@ -1,10 +1,16 @@
 #include "fxe.h"
 
 extern fxe_runtime_header _header_FEOSBASE;
+extern fxe_runtime_header _header_FEOSSTDIO;
 
 static fxe_runtime_header* mListHead = &_header_FEOSBASE;
 static fxe_runtime_header* mListTail = &_header_FEOSBASE;
 static int nmodules = 1;
+
+void FeOS_ModuleListInit()
+{
+	FeOS_ModuleListAdd(&_header_FEOSSTDIO);
+}
 
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
 {
@@ -16,7 +22,7 @@ void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
 
 void FeOS_ModuleListRemove(fxe_runtime_header* pModule)
 {
-	if (pModule == mListHead) return; // thwart attempts at doing evil
+	if (pModule->file == -1) return; // thwart attempts at doing evil
 	
 	pModule->prev->next = pModule->next;
 	nmodules --;

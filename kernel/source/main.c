@@ -97,6 +97,7 @@ int main()
 	SystemVectors.swi = (u32) __SWIHandler;
 	setVectorBase(0);
 	PrepareUserMode();
+	FeOS_ModuleListInit();
 
 	iprintf(
 		"FeOS kernel\n"

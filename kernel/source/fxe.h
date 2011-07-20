@@ -118,6 +118,7 @@ int ResolveImports(fxe2_import_t* imptbl, int count);
 void FreeImports(fxe2_import_t* imptbl, int count);
 void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name);
 
+void FeOS_ModuleListInit();
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule);
 void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
 int FeOS_ModuleListCount();

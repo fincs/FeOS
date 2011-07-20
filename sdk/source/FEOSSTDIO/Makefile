@@ -3,34 +3,27 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_LoadModule \
-FeOS_FindSymbol \
-FeOS_FreeModule \
-FeOS_Execute \
-FeOS_WaitForVBlank \
-FeOS_DebugPrint \
-atoi \
-rand \
-srand \
-malloc \
-calloc \
-free \
-relloc \
-bsearch \
-qsort \
-abs \
-div \
-strlen \
-strcpy \
-strcat \
-strcmp \
-strncpy \
-strncat \
-strncmp \
-memcpy \
-memmove \
-memset \
-memcmp
+FeOS_GetStdin \
+FeOS_GetStdout \
+FeOS_GetStderr \
+fopen \
+freopen \
+fclose \
+fwrite \
+fread \
+feof \
+fseek \
+ftell \
+fflush \
+ferror \
+vfprintf \
+vsprintf \
+vfscanf \
+vsscanf \
+fgetc \
+fputc \
+fgets \
+fputs
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
