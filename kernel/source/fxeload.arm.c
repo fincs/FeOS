@@ -158,6 +158,8 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	rh->refcount = 1;
 	rh->file = fd;
 	rh->entrypoint = (FeOSMain) (pMem + head.entrypoint);
+	rh->exp.count = head.nexports;
+	rh->imp.count = head.nimports;
 
 	strcpy(namebuf, aModuleName);
 
@@ -188,7 +190,6 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 			exptbl[i].address += (word_t) pMem;
 		}
 
-		rh->exp.count = nexports;
 		rh->exp.table = exptbl;
 	}
 
@@ -227,7 +228,6 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 			return NULL;
 		}
 
-		rh->imp.count = nimports;
 		rh->imp.table = imptbl;
 	}
 
