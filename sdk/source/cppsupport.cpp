@@ -8,6 +8,6 @@ void operator delete[](void *p)  { free(p);             }
 
 extern "C" void __cxa_pure_virtual()
 {
-	FeOS_DebugPrint("{C++} Pure virtual call!");
-	for(;;);
+	FeOS_DebugPrint("{C++} Pure virtual call!\n");
+	abort();
 }

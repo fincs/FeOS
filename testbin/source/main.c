@@ -1,5 +1,6 @@
 #include <feos.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int i;
@@ -32,17 +33,6 @@ int main(int argc, const char** argv)
 	FeOS_DebugPrint("\nVBlank test OK\n\n");
 
 	TestCpp();
-
-	/*
-	FeOS_DebugPrint("\nTesting exceptions...\n");
-	for(j = 0; j < 60; j ++)
-		FeOS_WaitForVBlank();
-	*(volatile word_t*) 0x04000208 = 0; // REG_IME
-	FeOS_DebugPrint("Exception not caught!\n");
-
-	for(;;)
-		FeOS_WaitForVBlank();
-	*/
 
 	FeOS_DebugPrint("\n");
 	return 0;

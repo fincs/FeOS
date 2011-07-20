@@ -29,6 +29,11 @@ void* calloc(size_t, size_t);
 void free(void*);
 void* realloc(void*, size_t);
 
+// Environment
+void abort() __attribute__((noreturn));
+//int atexit(fp_t);
+void exit(int) __attribute__((noreturn));
+
 // Searching and ordering
 typedef int (* c_comparator)(const void*, const void*);
 void* bsearch(const void*, const void*, size_t, size_t, c_comparator);
