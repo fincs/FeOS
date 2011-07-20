@@ -17,6 +17,6 @@ longjmp: @ r0 - buffer, r1 - excpt code
 	@ Read the registers from the jump buffer
 	ldmia r0!, {r4-r11, sp, lr}
 	
-	@ Return to the caller of face_setjmp.
+	@ Return to the caller of setjmp.
 	mov r0, r1
-	bx lr
+	bx  lr

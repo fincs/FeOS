@@ -42,22 +42,13 @@ void qsort(void*, size_t, size_t, c_comparator);
 // Absolute value
 #define labs abs
 int abs(int);
-/*
-static inline int abs(int n)
-{
-	if(n >= 0)
-		return n;
-	else
-		return -n;
-}
-*/
 
 // Division
 typedef struct { int quot, rem; } div_t;
 div_t div(int, int);
 
 // These functions will never be implemented:
-// atof, strtod, atexit, getenv, system, mblen, mbtowc, wctomb, mbstowcs, wcstombs
+// atof, strtod, getenv, system, mblen, mbtowc, wctomb, mbstowcs, wcstombs
 
 #ifdef __cplusplus
 }

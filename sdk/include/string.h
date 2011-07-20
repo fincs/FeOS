@@ -3,9 +3,6 @@
 // string.h
 //     String/memory manipulation functions
 //
-// These small/fast/common functions are statically linked
-// to the executable for performance reasons.
-//
 
 #pragma once
 #include <stddef.h>
