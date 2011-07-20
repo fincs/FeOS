@@ -50,8 +50,11 @@ void videoInit()
 {
 	// Set up the main engine
 	videoSetMode(MODE_3_2D | DISPLAY_BG_EXT_PALETTE);
+	// Set up the sub engine
+	videoSetModeSub(MODE_0_2D);
 	// Allocate some VRAM for our backgrounds
 	vramSetBankA(VRAM_A_MAIN_BG);
+	vramSetBankC(VRAM_C_SUB_BG);
 
 	// Initialize three backgrounds: console, text and bitmap
 	con    = consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
@@ -87,10 +90,18 @@ void videoInit()
 
 void InstallThunks();
 
+void kbd_key(int key)
+{
+	if(key > 0) putchar(key);
+}
+
 int main()
 {
 	videoInit();
-	swiWaitForVBlank();
+	consoleDebugInit(DebugDevice_CONSOLE);
+
+	Keyboard* kbd = keyboardDemoInit();
+	kbd->OnKeyPressed = kbd_key;
 	
 	defaultExceptionHandler();
 	SystemVectors.reset = (u32) __ResetHandler;
