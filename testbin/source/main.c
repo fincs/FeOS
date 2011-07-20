@@ -7,13 +7,13 @@ int i;
 
 FEOSINIT void foobar_init()
 {
-	FeOS_DebugPrint("[INIT]\n");
+	printf("[INIT]\n");
 	i = 42;
 }
 
 FEOSFINI void foobar_fini()
 {
-	FeOS_DebugPrint("[FINI]\n");
+	printf("[FINI]\n");
 }
 
 void TestCpp();
@@ -22,7 +22,7 @@ int main(int argc, const char** argv)
 {
 	int j;
 
-	FeOS_DebugPrint("FeOS test executable\n");
+	printf("FeOS test executable\n");
 	printf("argc: %d\n", argc);
 	for(j = 0; j < argc; j ++)
 		printf("[%d] %s\n", j, argv[j]);
@@ -30,10 +30,23 @@ int main(int argc, const char** argv)
 	for(j = 0; j < 60; j ++)
 		FeOS_WaitForVBlank();
 
-	FeOS_DebugPrint("\nVBlank test OK\n\n");
+	printf("\nVBlank test OK\n\n");
 
 	TestCpp();
 
-	FeOS_DebugPrint("\n");
+	printf("\n");
+
+	printf("Running hello_world...\n");
+
+	const char* hwlaunchargs[] = { "hello_world" };
+	int rc = FeOS_Execute(1, hwlaunchargs);
+
+	if (rc != E_FILENOTFOUND)
+		printf("Return code: %d\n", rc);
+	else
+		printf("hello_world does not exist...\n");
+
+	printf("\n");
+
 	return 0;
 }

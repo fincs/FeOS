@@ -1,20 +1,21 @@
 #include <feos.h>
+#include <stdio.h>
 #include <string.h>
 #include "testclasses.h"
 
 CTest::CTest()
 {
-	FeOS_DebugPrint("{CTest::CTest}\n");
+	printf("{CTest::CTest}\n");
 }
 
 CTest::~CTest()
 {
-	FeOS_DebugPrint("{CTest::~CTest}\n");
+	printf("{CTest::~CTest}\n");
 }
 
 void CTest::SayHello()
 {
-	FeOS_DebugPrint("Hello from CTest!\n");
+	printf("Hello from CTest!\n");
 }
 
 //--------------------------------------------------
@@ -25,12 +26,12 @@ class CCompletelyUseless : public ICompletelyUseless
 public:
 	CCompletelyUseless() : refcount(1)
 	{
-		FeOS_DebugPrint("{CCompletelyUseless()}\n");
+		printf("{CCompletelyUseless()}\n");
 	}
 
 	~CCompletelyUseless()
 	{
-		FeOS_DebugPrint("{~CCompletelyUseless()}\n");
+		printf("{~CCompletelyUseless()}\n");
 	}
 
 	virtual word_t AddRef()
@@ -64,7 +65,7 @@ public:
 
 void CCompletelyUseless::HelloWorld()
 {
-	FeOS_DebugPrint("Hello World!\n");
+	printf("Hello World!\n");
 }
 
 #define CASE(NAME) (strcmp(aIface, "I" #NAME) == 0) *(I##NAME**)ppObj = new C##NAME()

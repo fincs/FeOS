@@ -1,11 +1,12 @@
 #include <feos.h>
+#include <stdio.h>
 #include "testclasses.h"
 
 static void Something(IBase* pObj)
 {
 	ICompletelyUseless* pObj2;
 	if (!pObj->Coerce("ICompletelyUseless", (void**) &pObj2))
-		FeOS_DebugPrint("Can't coerce object!\n");
+		printf("Can't coerce object!\n");
 	else
 	{
 		pObj2->HelloWorld();
@@ -21,7 +22,7 @@ extern "C" void TestCpp()
 	ICompletelyUseless* pObj;
 
 	if (!CreateObject("ICompletelyUseless", (void**) &pObj))
-		FeOS_DebugPrint("Can't create object!\n");
+		printf("Can't create object!\n");
 	else
 	{
 		pObj->HelloWorld();
