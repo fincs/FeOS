@@ -41,9 +41,8 @@ char* strtok(char*, const char*);
 
 // Misc
 char* strerror(int);
-
-// These functions will never be implemented:
-// strcoll, strxfrm
+int strcoll(const char*, const char*);
+size_t strxfrm(char*, const char*, size_t);
 
 #ifdef __cplusplus
 }
