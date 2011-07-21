@@ -105,12 +105,8 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 		close(fd);
 		return NULL;
 	}
-	void* pMemUncached = memUncached(pMem);
 
-	FeOS_swi_DataCacheFlush(pMem, totalsize);
-	FeOS_swi_InstrCacheInvalidate(pMem, totalsize);
-
-	if(read(fd, pMemUncached, head.loadsize) != head.loadsize)
+	if(read(fd, pMem, head.loadsize) != head.loadsize)
 	{
 		free(pMem);
 		close(fd);
@@ -118,8 +114,8 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	}
 
 	// Clear the BSS
-	//dmaFillWords(0, pMemUncached + head.loadsize, head.bsssize);
-	memset(pMemUncached + head.loadsize, 0, head.bsssize);
+	//dmaFillWords(0, pMem + head.loadsize, head.bsssize);
+	memset(pMem + head.loadsize, 0, head.bsssize);
 
 	if(head.nrelocs)
 	{
@@ -142,7 +138,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 
 		// TODO: range checks
 		register int i, j;
-		word_t* patch = (word_t*) pMemUncached;
+		word_t* patch = (word_t*) pMem;
 		for(i = 0; i < head.nrelocs; i ++)
 		{
 			patch += pRelocs[i].skip;
@@ -222,7 +218,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 			// TODO: range checks
 			imptbl[i].nameoffset += (word_t) imptbl;
 			if (imptbl[i].address != FX2_IMP_SELECT_MODULE)
-				imptbl[i].address += (word_t) pMemUncached;
+				imptbl[i].address += (word_t) pMem;
 		}
 
 		if (!ResolveImports(imptbl, nimports))
@@ -236,6 +232,10 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 
 	// Write the pointer to the runtime header
 	*(volatile word_t*)pMem = (word_t) rh;
+
+	// Update caches
+	FeOS_swi_DataCacheFlush(pMem, totalsize);
+	FeOS_swi_InstrCacheInvalidate(pMem, totalsize);
 
 	// Add this module to the list of loaded modules
 	FeOS_ModuleListAdd(rh);
