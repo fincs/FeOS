@@ -53,6 +53,7 @@ Demo applications
 This repo contains some demo applications:
 - `/testbin`: it tests some FeOS features.
 - `/sdk/examples/hello_world`: the classic Hello World program.
+- `/sdk/example/time`: it prints the current time and date.
 
 Opening the source in Programmers Notepad
 -----------------------------------------
