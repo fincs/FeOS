@@ -9,6 +9,7 @@ FeOS_FreeModule \
 FeOS_Execute \
 FeOS_WaitForVBlank \
 FeOS_DebugPrint \
+FeOS_GetErrnoPtr \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \
@@ -47,6 +48,7 @@ strrchr \
 strspn \
 strstr \
 strtok \
+strerror \
 isalnum \
 isalpha \
 iscntrl \

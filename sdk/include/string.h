@@ -39,8 +39,11 @@ size_t strspn(const char*, const char*);
 char* strstr(const char*, const char*);
 char* strtok(char*, const char*);
 
+// Misc
+char* strerror(int);
+
 // These functions will never be implemented:
-// strcoll, strxfrm, strerror
+// strcoll, strxfrm
 
 #ifdef __cplusplus
 }

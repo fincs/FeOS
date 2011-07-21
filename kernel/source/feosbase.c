@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <errno.h>
 
 void FeOS_swi_DebugPrint(const char*);
 
@@ -27,6 +28,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_Execute),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
+	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),
@@ -73,6 +75,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(strspn),
 	ADD_FUNC(strstr),
 	ADD_FUNC(strtok),
+	ADD_FUNC(strerror),
 
 	// ctype.h
 	ADD_FUNC(isalnum),
