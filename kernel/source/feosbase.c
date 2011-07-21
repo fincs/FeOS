@@ -15,6 +15,11 @@ void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 	return FindInTbl(&GetRuntimeData(hinst)->exp, sym);
 }
 
+int __aeabi_idiv(int, int);
+int __aeabi_idivmod(int, int);
+unsigned int __aeabi_uidiv(unsigned int, unsigned int);
+unsigned int __aeabi_uidivmod(unsigned int, unsigned int);
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -22,6 +27,10 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_Execute),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
+	ADD_FUNC(__aeabi_idiv),
+	ADD_FUNC(__aeabi_idivmod),
+	ADD_FUNC(__aeabi_uidiv),
+	ADD_FUNC(__aeabi_uidivmod),
 
 	// stdlib.h
 	ADD_FUNC(atoi),
@@ -56,6 +65,14 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(memmove),
 	ADD_FUNC(memset),
 	ADD_FUNC(memcmp),
+	ADD_FUNC(memchr),
+	ADD_FUNC(strchr),
+	ADD_FUNC(strcspn),
+	ADD_FUNC(strpbrk),
+	ADD_FUNC(strrchr),
+	ADD_FUNC(strspn),
+	ADD_FUNC(strstr),
+	ADD_FUNC(strtok),
 
 	// ctype.h
 	ADD_FUNC(isalnum),

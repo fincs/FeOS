@@ -25,6 +25,7 @@ fgetc \
 fputc \
 fgets \
 fputs \
+ungetc \
 remove \
 rename \
 

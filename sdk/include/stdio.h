@@ -78,11 +78,13 @@ int fputs(const char*, FILE*);
 int getchar();
 char* gets(char*);
 
+int ungetc(int, FILE*);
+
 int putchar(int);
 int puts(const char*);
 
 int remove(const char*);
-int rename(const char*);
+int rename(const char*, const char*);
 
 #ifdef __cplusplus
 }

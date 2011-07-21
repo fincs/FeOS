@@ -48,6 +48,7 @@ BEGIN_TABLE(FEOSSTDIO)
 	// Strings and chars
 	ADD_FUNC(fgetc), ADD_FUNC(fputc),
 	ADD_FUNC(fgets), ADD_FUNC(fputs),
+	ADD_FUNC(ungetc),
 
 	// Misc
 	ADD_FUNC(remove),

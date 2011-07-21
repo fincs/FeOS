@@ -9,6 +9,10 @@ FeOS_FreeModule \
 FeOS_Execute \
 FeOS_WaitForVBlank \
 FeOS_DebugPrint \
+__aeabi_idiv \
+__aeabi_idivmod \
+__aeabi_uidiv \
+__aeabi_uidivmod \
 atoi \
 strtol \
 strtoul \
@@ -17,7 +21,7 @@ srand \
 malloc \
 calloc \
 free \
-relloc \
+realloc \
 bsearch \
 qsort \
 abs \
@@ -35,6 +39,14 @@ memcpy \
 memmove \
 memset \
 memcmp \
+memchr \
+strchr \
+strcspn \
+strpbrk \
+strrchr \
+strspn \
+strstr \
+strtok \
 isalnum \
 isalpha \
 iscntrl \

@@ -31,6 +31,9 @@ void* calloc(size_t, size_t);
 void free(void*);
 void* realloc(void*, size_t);
 
+#define EXIT_SUCCESS 0
+#define EXIT_FAILURE 1
+
 // Environment
 void abort() __attribute__((noreturn));
 //int atexit(fp_t);

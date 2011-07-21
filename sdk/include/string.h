@@ -29,7 +29,15 @@ void* memmove(void*, const void*, size_t);
 void* memset(void*, int, size_t);
 int   memcmp(const void*, const void*, size_t);
 
-// TODO: Searching functions
+// Searching functions
+void* memchr(const void*, int, size_t);
+char* strchr(const char*, int);
+size_t strcspn(const char*, const char*);
+char* strpbrk(const char*, const char*);
+char* strrchr(const char*, int);
+size_t strspn(const char*, const char*);
+char* strstr(const char*, const char*);
+char* strtok(char*, const char*);
 
 // These functions will never be implemented:
 // strcoll, strxfrm, strerror
