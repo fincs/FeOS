@@ -21,7 +21,8 @@ Before building, you must set the `FEOSSDK` environment variable to point to the
 How to build FeOS (including the SDK)
 -------------------------------------
 
-`cd` to the directory this repo is in and type the following:
+`cd` to the directory this repo is in and type the following:ç
+
     make && make install
 
 When it's done compiling, transfer the contents of the generated `FeOS` folder to the root of your SD card.
