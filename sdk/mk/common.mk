@@ -111,11 +111,17 @@ ifneq ($(strip $(CONF_TARGET)),staticlib)
 else
 	@arm-eabi-nm -CSn $(OUTPUT).a > $(BUILD)/$(TARGET).alt.map
 endif
+ifeq ($(strip $(CONF_TARGET)),dynlib)
+	@if [ -e $(TARGET).imp.a ]; then \
+		mkdir -p lib; \
+		cp $(TARGET).imp.a lib/lib$(TARGET).a; \
+	fi
+endif
 
 #---------------------------------------------------------------------------------
 clean:
 ifneq ($(strip $(CONF_TARGET)),staticlib)
-	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).fx2 $(TARGET).imp.a
+	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).fx2 $(TARGET).imp.a lib/lib$(TARGET).a
 else
 	@rm -fr $(BUILD) lib/lib$(TARGET).a
 endif
