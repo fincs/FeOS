@@ -47,8 +47,10 @@ void irq_vblank()
 	scanKeys();
 	bgUpdate();
 
+#ifdef VIDEOTEST
 	bgScroll(tilebg, -1, 0);
 	bgScroll(bmpbg, -1, -1);
+#endif
 }
 
 void videoInit()
@@ -83,15 +85,17 @@ void videoInit()
 	vramSetBankE(VRAM_E_LCD);
 	dmaCopyHalfWords(3, uipal_bin, VRAM_E_EXT_PALETTE[1], 2*256);
 	vramSetBankE(VRAM_E_BG_EXT_PALETTE);
+	dmaFillHalfWords(0, bgGetGfxPtr(bmpbg), 256*256);
 	
+#ifdef VIDEOTEST
 	drawbox(bgGetMapPtr(tilebg), 29, 21);
 	drawbox(bgGetMapPtr(tilebg), 27, 19);
 	drawbox(bgGetMapPtr(tilebg), 25, 17);
-	dmaFillHalfWords(0, bgGetGfxPtr(bmpbg), 256*256);
 
 #define MKCOL(a) ((u32)(a) | ((u32)(a) << 8))
 
 	dmaFillHalfWords(MKCOL(10 * 16 - 1), bgGetGfxPtr(bmpbg), 4*256);
+#endif
 
 	irqSet(IRQ_VBLANK, irq_vblank);
 }
