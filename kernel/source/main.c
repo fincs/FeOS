@@ -123,6 +123,7 @@ int main()
 
 	Keyboard* kbd = keyboardDemoInit();
 	kbd->OnKeyPressed = kbd_key;
+	kbd->scrollSpeed = 0;
 	
 	defaultExceptionHandler();
 	SystemVectors.reset = (u32) __ResetHandler;
