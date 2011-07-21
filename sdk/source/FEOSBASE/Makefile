@@ -10,6 +10,8 @@ FeOS_Execute \
 FeOS_WaitForVBlank \
 FeOS_DebugPrint \
 atoi \
+strtol \
+strtoul \
 rand \
 srand \
 malloc \
@@ -24,13 +26,35 @@ strlen \
 strcpy \
 strcat \
 strcmp \
+stricmp \
 strncpy \
 strncat \
 strncmp \
+strnicmp \
 memcpy \
 memmove \
 memset \
-memcmp
+memcmp \
+isalnum \
+isalpha \
+iscntrl \
+isdigit \
+isgraph \
+islower \
+isprint \
+ispunct \
+isspace \
+isupper \
+isxdigit \
+tolower \
+toupper \
+mktime \
+time \
+asctime \
+ctime \
+gmtime \
+localtime \
+strftime
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

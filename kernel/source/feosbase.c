@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <time.h>
 
 void FeOS_swi_DebugPrint(const char*);
 
@@ -23,6 +25,8 @@ BEGIN_TABLE(FEOSBASE)
 
 	// stdlib.h
 	ADD_FUNC(atoi),
+	ADD_FUNC(strtol),
+	ADD_FUNC(strtoul),
 	ADD_FUNC(rand),
 	ADD_FUNC(srand),
 	ADD_FUNC(malloc),
@@ -39,13 +43,43 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(strcpy),
 	ADD_FUNC(strcat),
 	ADD_FUNC(strcmp),
+#undef stricmp
+	ADD_FUNC_ALIAS(strcasecmp, stricmp),
+#define stricmp strcasecmp
 	ADD_FUNC(strncpy),
 	ADD_FUNC(strncat),
 	ADD_FUNC(strncmp),
+#undef strnicmp
+	ADD_FUNC_ALIAS(strncasecmp, strnicmp),
+#define strnicmp strncasecmp
 	ADD_FUNC(memcpy),
 	ADD_FUNC(memmove),
 	ADD_FUNC(memset),
-	ADD_FUNC(memcmp)
+	ADD_FUNC(memcmp),
+
+	// ctype.h
+	ADD_FUNC(isalnum),
+	ADD_FUNC(isalpha),
+	ADD_FUNC(iscntrl),
+	ADD_FUNC(isdigit),
+	ADD_FUNC(isgraph),
+	ADD_FUNC(islower),
+	ADD_FUNC(isprint),
+	ADD_FUNC(ispunct),
+	ADD_FUNC(isspace),
+	ADD_FUNC(isupper),
+	ADD_FUNC(isxdigit),
+	ADD_FUNC(tolower),
+	ADD_FUNC(toupper),
+
+	// time.h
+	ADD_FUNC(mktime),
+	ADD_FUNC(time),
+	ADD_FUNC(asctime),
+	ADD_FUNC(ctime),
+	ADD_FUNC(gmtime),
+	ADD_FUNC(localtime),
+	ADD_FUNC(strftime)
 END_TABLE(FEOSBASE)
 
 extern void* _inst_FEOSBASE;

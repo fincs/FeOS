@@ -37,6 +37,7 @@ BEGIN_TABLE(FEOSSTDIO)
 	ADD_FUNC(ftell),
 	ADD_FUNC(fflush),
 	ADD_FUNC(ferror),
+	ADD_FUNC(clearerr),
 
 	// Formatting
 	ADD_FUNC_ALIAS(vfiprintf, vfprintf),
@@ -46,7 +47,11 @@ BEGIN_TABLE(FEOSSTDIO)
 
 	// Strings and chars
 	ADD_FUNC(fgetc), ADD_FUNC(fputc),
-	ADD_FUNC(fgets), ADD_FUNC(fputs)
+	ADD_FUNC(fgets), ADD_FUNC(fputs),
+
+	// Misc
+	ADD_FUNC(remove),
+	ADD_FUNC(rename)
 END_TABLE(FEOSSTDIO)
 
 extern void* _inst_FEOSSTDIO;

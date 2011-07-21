@@ -49,14 +49,15 @@ void rewind(FILE*);
 
 int fflush(FILE*);
 int ferror(FILE*);
+void clearerr(FILE*);
 
-int vfprintf(FILE*, const char*, va_list);
-int vsprintf(char*, const char*, va_list);
-int vfscanf(FILE*, const char*, va_list);
-int vsscanf(const char*, const char*, va_list);
+int vfprintf(FILE*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
+int vsprintf(char*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
+int vfscanf(FILE*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
+int vsscanf(const char*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
 
-int vprintf(const char*, va_list);
-int vscanf(const char*, va_list);
+int vprintf(const char*, va_list) __attribute__ ((format (__printf__, 1, 0)));
+int vscanf(const char*, va_list) __attribute__ ((format (__scanf__, 1, 0)));;
 
 int printf(const char*, ...) __attribute__ ((format (__printf__, 1, 2)));
 int fprintf(FILE*, const char*, ...) __attribute__ ((format (__printf__, 2, 3)));
@@ -79,6 +80,9 @@ char* gets(char*);
 
 int putchar(int);
 int puts(const char*);
+
+int remove(const char*);
+int rename(const char*);
 
 #ifdef __cplusplus
 }

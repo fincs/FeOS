@@ -17,6 +17,8 @@ extern "C"
 // String to integer conversions
 #define atol atoi
 int atoi(const char*);
+int strtol(const char*, char**, int);
+unsigned int strtoul(const char*, char**, int);
 
 // Random number functions
 #define RAND_MAX INT_MAX
@@ -44,6 +46,8 @@ void qsort(void*, size_t, size_t, c_comparator);
 int abs(int);
 
 // Division
+#define ldiv div
+#define ldiv_t div_t
 typedef struct { int quot, rem; } div_t;
 div_t div(int, int);
 

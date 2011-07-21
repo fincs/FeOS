@@ -16,6 +16,7 @@ fseek \
 ftell \
 fflush \
 ferror \
+clearerr \
 vfprintf \
 vsprintf \
 vfscanf \
@@ -23,7 +24,9 @@ vsscanf \
 fgetc \
 fputc \
 fgets \
-fputs
+fputs \
+remove \
+rename \
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
