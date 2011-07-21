@@ -18,32 +18,18 @@ You need the following in order to build FeOS:
 
 Before building, you must set the `FEOSSDK` environment variable to point to the `/sdk` directory (if on Windows, you **must** use Unix-style paths, like `/c/Users/.../gitrepos/FeOS/sdk`).
 
-How to build the FeOS SDK
--------------------------
+How to build FeOS (including the SDK)
+-------------------------------------
 
-`cd` to the `/sdk` directory and run `make` on it.
+`cd` to the directory this repo is in and type the following:
+    make && make install
 
-How to build FeOS
------------------
-
-`cd` to the following directories and run `make` on them:
-
-- `/kernel` (FeOS kernel)
-- `/cmdprompt` (FeOS command prompt)
-
-How to transfer FeOS to the SD card
------------------------------------
-
-- Create a `/data/FeOS/` folder in the SD card.
-- Create the folders `bin/` and `lib/` inside it. This is where FeOS apps and libraries will be stored, respectively.
-- Copy `/kernel/FeOS.nds` to the root of the SD card.
-- Copy `/cmdprompt/cmd.fx2` to the binary folder.
-- Now copy the applications you want (read the "Demo applications" section).
+When it's done compiling, transfer the contents of the generated `FeOS` folder to the root of your SD card.
 
 How to transfer a FeOS application to the SD card
 -------------------------------------------------
 
-Just copy the fx2 file to the `/data/FeOS/bin/` folder.
+Just copy the fx2 file to the `/data/FeOS/bin/` folder in the SD card.
 
 The application might have dependencies on some libraries. If so, then copy the libraries to the `/data/FeOS/lib/` folder.
 

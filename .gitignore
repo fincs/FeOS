@@ -1,4 +1,5 @@
 build/
+/FeOS/
 /sdk/lib/
 /sdk/bin/fxe2tool
 /sdk/source/FEOSBASE/*
