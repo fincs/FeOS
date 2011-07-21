@@ -37,6 +37,16 @@ instance_t LoadModule(const char* aFilename)
 		memcpy(aModuleName, aFilename + i, name_len);
 		aModuleName[name_len] = '\0';
 
+		// Check if the module is already loaded
+		{
+			fxe_runtime_header* header = FeOS_ModuleListFind(aModuleName);
+			if (header)
+			{
+				header->refcount ++;
+				return header->hThis;
+			}
+		}
+
 		instance_t ret = _LoadModule_imp(aFilename, aModuleName);
 
 		free(aModuleName);
