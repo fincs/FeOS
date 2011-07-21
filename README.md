@@ -21,9 +21,9 @@ Before building, you must set the `FEOSSDK` environment variable to point to the
 How to build FeOS (including the SDK)
 -------------------------------------
 
-`cd` to the directory this repo is in and type the following:ç
+`cd` to the directory this repo is in and type the following:
 
-    make && make install
+    make install
 
 When it's done compiling, transfer the contents of the generated `FeOS` folder to the root of your SD card.
 
@@ -38,6 +38,7 @@ Demo applications
 -----------------
 
 This repo contains some demo applications:
+
 - `/testbin`: it tests some FeOS features.
 - `/sdk/examples/hello_world`: the classic Hello World program.
 - `/sdk/example/time`: it prints the current time and date.
