@@ -65,23 +65,6 @@ fxe_runtime_header _header_FEOSBASE =
 
 void* _inst_FEOSBASE = &_header_FEOSBASE;
 
-
-/*
-int FeOS_LoadExecutable(const char* path, const char* cmdline)
-{
-	instance_t inst;
-
-	if(FeOS_IsValidName(path) < 0)
-		return -1;
-
-	inst = LoadExecutable(path);
-	if(!inst)
-		return -1;
-
-	return GetRuntimeData(inst)->entrypoint(cmdline);
-}
-*/
-
 int FeOS_Execute(int argc, const char* argv[])
 {
 	if (argc == 0) return E_INVALIDARG;

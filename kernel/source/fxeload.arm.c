@@ -33,11 +33,14 @@ instance_t LoadModule(const char* aFilename)
 
 		name_len = ext_pos - i;
 
-		char* aModuleName = FeOS_AllocStack(name_len+1);
+		char* aModuleName = (char*) malloc(name_len+1);
 		memcpy(aModuleName, aFilename + i, name_len);
 		aModuleName[name_len] = '\0';
 
-		return _LoadModule_imp(aFilename, aModuleName);
+		instance_t ret = _LoadModule_imp(aFilename, aModuleName);
+
+		free(aModuleName);
+		return ret;
 	}else
 	{
 		// Check if the module is already loaded
@@ -151,7 +154,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	}
 
 	// Build the runtime header
-	char* namebuf = (char*)(pMemUncached + totalsize - aModuleNameLen);
+	char* namebuf = (char*)(pMem + totalsize - aModuleNameLen);
 	fxe_runtime_header* rh = (fxe_runtime_header*)(namebuf - sizeof(fxe_runtime_header));
 	rh->hThis = pMem;
 	rh->name = namebuf;
@@ -232,7 +235,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	}
 
 	// Write the pointer to the runtime header
-	*(word_t*)pMemUncached = (word_t) rh;
+	*(volatile word_t*)pMem = (word_t) rh;
 
 	// Add this module to the list of loaded modules
 	FeOS_ModuleListAdd(rh);
@@ -252,6 +255,9 @@ void FreeModule(instance_t hInst)
 
 	// Run the destructors
 	rh->entrypoint(FEOS_EP_FINI, 0, 0, 0);
+
+	// Remove the module from the list of loaded modules
+	FeOS_ModuleListRemove(rh);
 
 	// Free the export table
 	if (rh->exp.count)

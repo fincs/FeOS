@@ -15,6 +15,7 @@ void FeOS_ModuleListInit()
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
 {
 	mListTail->next = pModule;
+	pModule->next = NULL;
 	pModule->prev = mListTail;
 	mListTail = pModule;
 	nmodules ++;
@@ -23,8 +24,9 @@ void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
 void FeOS_ModuleListRemove(fxe_runtime_header* pModule)
 {
 	if (pModule->file == -1) return; // thwart attempts at doing evil
-	
+
 	pModule->prev->next = pModule->next;
+	if (mListTail == pModule) mListTail = pModule->prev;
 	nmodules --;
 }
 
