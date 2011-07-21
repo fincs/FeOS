@@ -24,3 +24,6 @@ int FeOS_Execute(int, const char*[]);
 
 void FeOS_DebugPrint(const char*);
 void FeOS_WaitForVBlank();
+
+int FeOS_PushExitFunc(FeOSExitFunc func);
+void FeOS_PopExitFunc();

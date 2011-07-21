@@ -78,6 +78,7 @@ enum
 #define FEOS_RC_ERR 0xFFFFFFFF
 
 typedef word_t (* FeOSMain)(word_t, word_t, word_t, word_t);
+typedef void (* FeOSExitFunc)(int);
 
 typedef struct
 {
@@ -123,3 +124,7 @@ void FeOS_ModuleListAdd(fxe_runtime_header* pModule);
 void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
 int FeOS_ModuleListCount();
 fxe_runtime_header* FeOS_ModuleListFind(const char* name);
+
+int FeOS_PushExitFunc(FeOSExitFunc func);
+void FeOS_CallExitFunc(int);
+void FeOS_PopExitFunc();

@@ -9,6 +9,8 @@ FeOS_FreeModule \
 FeOS_Execute \
 FeOS_WaitForVBlank \
 FeOS_DebugPrint \
+FeOS_PushExitFunc \
+FeOS_PopExitFunc \
 FeOS_GetErrnoPtr \
 __aeabi_idiv \
 __aeabi_idivmod \
@@ -23,6 +25,7 @@ malloc \
 calloc \
 free \
 realloc \
+exit \
 bsearch \
 qsort \
 abs \
