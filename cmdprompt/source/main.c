@@ -79,6 +79,7 @@ int main()
 		switch(rc)
 		{
 			case 0: break;
+			case E_INVALIDARG:
 			case E_FILENOTFOUND: printf("Bad command or filename\n"); break;
 			default: printf("'%s' returned with RC=%d\n", cmd, rc);
 		}

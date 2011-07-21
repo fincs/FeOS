@@ -71,9 +71,12 @@ int FeOS_Execute(int argc, const char* argv[])
 	instance_t hInst = LoadModule(argv[0]);
 	if (!hInst) return E_FILENOTFOUND;
 
-	int rc = GetRuntimeData(hInst)->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
-	FreeModule(hInst);
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
+	int rc = E_INVALIDARG;
+	if (rh->entrypoint) rc = rh->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
+
+	FreeModule(hInst);
 	return rc;
 }
 
