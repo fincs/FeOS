@@ -3,6 +3,7 @@
 #include "feos.h"
 #include <fat.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fxe.h"
 #include <sys/iosupport.h>
 
@@ -36,9 +37,13 @@ static inline void drawbox(u16* map, int x, int y)
 	MAPIDX(map, x+2, y+2) = 10 | BIT(11);
 }
 
+void chk_exit();
+
 void irq_vblank()
 {
-	//static int x = 0;
+	// Done here because it's kernel mode code
+	chk_exit();
+
 	scanKeys();
 	bgUpdate();
 
@@ -98,6 +103,15 @@ void kbd_key(int key)
 	if(key > 0) putchar(key);
 }
 
+volatile static bool _hasExited = false;
+volatile static int _rc = 0;
+
+void chk_exit()
+{
+	if (_hasExited)
+		exit(_rc);
+}
+
 int main()
 {
 	videoInit();
@@ -135,18 +149,14 @@ int main()
 	DoTheUserMode();
 	iprintf("User mode OK\n\n");
 
-	iprintf("Executing test executable...\n");
+	iprintf("Loading command prompt...\n");
 
-	const char* argv[] =
-	{
-		"/data/FeOS/sys/testbin.fx2",
-		"This works!"
-	};
+	const char* argv[] = { "cmd" };
 
-	FeOS_Execute(2, argv);
+	_rc = FeOS_Execute(1, argv);
+	_hasExited = true;
 
-	for(;;)
-		FeOS_WaitForVBlank();
+	for(;;) FeOS_WaitForVBlank();
 }
 
 void FeOS_DebugPrint(const char* text)

@@ -1,1 +1,1 @@
-<Workspace name="FeOS"><Project path="kernel\kernel.pnproj"></Project><Project path="sdk\SDK.pnproj"></Project><Project path="testbin\testbin.pnproj"></Project></Workspace>
+<Workspace name="FeOS"><Project path="kernel\kernel.pnproj"></Project><Project path="sdk\SDK.pnproj"></Project><Project path="testbin\testbin.pnproj"></Project><Project path="cmdprompt\cmdprompt.pnproj"></Project></Workspace>

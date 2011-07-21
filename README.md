@@ -29,20 +29,30 @@ How to build FeOS
 `cd` to the following directories and run `make` on them:
 
 - `/kernel` (FeOS kernel)
-- `/testbin` (Test executable)
+- `/cmdprompt` (FeOS command prompt)
 
 How to transfer FeOS to the SD card
 -----------------------------------
 
-- Create a `/data/FeOS/sys/` folder in the SD card.
+- Create a `/data/FeOS/` folder in the SD card.
+- Create the folders `bin/` and `lib/` inside it. This is where FeOS apps and libraries will be stored, respectively.
 - Copy `/kernel/FeOS.nds` to the root of the SD card.
-- Copy `/testbin/testbin.fx2` to `/data/FeOS/sys/` in the SD card.
+- Copy `/cmdprompt/cmd.fx2` to the binary folder.
+- Now copy the applications you want (read the "Demo applications" section).
 
 How to transfer a FeOS application to the SD card
 -------------------------------------------------
 
-Just copy the fx2 file to the `/data/FeOS/bin/` folder. If said folder does not exist, create it.
-The application might have dependencies on some libraries. If so, then copy the libraries to the `/data/FeOS/lib/` folder. Again, if the folder does not exist, create it.
+Just copy the fx2 file to the `/data/FeOS/bin/` folder.
+
+The application might have dependencies on some libraries. If so, then copy the libraries to the `/data/FeOS/lib/` folder.
+
+Demo applications
+-----------------
+
+This repo contains some demo applications:
+- `/testbin`: it tests some FeOS features.
+- `/sdk/examples/hello_world`: the classic Hello World program.
 
 Opening the source in Programmers Notepad
 -----------------------------------------
