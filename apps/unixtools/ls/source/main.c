@@ -6,11 +6,14 @@
 #include <string.h>
 #include <errno.h>
 
+char target[1024];
+
 int list(char *path)
 {
   DIR *dp;
   struct dirent *dent;
   struct stat buf;
+  int error = 0;
 
   if(stat(path, &buf))
   {
@@ -28,8 +31,22 @@ int list(char *path)
     }
 
     while((dent = readdir(dp)) != NULL)
+    {
       if(strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
-        printf("  %s\n", dent->d_name);
+      {
+        strncpy(target, path, 1024);
+        target[1023] = 0;
+        strncat(target, "/", 1023-strlen(target));
+        strncat(target, dent->d_name, 1023-strlen(target));
+        if(stat(target, &buf))
+        {
+          fprintf(stderr, "ls: '%s': %s\n", target, strerror(errno));
+          error = 1;
+        }
+        else
+          printf(" %s %s\n", S_ISDIR(buf.st_mode)?"D":"F", dent->d_name);
+      }
+    }
 
     if(closedir(dp))
     {
@@ -40,7 +57,7 @@ int list(char *path)
   else
     printf("%s\n", path);
 
-  return 0;
+  return error;
 }
 
 int main(int argc, char *argv[])
