@@ -43,8 +43,10 @@ int list(char *path)
           fprintf(stderr, "ls: '%s': %s\n", target, strerror(errno));
           error = 1;
         }
+        else if(S_ISDIR(buf.st_mode))
+          printf(" <%s>\n", dent->d_name);
         else
-          printf(" %s %s\n", S_ISDIR(buf.st_mode)?"D":"F", dent->d_name);
+          printf(" %s\n", dent->d_name);
       }
     }
 
