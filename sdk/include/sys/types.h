@@ -5,6 +5,7 @@
 //
 
 #pragma once
+#include <stddef.h>
 #include <time.h>
 
 #define NAME_MAX 767
