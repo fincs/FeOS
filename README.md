@@ -43,6 +43,11 @@ This repo contains some demo applications:
 - `/sdk/examples/hello_world`: the classic Hello World program.
 - `/sdk/example/time`: it prints the current time and date.
 
+Default commands
+----------------
+
+FeOS comes with several Unix-like commands: `ls`, `cd`, `pwd` and `cat`; courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
+
 When an application hangs...
 ----------------------------
 
