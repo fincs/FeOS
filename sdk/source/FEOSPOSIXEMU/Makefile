@@ -3,31 +3,16 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_GetStdin \
-FeOS_GetStdout \
-FeOS_GetStderr \
-fopen \
-freopen \
-fclose \
-fwrite \
-fread \
-feof \
-fseek \
-ftell \
-fflush \
-ferror \
-clearerr \
-vfprintf \
-vsprintf \
-vfscanf \
-vsscanf \
-fgetc \
-fputc \
-fgets \
-fputs \
-ungetc \
-remove \
-rename
+opendir \
+closedir \
+readdir \
+rewinddir \
+seekdir \
+telldir \
+mkdir \
+chdir \
+getcwd \
+stat
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
