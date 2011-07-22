@@ -23,12 +23,15 @@ FEOSMK = $(FEOSSDK)/mk
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
-TARGET        := $(shell basename $(CURDIR))
+TARGET        := $(notdir $(CURDIR))
 BUILD         := build
 SOURCES       := source
 DATA          := data
 INCLUDES      := include
 
 CONF_DEFINES =
+CONF_LIBDIRS =
+CONF_LIBS =
 
 include $(FEOSMK)/app.mk
+
