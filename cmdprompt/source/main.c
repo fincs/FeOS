@@ -81,6 +81,7 @@ int main()
 			case 0: break;
 			case E_INVALIDARG:
 			case E_FILENOTFOUND: printf("Bad command or filename\n"); break;
+			case E_APPKILLED: printf("'%s' was terminated!\n", cmd); break;
 			default: printf("'%s' returned with RC=%d\n", cmd, rc);
 		}
 	}

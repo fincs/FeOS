@@ -122,6 +122,11 @@ fxe_runtime_header _header_FEOSBASE =
 
 void* _inst_FEOSBASE = &_header_FEOSBASE;
 
+static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
+{
+	return FEOS_RC_OK;
+}
+
 int FeOS_Execute(int argc, const char* argv[])
 {
 	if (argc == 0) return E_INVALIDARG;
@@ -132,6 +137,9 @@ int FeOS_Execute(int argc, const char* argv[])
 
 	int rc = E_INVALIDARG;
 	if (rh->entrypoint) rc = rh->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
+
+	// If the app was forcefully killed we don't want FreeModule() to run the destructors
+	if ((int)rc == E_APPKILLED) rh->entrypoint = dummy_entrypoint;
 
 	FreeModule(hInst);
 	return rc;

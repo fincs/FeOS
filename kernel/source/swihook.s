@@ -127,6 +127,60 @@ DoTheUserMode:
 	bx lr
 
 .align 2
+.global __getIRQStack
+__getIRQStack:
+	@ Switch to IRQ mode
+	mrs r1, cpsr
+	bic r1, r1, #0xD
+	msr cpsr, r1
+
+	@ Get the stack pointer
+	mov r0, sp
+
+	@ Switch back to System mode
+	orr r1, r1, #0xD
+	msr cpsr, r1
+
+	@ Return
+	bx lr
+
+.align 2
+.global __getSWIStack
+__getSWIStack:
+	@ Switch to SWI mode
+	mrs r1, cpsr
+	bic r1, r1, #0xC
+	msr cpsr, r1
+
+	@ Get the stack pointer
+	mov r0, sp
+
+	@ Switch back to System mode
+	orr r1, r1, #0xC
+	msr cpsr, r1
+
+	@ Return
+	bx lr
+
+.align 2
+.global __setSWIStack
+__setSWIStack:
+	@ Switch to SWI mode
+	mrs r1, cpsr
+	bic r1, r1, #0xC
+	msr cpsr, r1
+
+	@ Set the stack pointer
+	mov sp, r0
+
+	@ Switch back to System mode
+	orr r1, r1, #0xC
+	msr cpsr, r1
+
+	@ Return
+	bx lr
+
+.align 2
 .thumb_func
 FeOS_WaitForVBlank:
 	swi 0x11

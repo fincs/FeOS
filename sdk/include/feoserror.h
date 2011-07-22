@@ -8,3 +8,4 @@
 
 #define E_FILENOTFOUND (-10)
 #define E_INVALIDARG (-11)
+#define E_APPKILLED (-12)

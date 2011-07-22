@@ -43,6 +43,13 @@ This repo contains some demo applications:
 - `/sdk/examples/hello_world`: the classic Hello World program.
 - `/sdk/example/time`: it prints the current time and date.
 
+When an application hangs...
+----------------------------
+
+When an application hangs, you can terminate said application by holding down Down on the D-pad then pressing the "Menu" key on the on-screen keyboard.
+
+**WARNING**: This feature forcefully exits the application. It could lead to system unstability, memory leaks, disk corruption and/or data loss. **Use with caution**.
+
 Opening the source in Programmers Notepad
 -----------------------------------------
 

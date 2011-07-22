@@ -27,6 +27,7 @@ static inline bool AddressCheckMainRAM(const void* addr)
 
 #define E_FILENOTFOUND (-10)
 #define E_INVALIDARG (-11)
+#define E_APPKILLED (-12)
 
 int FeOS_IsValidName(const char* path);
 
