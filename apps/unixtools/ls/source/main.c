@@ -7,6 +7,7 @@
 #include <errno.h>
 
 char target[1024];
+char cwd[1024];
 
 int list(char *path)
 {
@@ -14,6 +15,9 @@ int list(char *path)
   struct dirent *dent;
   struct stat buf;
   int error = 0;
+
+  if(strcmp(path, ".") == 0 && (path = getcwd(cwd, 1024)) == NULL)
+    return 1;
 
   if(stat(path, &buf))
   {
@@ -43,8 +47,10 @@ int list(char *path)
           fprintf(stderr, "ls: '%s': %s\n", target, strerror(errno));
           error = 1;
         }
+        else if(S_ISDIR(buf.st_mode))
+          printf(" <%s>\n", dent->d_name);
         else
-          printf(" %s %s\n", S_ISDIR(buf.st_mode)?"D":"F", dent->d_name);
+          printf(" %s\n", dent->d_name);
       }
     }
 
