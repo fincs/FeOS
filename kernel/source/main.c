@@ -41,7 +41,7 @@ void chk_exit();
 
 extern bool stdioRead;
 
-touchPosition touchPos;
+volatile touchPosition touchPos;
 
 void irq_vblank()
 {

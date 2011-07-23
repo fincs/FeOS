@@ -3,7 +3,7 @@
 
 typedef struct { int x, y; } styluspos_t;
 
-extern touchPosition touchPos;
+extern volatile touchPosition touchPos;
 
 void FeOS_GetStylusPos(styluspos_t* pos)
 {
