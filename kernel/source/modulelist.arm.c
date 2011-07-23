@@ -3,6 +3,7 @@
 extern fxe_runtime_header _header_FEOSBASE;
 extern fxe_runtime_header _header_FEOSSTDIO;
 extern fxe_runtime_header _header_FEOSPOSIXEMU;
+extern fxe_runtime_header _header_FEOSDSAPI;
 
 static fxe_runtime_header* mListHead = &_header_FEOSBASE;
 static fxe_runtime_header* mListTail = &_header_FEOSBASE;
@@ -12,6 +13,7 @@ void FeOS_ModuleListInit()
 {
 	FeOS_ModuleListAdd(&_header_FEOSSTDIO);
 	FeOS_ModuleListAdd(&_header_FEOSPOSIXEMU);
+	FeOS_ModuleListAdd(&_header_FEOSDSAPI);
 }
 
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
