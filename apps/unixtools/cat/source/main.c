@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     else
     {
       while((bytes = fread(buf, 1, 4096, fp)) > 0)
-        printf("%*s", bytes, buf);
+        fwrite(buf, 1, bytes, stdout);
       if(bytes < 0)
       {
         fprintf(stderr, "fread: '%s': %s\n", argv[i], strerror(errno));
