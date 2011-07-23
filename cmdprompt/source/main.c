@@ -1,22 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <errno.h>
-
-static inline int my_isspace(char c)
-{
-	return c == ' ' || c == '\t' || c == '\n';
-}
 
 char* trim_whitespace(char* buf)
 {
 	// Remove trailing whitespace
 	int pos;
-	for(pos = strlen(buf)-1; pos >= 0 && my_isspace(buf[pos]); pos --) buf[pos] = '\0';
+	for(pos = strlen(buf)-1; pos >= 0 && isspace(buf[pos]); pos --) buf[pos] = '\0';
 
 	// Remove leading whitespace
 	char* newbuf = buf;
-	for(; my_isspace(*newbuf); newbuf ++);
+	for(; isspace(*newbuf); newbuf ++);
 
 	return newbuf;
 }
@@ -30,7 +26,7 @@ int parse_cmdline(char* cmdline, const char* argv[])
 	for(bufp = cmdline; *bufp && argc < 32;)
 	{
 		// Skip leading whitespace
-		for(; my_isspace(*bufp); bufp ++);
+		for(; isspace(*bufp); bufp ++);
 
 		// Skip over argument
 		if(*bufp == '"')
@@ -45,7 +41,7 @@ int parse_cmdline(char* cmdline, const char* argv[])
 			if(*bufp) argv[argc++] = bufp;
 
 			// Skip over word
-			for(; *bufp && !my_isspace(*bufp); bufp ++ );
+			for(; *bufp && !isspace(*bufp); bufp ++ );
 		}
 
 		if (*bufp) *bufp++ = '\0';
