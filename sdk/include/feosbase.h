@@ -18,6 +18,8 @@ typedef word_t bool_t;
 typedef long_t off_t;
 typedef void (* fp_t)();
 
+#define BIT(n) (1<<(n))
+
 extern char __hinstance[];
 #define FeOS_hInstance ((instance_t) __hinstance)
 
