@@ -8,6 +8,8 @@ build/
 !/sdk/source/FEOSSTDIO/Makefile
 /sdk/source/FEOSPOSIXEMU/*
 !/sdk/source/FEOSPOSIXEMU/Makefile
+/sdk/source/FEOSDSAPI/*
+!/sdk/source/FEOSDSAPI/Makefile
 *.exe
 *.nds
 *.elf

@@ -14,6 +14,7 @@ extern "C"
 #include <feosbase.h>
 #include <feoserror.h>
 #include <feosuser.h>
+#include <feosdsapi.h>
 #include <feoscrt.h>
 
 #ifdef __cplusplus

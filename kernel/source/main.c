@@ -41,12 +41,15 @@ void chk_exit();
 
 extern bool stdioRead;
 
+volatile touchPosition touchPos;
+
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
 	chk_exit();
 
 	scanKeys();
+	touchRead((touchPosition*)&touchPos);
 	bgUpdate();
 
 #ifdef VIDEOTEST
