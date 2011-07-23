@@ -49,7 +49,7 @@ void irq_vblank()
 	chk_exit();
 
 	scanKeys();
-	touchRead(&touchPos);
+	touchRead((touchPosition*)&touchPos);
 	bgUpdate();
 
 #ifdef VIDEOTEST
