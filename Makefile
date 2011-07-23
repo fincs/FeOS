@@ -20,7 +20,7 @@ clean:
 	@rm -f $(TARGET)/data/FeOS/bin/*
 	@rm -f $(TARGET)/data/FeOS/lib/*
 
-install:
+install: all
 	@mkdir -p $(TARGET)/data/FeOS/bin || exit 1
 	@mkdir -p $(TARGET)/data/FeOS/lib || exit 1
 	@cp kernel/FeOS.nds $(TARGET)/FeOS.nds || exit 1
