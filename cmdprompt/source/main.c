@@ -90,7 +90,7 @@ int main()
 			hook = fopen(filename, mode);
 			if (hook == NULL)
 			{
-				fprintf(stderr, "Error opening '%s': %s\n", "file2", strerror(errno));
+				fprintf(stderr, "Error opening '%s': %s\n", filename, strerror(errno));
 				continue;
 			}
 
