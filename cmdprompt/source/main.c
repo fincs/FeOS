@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 static inline int my_isspace(char c)
 {
@@ -67,15 +68,42 @@ int main()
 	printf("\nFeOS command prompt v0.0\n\n");
 	for(;;)
 	{
+		FILE* hook = NULL;
+
 		printf("> ");
 		fgets(data->buf, sizeof(data->buf), stdin);
 		int argc = parse_cmdline(data->buf, data->argv);
 		if (argc == 0) continue;
 		const char* cmd = data->argv[0];
+		const char* lastarg = data->argv[argc-1];
+
+		if (*lastarg == '>')
+		{
+			const char* filename = lastarg + 1;
+			const char* mode = "w";
+
+			if (*filename == '>') filename ++, mode = "a";
+
+			argc --;
+			if (argc == 0) continue;
+
+			hook = fopen(filename, mode);
+			if (hook == NULL)
+			{
+				fprintf(stderr, "Error opening '%s': %s\n", "file2", strerror(errno));
+				continue;
+			}
+
+			hook = FeOS_SetStdout(hook);
+		}
 
 		if (strcmp(cmd, "exit") == 0) break;
 
 		int rc = FeOS_Execute(argc, data->argv);
+
+		hook = FeOS_SetStdout(hook);
+		if (hook) fclose(hook);
+
 		switch(rc)
 		{
 			case 0: break;

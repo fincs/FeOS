@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+FILE* stdout_hook = NULL;
+
 FILE* FeOS_GetStdin()
 {
 	return stdin;
@@ -13,7 +15,7 @@ FILE* FeOS_GetStdin()
 
 FILE* FeOS_GetStdout()
 {
-	return stdout;
+	return !stdout_hook ? stdout : stdout_hook;
 }
 
 FILE* FeOS_GetStderr()
@@ -21,10 +23,18 @@ FILE* FeOS_GetStderr()
 	return stderr;
 }
 
+FILE* FeOS_SetStdout(FILE* newstdout)
+{
+	FILE* oldstdout = stdout_hook;
+	stdout_hook = newstdout;
+	return oldstdout;
+}
+
 BEGIN_TABLE(FEOSSTDIO)
 	ADD_FUNC(FeOS_GetStdin),
 	ADD_FUNC(FeOS_GetStdout),
 	ADD_FUNC(FeOS_GetStderr),
+	ADD_FUNC(FeOS_SetStdout),
 
 	// Basic I/O
 	ADD_FUNC(fopen),

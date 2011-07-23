@@ -22,6 +22,7 @@ typedef struct
 FILE* FeOS_GetStdin();
 FILE* FeOS_GetStdout();
 FILE* FeOS_GetStderr();
+FILE* FeOS_SetStdout(FILE*);
 
 #define stdin  FeOS_GetStdin()
 #define stdout FeOS_GetStdout()
