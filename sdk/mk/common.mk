@@ -28,9 +28,9 @@ endif
 
 CFLAGS   := -g0 -Wall -O2 -save-temps -fvisibility=hidden\
             $(ARCH) -fomit-frame-pointer -ffast-math\
-            -mthumb-interwork $(INCLUDE) $(DEFINES) -nostdinc
+            -mthumb-interwork $(INCLUDE) $(DEFINES) -nostdinc $(CONF_CFLAGS)
 
-CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -nostdinc++ -fvisibility-inlines-hidden
+CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
 
 ASFLAGS  := -g0 $(ARCH) $(DEFINES)
 LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld -g $(ARCH) -Wl,-d,-q,-Map,$(TARGET).map
