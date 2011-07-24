@@ -22,7 +22,9 @@ DEFINES   := -DFEOS $(CONF_DEFINES)
 ARCH      := -mcpu=arm946e-s -mtune=arm946e-s
 ARMARCH   := -marm
 THUMBARCH := -mthumb
+ifeq ($(strip $(DEFARCH)),)
 DEFARCH   := $(THUMBARCH)
+endif
 
 CFLAGS   := -g0 -Wall -O2 -save-temps -fvisibility=hidden\
             $(ARCH) -fomit-frame-pointer -ffast-math\
