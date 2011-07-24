@@ -49,28 +49,28 @@ int cp(char *source, char *target)
     }
     else if(bout < 0) //error writing file
     {
-      fprintf(stderr, "cp: target '%s': (%d)%s\n", target, errno, strerror(errno));
+      fprintf(stderr, "cp: target '%s': %s\n", target, strerror(errno));
       error = 1;
       break;
     }
   }
   if(bin < 0) //error reading file
   {
-    fprintf(stderr, "cp: source '%s': (%d)%s\n", source, errno, strerror(errno));
+    fprintf(stderr, "cp: source '%s': %s\n", source, strerror(errno));
     error = 1;
   }
   if(fclose(fpin)) //error closing source file
   {
-    fprintf(stderr, "cp: source '%s': (%d)%s\n", source, errno, strerror(errno));
+    fprintf(stderr, "cp: source '%s': %s\n", source, strerror(errno));
     error = 1;
   }
   if(fclose(fpout)) //error closing target file
   {
-    fprintf(stderr, "cp: target '%s': (%d)%s\n", target, errno, strerror(errno));
+    fprintf(stderr, "cp: target '%s': %s\n", target, strerror(errno));
     error = 1;
   }
   if(error && remove(target)) //delete target due to failure
-    fprintf(stderr, "cp: unlink '%s': (%d)%s\n", target, errno, strerror(errno));
+    fprintf(stderr, "cp: unlink '%s': %s\n", target, strerror(errno));
 
   return error;
 }

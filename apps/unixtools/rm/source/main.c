@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   {
     if(remove(argv[i]))
     {
-      fprintf(stderr, "rm: '%s': (%d)%s\n", argv[i], errno, strerror(errno));
+      fprintf(stderr, "rm: '%s': %s\n", argv[i], strerror(errno));
       error = 1;
     }
   }
