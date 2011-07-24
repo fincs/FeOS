@@ -6,7 +6,7 @@ all:
 clean:
 	@for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
 
-ifneq ($(strip $(TARGET)),)
-install:
-	@for i in $(SUBDIRS); do cp $$i/$$i.fx2 $(TARGET)/data/FeOS/bin/$$i.fx2; done
+ifneq ($(strip $(DEST)),)
+install: all
+	@for i in $(SUBDIRS); do cp $$i/$$i.fx2 $(DEST)/data/FeOS/bin/$$i.fx2; done
 endif
