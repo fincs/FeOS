@@ -33,6 +33,5 @@ CONF_DEFINES =
 CONF_LIBDIRS =
 CONF_LIBS =
 
-DEFARCH := -marm
 include $(FEOSMK)/app.mk
 
