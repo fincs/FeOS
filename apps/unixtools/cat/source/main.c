@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
       while((bin = fread(buf, 1, 4096, fp)) > 0)
       {
         pos = 0;
-        while(pos < bin && (bout = fwrite(&(buf[pos]), 1, bin-pos, stdout) > 0))
+        while(pos < bin && (bout = fwrite(&(buf[pos]), 1, bin-pos, stdout)) > 0)
           pos += bout;
 
         if(bout == 0 && pos != bin) //didn't complete writing
