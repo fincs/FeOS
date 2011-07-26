@@ -21,6 +21,9 @@ int __aeabi_idivmod(int, int);
 unsigned int __aeabi_uidiv(unsigned int, unsigned int);
 unsigned int __aeabi_uidivmod(unsigned int, unsigned int);
 
+long long __aeabi_ldivmod(long long, long long);
+unsigned long long __aeabi_uldivmod(unsigned long long, unsigned long long);
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -36,6 +39,8 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),
 	ADD_FUNC(__aeabi_uidivmod),
+	ADD_FUNC(__aeabi_ldivmod),
+	ADD_FUNC(__aeabi_uldivmod),
 
 	// stdlib.h
 	ADD_FUNC(atoi),

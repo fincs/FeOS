@@ -16,6 +16,8 @@ __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \
 __aeabi_uidivmod \
+__aeabi_ldivmod \
+__aeabi_uldivmod \
 atoi \
 strtol \
 strtoul \
