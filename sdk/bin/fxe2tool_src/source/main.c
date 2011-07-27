@@ -388,7 +388,6 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);
 		fclose(tempfile);
 		sprintf(cmd, "arm-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
-		//printf("%s\n", cmd);
 		if (system(cmd) != 0)
 			die("arm-eabi-gcc returned error");
 
@@ -398,14 +397,12 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 	if(exp_list)
 	{
 		sprintf(cmd, "rm -f %s", imp_name);
-		system(cmd);
 		if (system(cmd) != 0)
 			die("rm returned error");
 		sprintf(cmd, "arm-eabi-ar -rc %s *.imp.o", imp_name);
 		if (system(cmd) != 0)
 			die("arm-eabi-ar returned error");
 		sprintf(cmd, "rm -f *.imp.o *.imp.s");
-		system(cmd);
 		if (system(cmd) != 0)
 			die("rm returned error");
 
