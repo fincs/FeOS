@@ -8,7 +8,6 @@
 #include <stddef.h>
 #include <limits.h>
 #include <stdarg.h>
-#include <feosuser.h>
 
 #ifdef __cplusplus
 extern "C"

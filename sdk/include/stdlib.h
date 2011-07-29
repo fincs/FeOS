@@ -7,7 +7,6 @@
 #pragma once
 #include <stddef.h>
 #include <limits.h>
-#include <feosuser.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -36,7 +35,7 @@ void* realloc(void*, size_t);
 
 // Environment
 void abort() __attribute__((noreturn));
-//int atexit(fp_t);
+//int atexit(void (*)());
 void exit(int) __attribute__((noreturn));
 
 // Searching and ordering
