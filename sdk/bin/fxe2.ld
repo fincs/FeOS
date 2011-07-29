@@ -37,7 +37,9 @@ SECTIONS
 		*(.gnu.linkonce.t*)
 		. = ALIGN(4);
 
+		/* Constructor table */
 		__feos_init_array =  . ;
+		KEEP( *(SORT(.preinit_array.*)) )
 		KEEP( *(.preinit_array) )
 		KEEP( *(SORT(.init_array.*)) )
 		KEEP( *(.init_array) )
@@ -46,6 +48,7 @@ SECTIONS
 		__feos_init_size = . ;
 		LONG((__feos_init_size - __feos_init_array) / 4);
 
+		/* Destructor table */
 		__feos_fini_array =  . ;
 		KEEP( *(SORT(.dtors.*)) )
 		KEEP( *(.dtors) )
@@ -53,6 +56,12 @@ SECTIONS
 		KEEP( *(SORT(.fini_array.*)) )
 		__feos_fini_size = . ;
 		LONG((__feos_fini_size - __feos_fini_array) / 4);
+
+		/* (Experimental) Exception Frame */
+		KEEP( *(.eh_frame) )
+
+		/* (Experimental) GCC excpt metadata */
+		*(.gcc_except_table)
 	} : loadable
 
 	__text_end =  . ;
