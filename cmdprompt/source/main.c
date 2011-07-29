@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#include <FeOS.h>
+#include <feos.h>
 
 char* trim_whitespace(char* buf)
 {
