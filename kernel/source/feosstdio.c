@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+FILE* stdin_hook = NULL;
 FILE* stdout_hook = NULL;
+FILE* stderr_hook = NULL;
 
 FILE* FeOS_GetStdin()
 {
-	return stdin;
+	return !stdin_hook ? stdin : stdin_hook;
 }
 
 FILE* FeOS_GetStdout()
@@ -20,7 +22,14 @@ FILE* FeOS_GetStdout()
 
 FILE* FeOS_GetStderr()
 {
-	return stderr;
+	return !stderr_hook ? stderr : stderr_hook;
+}
+
+FILE* FeOS_SetStdin(FILE* newstdin)
+{
+	FILE* oldstdin = stdin_hook;
+	stdin_hook = newstdin;
+	return oldstdin;
 }
 
 FILE* FeOS_SetStdout(FILE* newstdout)
@@ -30,11 +39,23 @@ FILE* FeOS_SetStdout(FILE* newstdout)
 	return oldstdout;
 }
 
+FILE* FeOS_SetStderr(FILE* newstderr)
+{
+	FILE* oldstderr = stderr_hook;
+	stderr_hook = newstderr;
+	return oldstderr;
+}
+
+FILE* FeOS_OpenStream(const void*);
+
 BEGIN_TABLE(FEOSSTDIO)
 	ADD_FUNC(FeOS_GetStdin),
 	ADD_FUNC(FeOS_GetStdout),
 	ADD_FUNC(FeOS_GetStderr),
+	ADD_FUNC(FeOS_SetStdin),
 	ADD_FUNC(FeOS_SetStdout),
+	ADD_FUNC(FeOS_SetStderr),
+	ADD_FUNC(FeOS_OpenStream),
 
 	// Basic I/O
 	ADD_FUNC(fopen),

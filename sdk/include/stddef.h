@@ -11,6 +11,7 @@
 
 typedef long_t ptrdiff_t;
 typedef word_t size_t;
+typedef long_t ssize_t;
 
 #ifndef __cplusplus
 #define NULL ((void*)0)

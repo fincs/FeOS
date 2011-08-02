@@ -18,6 +18,20 @@ FEOSFINI void foobar_fini()
 
 void TestCpp();
 
+ssize_t MyWrite(void* cData, const char* buf, size_t size)
+{
+	return fwrite(buf, 1, size, stdout);
+}
+
+const stream_t MyStream = { 0, NULL, NULL, MyWrite, NULL, NULL };
+
+void StreamTest()
+{
+	FILE* stm = FeOS_OpenStream(&MyStream);
+	fputs("\nStreams do work!\n", stm);
+	fclose(stm);
+}
+
 int main(int argc, const char** argv)
 {
 	int j;
@@ -26,6 +40,8 @@ int main(int argc, const char** argv)
 	printf("argc: %d\n", argc);
 	for(j = 0; j < argc; j ++)
 		printf("[%d] %s\n", j, argv[j]);
+
+	StreamTest();
 
 	for(j = 0; j < 60; j ++)
 		FeOS_WaitForVBlank();

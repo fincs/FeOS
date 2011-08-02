@@ -6,7 +6,10 @@ FUNCS := \
 FeOS_GetStdin \
 FeOS_GetStdout \
 FeOS_GetStderr \
+FeOS_SetStdin \
 FeOS_SetStdout \
+FeOS_SetStderr \
+FeOS_OpenStream \
 fopen \
 freopen \
 fclose \

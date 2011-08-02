@@ -194,6 +194,8 @@ void chk_exit()
 		exit(_rc);
 }
 
+void FeOS_InitStreams();
+
 int main()
 {
 	videoInit();
@@ -209,6 +211,7 @@ int main()
 	SystemVectors.swi = (u32) __SWIHandler;
 	setVectorBase(0);
 	FeOS_ModuleListInit();
+	FeOS_InitStreams();
 
 	iprintf(
 		"FeOS kernel\n"

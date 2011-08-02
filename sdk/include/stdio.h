@@ -18,10 +18,23 @@ typedef struct
 {
 } FILE;
 
+typedef struct
+{
+	size_t  CustomSize;
+	int     (*Open) ();
+	void    (*Close)();
+	ssize_t (*Write)(void*, const char*, size_t);
+	ssize_t (*Read) (void*, char*, size_t);
+	off_t   (*Seek) (void*, off_t, int);
+} stream_t;
+
 FILE* FeOS_GetStdin();
 FILE* FeOS_GetStdout();
 FILE* FeOS_GetStderr();
+FILE* FeOS_SetStdin(FILE*);
 FILE* FeOS_SetStdout(FILE*);
+FILE* FeOS_SetStderr(FILE*);
+FILE* FeOS_OpenStream(const stream_t*);
 
 #define stdin  FeOS_GetStdin()
 #define stdout FeOS_GetStdout()
