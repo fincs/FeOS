@@ -11,8 +11,8 @@
 typedef struct
 {
 	size_t  CustomSize;
-	int     (*Open) ();
-	void    (*Close)();
+	int     (*Open) (void*);
+	void    (*Close)(void*);
 	ssize_t (*Write)(void*, const char*, size_t);
 	ssize_t (*Read) (void*, char*, size_t);
 	off_t   (*Seek) (void*, off_t, int);
