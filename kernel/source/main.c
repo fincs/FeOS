@@ -136,7 +136,12 @@ void KillCurrentApp_IRQ()
 #ifdef __thumb__
 	irqstack[0] |= BIT(5); // THUMB flag
 #endif
+	irqstack[0] &= ~0xF; // Force user mode :)
 	irqstack[9] = (word_t) ForcefulExit;
+
+	// Reset/clear the SWI stack
+	extern word_t __sp_svc;
+	__setSWIStack(&__sp_svc);
 }
 
 void KillCurrentApp_SWI()
