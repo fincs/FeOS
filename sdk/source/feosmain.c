@@ -3,7 +3,6 @@
 #include <string.h>
 #include <setjmp.h>
 #include <alloca.h>
-#include <string.h>
 
 word_t FEOS_WEAK FeOSMain(word_t, word_t, word_t, word_t);
 int FEOS_WEAK main(int, const char*[]);
