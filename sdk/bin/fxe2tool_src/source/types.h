@@ -1,4 +1,11 @@
 #pragma once
+#ifndef _MSC_VER
+#include <sys/param.h>
+#else
+#define BIG_ENDIAN 1
+#define LITTLE_ENDIAN 0
+#define BYTE_ORDER LITTLE_ENDIAN
+#endif
 
 typedef unsigned int word_t;
 typedef unsigned short hword_t;

@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/param.h>
 
 #include "types.h"
 #include "elf.h"
 #include "fxe2.h"
+#include "impcopy.h"
 
 #define die(msg) do { fputs(msg "\n\n", stderr); return 1; } while(0)
 #define safe_call(a) do { int rc = a; if(rc != 0) return rc; } while(0)
@@ -16,7 +16,7 @@ char elf_name[FILENAME_MAX+1];
 char fx2_name[FILENAME_MAX+1];
 char imp_name[FILENAME_MAX+1];
 
-inline void buildname(char* buffer, const char* prefix, const char* suffix)
+void buildname(char* buffer, const char* prefix, const char* suffix)
 {
 	strncpy(buffer, prefix, FILENAME_MAX);
 	strncat(buffer, suffix, FILENAME_MAX);
@@ -60,6 +60,7 @@ int GetElfInfo(elf2fx2_cnvstruct_t* cs)
 		switch(eswap_word(shdr->sh_type))
 		{
 			case SHT_PROGBITS:
+			case SHT_ARM_EXIDX:
 				if(strcmp(sname, ".meta") != 0)
 				{
 					if(status > 0) die("Unexpected loadable section!");
@@ -121,7 +122,6 @@ int AddRelocation(elf2fx2_cnvstruct_t* cs, word_t addr)
 int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf32_Sym* symtab, Elf32_Rel* rels, int nrels)
 {
 	int i;
-	//printf("PrerelocateSection: nrels=%d\n", nrels);
 
 	for(i = 0; i < nrels; i ++)
 	{
@@ -130,30 +130,58 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		int rtype = ELF32_R_TYPE(rinfo);
 		Elf32_Sym* rsym = symtab + ELF32_R_SYM(rinfo);
 		hword_t rsymsect = eswap_hword(rsym->st_shndx);
+		Elf32_Shdr* symsect = NULL;
+		if ( !(rsymsect >= SHN_LORESERVE && rsymsect <= SHN_HIRESERVE) )
+			symsect = cs->sects + rsymsect;
 		word_t rsymv = eswap_word(rsym->st_value);
-		if(rsymsect < SHN_LORESERVE)
-			rsymv += eswap_word(cs->sects[rsymsect].sh_addr);
+		// The following is only valid for ET_REL ELF files
+		//if(rsymsect < SHN_LORESERVE)
+		//	rsymv += eswap_word(symsect->sh_addr);
 		
 		word_t vtarget = /*vsect +*/ eswap_word(rel->r_offset);
-		//byte_t* rtarget = sect + eswap_word(rel->r_offset);
+		word_t* rtarget = (word_t*)(cs->loaddata + vtarget);
+		word_t* rsymp = (word_t*)(cs->loaddata + rsymv);
 
-		//printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
-		//const char* symname = (const char*)(cs->symnames + rsym->st_name);
-		//if(*symname)
-		//	printf(", symn=%s\n", symname);
-		//else
-		//	printf("\n");
+		const char* symname = cs->symnames + rsym->st_name;
+
+		if (symsect && strncmp(cs->sectnames + symsect->sh_name, ".imp.", 5) == 0 // It's in an import section
+		  && *symname && strncmp(symname, "__imp_", 6) != 0 // ...and it's *not* a direct import
+		  && *rsymp == 0) // ...and it's a dummy import pointer
+		{
+			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
+			{
+				// Add an import copy entry
+				printf("Import?\n");
+				*rtarget = 0;
+				AddImpCopy(rsymv, vtarget);
+			}else
+				die("Non-pointer type non-function imports are not supported!");
+		}
+
+		/*
+		printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
+		if(*symname)
+			printf(", symn=%s\n", symname);
+		else
+			printf("\n");
+		*/
 
 		switch(rtype)
 		{
+			// Notes:
+			// R_ARM_TARGET2 is equivalent to R_ARM_REL32
+			// R_ARM_PREL32 is an address-relative signed 31-bit offset
+
 			case R_ARM_ABS32:
 			case R_ARM_TARGET1:
 			{
 				// This relocation is the only one FXE2 supports
 				if(vtarget & 3)
 					die("Unaligned relocation!");
-				//printf("[%08X]", *(word_t*)rtarget);
-				//*(word_t*)rtarget = eswap_word(eswap_word(*(word_t*)rtarget) + rsymv);
+
+				// Ignore undefined weak target symbols (keep them 0)
+				if (ELF32_ST_BIND(rsym->st_info) == STB_WEAK && rsymv == 0) break;
+
 				if(sect != cs->metadata)
 					safe_call(AddRelocation(cs, vtarget));
 				break;
@@ -367,6 +395,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			(strncmp(symname, "__feos_", 7) == 0) ||
 			(strncmp(symname, "__text_", 7) == 0) ||
 			(strncmp(symname, "__load_", 7) == 0) ||
+			(strncmp(symname, "__exidx_", 8) == 0) ||
 			(strncmp(symname, "__bss_", 6) == 0)  ||
 			(strcmp(symname, "__hinstance") == 0) ||
 			(strcmp(symname, "__start__") == 0)   ||
@@ -385,6 +414,8 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		if (ELF32_ST_TYPE(sym->st_info) == STT_FUNC)
 			fprintf(tempfile, ".global %s\n.hidden %s\n", symname, symname),
 			fprintf(tempfile, "%s:\n\tldr r12, [pc]\n\tbx r12\n", symname);
+		else
+			fprintf(tempfile, ".global %s\n.hidden %s\n%s:", symname, symname, symname);
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);
 		fclose(tempfile);
 		sprintf(cmd, "arm-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
@@ -507,6 +538,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 	// Prerelocate the binary
 	safe_call(PrerelocateBinary(&cs));
 
+	if (HasImpCopy())
+		cs.fxe2hdr.flags |= FX2_LDRFLAGS_HASIMPCOPY;
+
 	// Write the binary to the file
 	safe_call(WriteBinary(&cs));
 
@@ -518,6 +552,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 
 	// Process imports and exports
 	safe_call(ProcessSymbols(&cs));
+
+	// Write the import copy table
+	if (HasImpCopy()) WriteImpCopy(outf);
 
 	// Write the final header
 	safe_call(WriteHeader(&cs));

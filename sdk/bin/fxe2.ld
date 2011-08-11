@@ -87,6 +87,11 @@ SECTIONS
 		. = ALIGN(4);
 	} : loadable
 
+	.ARM.extab : { *(.ARM.extab* .gnu.linkonce.armextab.*) } : loadable
+ 	__exidx_start = .;
+	ARM.exidx : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } : loadable
+ 	__exidx_end = .;
+
 	__load_end = . ;
 
 	__bss_start = . ;

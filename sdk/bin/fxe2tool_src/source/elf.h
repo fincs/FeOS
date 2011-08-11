@@ -150,6 +150,7 @@ enum
 	SHT_DYNSYM = 11,         // Dynamic symbol table section
 	SHT_NUM = 12,            // Number of section types
 	SHT_LOPROC = 0x70000000, // Reserved range for processor
+	SHT_ARM_EXIDX = 0x70000001, // ARM exception index table
 	SHT_HIPROC = 0x7fffffff, // Specific section header types
 	SHT_LOUSER = 0x80000000, // Reserved range for application
 	SHT_HIUSER = 0xffffffff  // Specific indexes
@@ -170,6 +171,8 @@ enum
 	R_ARM_CALL = 28,
 	R_ARM_JUMP24 = 29,
 	R_ARM_TARGET1 = 38,
+	R_ARM_TARGET2 = 41,
+	R_ARM_PREL31 = 42,
 	R_ARM_THM_JUMP11 = 102,
 	R_ARM_THM_JUMP8 = 103
 };
