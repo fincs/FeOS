@@ -97,6 +97,7 @@ fxe_runtime_header _header_FEOSSTDIO =
 	NULL, // entrypoint
 	MAKE_EXPORTSTRUCT(FEOSSTDIO), // exp
 	{ 0, NULL }, // imp
+	{ NULL, 0 }, // exidx
 	NULL, // next
 	NULL // prev
 };

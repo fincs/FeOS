@@ -283,6 +283,13 @@ _impcopy_err:
 	// Run the constructors
 	rh->entrypoint(FEOS_EP_INIT, 0, 0, 0);
 
+	// Get the exception index table
+	if (rh->entrypoint(FEOS_EP_GETEXIDXTBL, (word_t) &rh->exidx, 0, 0) != FEOS_RC_OK)
+	{
+		rh->exidx.table = NULL;
+		rh->exidx.nentries = 0;
+	}
+
 	return pMem;
 }
 

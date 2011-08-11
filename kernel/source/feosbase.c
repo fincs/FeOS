@@ -35,6 +35,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_PopExitFunc),
 	ADD_FUNC_ALIAS(FeOS_CallExitFunc, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
+	ADD_FUNC(FeOS_GetModuleExidxTbl),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),
@@ -121,6 +122,7 @@ fxe_runtime_header _header_FEOSBASE =
 	NULL, // entrypoint
 	MAKE_EXPORTSTRUCT(FEOSBASE), // exp
 	{ 0, NULL }, // imp
+	{ NULL, 0 }, // exidx
 	NULL, // next
 	NULL // prev
 };
@@ -148,6 +150,16 @@ int FeOS_Execute(int argc, const char* argv[])
 
 	FreeModule(hInst);
 	return rc;
+}
+
+void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
+{
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+
+	if (count) *count = rh->exidx.nentries;
+	if (!*count) return NULL;
+
+	return rh->exidx.table;
 }
 
 void FeOS_DataCacheFlush(const void* mem, size_t size)

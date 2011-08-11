@@ -12,6 +12,7 @@ FeOS_DebugPrint \
 FeOS_PushExitFunc \
 FeOS_PopExitFunc \
 FeOS_GetErrnoPtr \
+FeOS_GetModuleExidxTbl \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \

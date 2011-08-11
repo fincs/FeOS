@@ -33,6 +33,7 @@ fxe_runtime_header _header_FEOSPOSIXEMU =
 	NULL, // entrypoint
 	MAKE_EXPORTSTRUCT(FEOSPOSIXEMU), // exp
 	{ 0, NULL }, // imp
+	{ NULL, 0 }, // exidx
 	NULL, // next
 	NULL // prev
 };

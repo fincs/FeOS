@@ -34,3 +34,5 @@ void FeOS_WaitForVBlank();
 
 int FeOS_PushExitFunc(FeOSExitFunc func);
 void FeOS_PopExitFunc();
+
+void* FeOS_GetModuleExidxTbl(instance_t, int*);

@@ -131,6 +131,7 @@ typedef struct tag_fxe_runtime_header
 	FeOSMain entrypoint;
 	fxe_inmem_exports exp;
 	fxe_inmem_imports imp;
+	FeOS_GetExidxTbl_t exidx;
 	struct tag_fxe_runtime_header* next;
 	struct tag_fxe_runtime_header* prev;
 } fxe_runtime_header;
@@ -158,3 +159,5 @@ fxe_runtime_header* FeOS_ModuleListFind(const char* name);
 int FeOS_PushExitFunc(FeOSExitFunc func);
 void FeOS_CallExitFunc(int);
 void FeOS_PopExitFunc();
+
+void* FeOS_GetModuleExidxTbl(instance_t, int*);
