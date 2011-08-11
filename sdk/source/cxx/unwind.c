@@ -1235,6 +1235,7 @@ __gnu_unwind_pr_common (_Unwind_State state,
   return _URC_CONTINUE_UNWIND;
 }
 
+#pragma GCC visibility push(default)
 
 /* ABI defined personality routine entry points.  */
 
@@ -1261,3 +1262,5 @@ __aeabi_unwind_cpp_pr2 (_Unwind_State state,
 {
   return __gnu_unwind_pr_common (state, ucbp, context, 2);
 }
+
+#pragma GCC visibility pop
