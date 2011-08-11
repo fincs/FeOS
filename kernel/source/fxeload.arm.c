@@ -166,6 +166,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	rh->name = namebuf;
 	rh->refcount = 1;
 	rh->file = fd;
+	rh->size = head.loadsize + head.bsssize;
 	rh->entrypoint = (FeOSMain) (pMem + head.entrypoint);
 	rh->exp.count = head.nexports;
 	rh->imp.count = head.nimports;

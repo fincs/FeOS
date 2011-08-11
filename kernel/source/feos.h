@@ -20,6 +20,7 @@
 		#_NAME_, /* name */ \
 		1, /* refcount */ \
 		-1, /* file */ \
+		0, /* size */ \
 		NULL, /* entrypoint */ \
 		MAKE_EXPORTSTRUCT(_NAME_), /* exp */ \
 		{ 0, NULL }, /* imp */ \

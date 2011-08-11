@@ -9,6 +9,7 @@ all:
 	@make -C source/FEOSPOSIXEMU
 	@make -C source/FEOSDSAPI
 	@make -f libfeos.mk
+	@make -f libfeoscxx.mk
 
 clean:
 	@make -C bin/fxe2tool_src clean
@@ -17,3 +18,4 @@ clean:
 	@make -C source/FEOSPOSIXEMU clean
 	@make -C source/FEOSDSAPI clean
 	@make -f libfeos.mk clean
+	@make -f libfeoscxx.mk clean

@@ -128,6 +128,7 @@ typedef struct tag_fxe_runtime_header
 	const char* name;
 	int refcount;
 	int file;
+	size_t size;
 	FeOSMain entrypoint;
 	fxe_inmem_exports exp;
 	fxe_inmem_imports imp;
@@ -161,3 +162,4 @@ void FeOS_CallExitFunc(int);
 void FeOS_PopExitFunc();
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
+void* FeOS_ModuleFromAddress(void*);

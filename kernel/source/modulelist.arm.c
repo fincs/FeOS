@@ -47,3 +47,22 @@ fxe_runtime_header* FeOS_ModuleListFind(const char* name)
 		if (stricmp(name, item->name) == 0) return item;
 	return NULL;
 }
+
+void* FeOS_ModuleFromAddress(void* addr)
+{
+	word_t addrw = (word_t) addr;
+
+	fxe_runtime_header* item;
+	for (item = mListHead; item != NULL; item = item->next)
+	{
+		if (item->file == -1) continue; // Ignore fake modules
+
+		word_t m_bottom = (word_t) item->hThis;
+		word_t m_top = m_bottom + item->size;
+
+		if (addrw >= m_bottom && addrw <= m_top)
+			return item->hThis;
+	}
+
+	return NULL;
+}

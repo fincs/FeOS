@@ -36,3 +36,4 @@ int FeOS_PushExitFunc(FeOSExitFunc func);
 void FeOS_PopExitFunc();
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
+void* FeOS_ModuleFromAddress(void*);

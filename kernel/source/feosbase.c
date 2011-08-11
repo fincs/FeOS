@@ -36,6 +36,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_CallExitFunc, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
 	ADD_FUNC(FeOS_GetModuleExidxTbl),
+	ADD_FUNC(FeOS_ModuleFromAddress),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),
