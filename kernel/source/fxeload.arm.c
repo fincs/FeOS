@@ -267,7 +267,18 @@ _impcopy_err:
 			impcpy.from += (word_t) pMem;
 			impcpy.to += (word_t) pMem;
 
-			*impcpy.pTo = *impcpy.pFrom;
+			switch (*impcpy.pTo)
+			{
+				case 0: // simple copy
+				*impcpy.pTo = *impcpy.pFrom;
+				break;
+
+				case 1: // relative offset
+				*impcpy.pTo = *impcpy.pFrom - impcpy.to;
+				break;
+
+				default: goto _impcopy_err;
+			}
 		}
 	}
 

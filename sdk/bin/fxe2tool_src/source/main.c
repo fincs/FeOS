@@ -148,14 +148,19 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		  && *symname && strncmp(symname, "__imp_", 6) != 0 // ...and it's *not* a direct import
 		  && *rsymp == 0) // ...and it's a dummy import pointer
 		{
+			// Add an import copy entry
+
 			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
-			{
-				// Add an import copy entry
-				printf("Import?\n");
 				*rtarget = 0;
-				AddImpCopy(rsymv, vtarget);
-			}else
+			else if (rtype == R_ARM_TARGET2 || rtype == R_ARM_REL32)
+				*rtarget = 1;
+			else
+			{
+				printf("%d %s\n", rtype, symname);
 				die("Non-pointer type non-function imports are not supported!");
+			}
+
+			AddImpCopy(rsymv, vtarget);
 		}
 
 		/*
