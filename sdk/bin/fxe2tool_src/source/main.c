@@ -7,6 +7,10 @@
 #include "elf.h"
 #include "fxe2.h"
 
+void AddImpCopy(word_t from, word_t to);
+int HasImpCopy();
+void WriteImpCopy(FILE* f);
+
 #define die(msg) do { fputs(msg "\n\n", stderr); return 1; } while(0)
 #define safe_call(a) do { int rc = a; if(rc != 0) return rc; } while(0)
 
@@ -130,14 +134,33 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		int rtype = ELF32_R_TYPE(rinfo);
 		Elf32_Sym* rsym = symtab + ELF32_R_SYM(rinfo);
 		hword_t rsymsect = eswap_hword(rsym->st_shndx);
+		Elf32_Shdr* symsect = cs->sects + rsymsect;
 		word_t rsymv = eswap_word(rsym->st_value);
-		if(rsymsect < SHN_LORESERVE)
-			rsymv += eswap_word(cs->sects[rsymsect].sh_addr);
+		// The following is only valid for ET_REL ELF files
+		//if(rsymsect < SHN_LORESERVE)
+		//	rsymv += eswap_word(symsect->sh_addr);
 		
 		word_t vtarget = /*vsect +*/ eswap_word(rel->r_offset);
+		word_t* rtarget = (word_t*)(cs->loaddata + vtarget);
+		word_t* rsymp = (word_t*)(cs->loaddata + rsymv);
+
+		const char* symname = cs->symnames + rsym->st_name;
+		const char* symsectname = cs->sectnames + symsect->sh_name;
+
+		if (strncmp(symsectname, ".imp.", 5) == 0 // It's in an import section
+		  && *symname && strncmp(symname, "__imp_", 6) != 0 // ...and it's *not* a direct import
+		  && *rsymp == 0) // ...and it's a dummy import pointer
+		{
+			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
+			{
+				// Add an import copy entry
+				*rtarget = 0;
+				AddImpCopy(rsymv, vtarget);
+			}else
+				die("Non-pointer type non-function imports are not supported!");
+		}
 
 		//printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
-		//const char* symname = (const char*)(cs->symnames + rsym->st_name);
 		//if(*symname)
 		//	printf(", symn=%s\n", symname);
 		//else
@@ -145,9 +168,7 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 
 		switch(rtype)
 		{
-			// Future notes:
-			// To access the target address use this:
-			//   word_t* rtarget = (word_t*)(cs->loaddata + vtarget);
+			// Notes:
 			// R_ARM_TARGET2 is equivalent to R_ARM_REL32
 			// R_ARM_PREL32 is an address-relative signed 31-bit offset
 
@@ -394,7 +415,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			fprintf(tempfile, ".global %s\n.hidden %s\n", symname, symname),
 			fprintf(tempfile, "%s:\n\tldr r12, [pc]\n\tbx r12\n", symname);
 		else
-			fprintf(tempfile, ".weak %s\n.hidden %s\n", symname, symname);
+			fprintf(tempfile, ".global %s\n.hidden %s\n%s:", symname, symname, symname);
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);
 		fclose(tempfile);
 		sprintf(cmd, "arm-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
@@ -517,6 +538,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 	// Prerelocate the binary
 	safe_call(PrerelocateBinary(&cs));
 
+	if (HasImpCopy())
+		cs.fxe2hdr.flags |= FX2_LDRFLAGS_HASIMPCOPY;
+
 	// Write the binary to the file
 	safe_call(WriteBinary(&cs));
 
@@ -528,6 +552,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 
 	// Process imports and exports
 	safe_call(ProcessSymbols(&cs));
+
+	// Write the import copy table
+	if (HasImpCopy()) WriteImpCopy(outf);
 
 	// Write the final header
 	safe_call(WriteHeader(&cs));

@@ -240,6 +240,36 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 		rh->imp.table = imptbl;
 	}
 
+	if(head.flags & FX2_LDRFLAGS_HASIMPCOPY)
+	{
+		fxe2_impcopy_head_t ich;
+		fxe2_impcopy_t impcpy;
+
+		if(read(fd, &ich, sizeof(ich)) != sizeof(ich))
+		{
+_impcopy_err:
+			free(pMem);
+			close(fd);
+			return NULL;
+		}
+
+		if(ich.type != FX2_IMPCOPY_NORMAL)
+			goto _impcopy_err;
+
+		// TODO: range checks
+		register int i;
+		for(i = 0; i < ich.count; i ++)
+		{
+			if(read(fd, &impcpy, sizeof(impcpy)) != sizeof(impcpy))
+				goto _impcopy_err;
+
+			impcpy.from += (word_t) pMem;
+			impcpy.to += (word_t) pMem;
+
+			*impcpy.pTo = *impcpy.pFrom;
+		}
+	}
+
 	// Write the pointer to the runtime header
 	*(volatile word_t*)pMem = (word_t) rh;
 

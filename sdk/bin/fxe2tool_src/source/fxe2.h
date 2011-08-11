@@ -36,6 +36,18 @@ typedef struct
 	word_t address;
 } fxe2_import_t;
 
+typedef struct
+{
+	word_t type;
+	word_t count;
+} fxe2_impcopy_head_t;
+
+typedef struct
+{
+	word_t from;
+	word_t to;
+} fxe2_impcopy_t;
+
 #define FXE2_MAGIC "FZ01"
 
 enum
@@ -47,8 +59,11 @@ enum
 
 	FX2_M_LDRFLAGS          = 0xFFF0,
 	FX2_LDRFLAGS_COMPRESSED = 0x0010,
+	FX2_LDRFLAGS_HASIMPCOPY = 0x0020,
 
-	FX2_IMP_SELECT_MODULE = 0xFFFFFFFF
+	FX2_IMP_SELECT_MODULE = 0xFFFFFFFF,
+
+	FX2_IMPCOPY_NORMAL = 0
 };
 
 #define FX2_SUBSYSTEM(n) ((n) & FX2_M_SUBSYSTEM)

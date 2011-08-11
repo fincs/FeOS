@@ -13,12 +13,13 @@ export STRIP := strip
 CFLAGS   := -g0 -Wall -O2
 CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions
 
-LDFLAGS := -g0 -static-libgcc
+LDFLAGS := -g0
 
 UNAME := $(shell uname -s)
 
 ifneq (,$(findstring MINGW,$(UNAME)))
 	EXEEXT := .exe
+	LDFLAGS += -static-libgcc -static-libstdc++
 endif
 
 ifneq (,$(findstring Darwin,$(UNAME)))
