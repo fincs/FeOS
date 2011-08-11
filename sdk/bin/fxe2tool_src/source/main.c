@@ -60,6 +60,7 @@ int GetElfInfo(elf2fx2_cnvstruct_t* cs)
 		switch(eswap_word(shdr->sh_type))
 		{
 			case SHT_PROGBITS:
+			case SHT_ARM_EXIDX:
 				if(strcmp(sname, ".meta") != 0)
 				{
 					if(status > 0) die("Unexpected loadable section!");
@@ -121,7 +122,6 @@ int AddRelocation(elf2fx2_cnvstruct_t* cs, word_t addr)
 int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf32_Sym* symtab, Elf32_Rel* rels, int nrels)
 {
 	int i;
-	//printf("PrerelocateSection: nrels=%d\n", nrels);
 
 	for(i = 0; i < nrels; i ++)
 	{
@@ -135,7 +135,6 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 			rsymv += eswap_word(cs->sects[rsymsect].sh_addr);
 		
 		word_t vtarget = /*vsect +*/ eswap_word(rel->r_offset);
-		//byte_t* rtarget = sect + eswap_word(rel->r_offset);
 
 		//printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
 		//const char* symname = (const char*)(cs->symnames + rsym->st_name);
@@ -146,14 +145,22 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 
 		switch(rtype)
 		{
+			// Future notes:
+			// To access the target address use this:
+			//   word_t* rtarget = (word_t*)(cs->loaddata + vtarget);
+			// R_ARM_TARGET2 is equivalent to R_ARM_REL32
+			// R_ARM_PREL32 is an address-relative signed 31-bit offset
+
 			case R_ARM_ABS32:
 			case R_ARM_TARGET1:
 			{
 				// This relocation is the only one FXE2 supports
 				if(vtarget & 3)
 					die("Unaligned relocation!");
-				//printf("[%08X]", *(word_t*)rtarget);
-				//*(word_t*)rtarget = eswap_word(eswap_word(*(word_t*)rtarget) + rsymv);
+
+				// Ignore undefined weak target symbols (keep them 0)
+				if (ELF32_ST_BIND(rsym->st_info) == STB_WEAK && rsymv == 0) break;
+
 				if(sect != cs->metadata)
 					safe_call(AddRelocation(cs, vtarget));
 				break;
@@ -367,6 +374,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			(strncmp(symname, "__feos_", 7) == 0) ||
 			(strncmp(symname, "__text_", 7) == 0) ||
 			(strncmp(symname, "__load_", 7) == 0) ||
+			(strncmp(symname, "__exidx_", 8) == 0) ||
 			(strncmp(symname, "__bss_", 6) == 0)  ||
 			(strcmp(symname, "__hinstance") == 0) ||
 			(strcmp(symname, "__start__") == 0)   ||
@@ -385,6 +393,8 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		if (ELF32_ST_TYPE(sym->st_info) == STT_FUNC)
 			fprintf(tempfile, ".global %s\n.hidden %s\n", symname, symname),
 			fprintf(tempfile, "%s:\n\tldr r12, [pc]\n\tbx r12\n", symname);
+		else
+			fprintf(tempfile, ".weak %s\n.hidden %s\n", symname, symname);
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);
 		fclose(tempfile);
 		sprintf(cmd, "arm-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
