@@ -26,17 +26,19 @@ ifeq ($(strip $(DEFARCH)),)
 DEFARCH   := $(THUMBARCH)
 endif
 
+INCLUDECXX := -I$(FEOSSDK)/include/cxx
+
 CFLAGS   := -g0 -Wall -O2 -save-temps -fvisibility=hidden\
             $(ARCH) -fomit-frame-pointer -ffast-math\
             -mthumb-interwork $(INCLUDE) $(DEFINES) -nostdinc $(CONF_CFLAGS)
 
-CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
+CXXFLAGS := $(CFLAGS) $(INCLUDECXX) -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
 
 ASFLAGS  := -g0 $(ARCH) $(DEFINES)
 LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld -g $(ARCH) -Wl,-d,-q,-Map,$(TARGET).map
 
 ifneq ($(CONF_NOSTDLIB),1)
-LIBS     := -lfeos
+LIBS     := $(CXXLIB) -lfeos
 endif
 LIBS     := $(CONF_LIBS) $(LIBS)
 
@@ -82,6 +84,9 @@ ifeq ($(strip $(CPPFILES)),)
 	export LD := $(CC)
 else
 	export LD := $(CXX)
+ifneq ($(CONF_NOCXXLIB),1)
+	export CXXLIB := -lfeoscxx
+endif
 endif
 
 export OFILES   := $(addsuffix .o,$(BINFILES)) \
