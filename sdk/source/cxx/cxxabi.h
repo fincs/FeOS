@@ -190,8 +190,6 @@ namespace __cxxabiv1
 } // namespace __cxxabiv1
 #endif
 
-#pragma GCC visibility pop
-
 #ifdef __cplusplus
 
 #include <typeinfo>
@@ -578,6 +576,8 @@ namespace __cxxabiv1
 
 } // namespace __cxxabiv1
 
+#pragma GCC visibility pop
+
 /** @namespace abi
  *  @brief The cross-vendor C++ Application Binary Interface. A
  *  namespace alias to __cxxabiv1, but user programs should use the
@@ -621,8 +621,8 @@ namespace __gnu_cxx
     virtual ~recursive_init_error() throw ();
   };
 }
-#endif // __cplusplus
-
-//#pragma GCC visibility pop
+#else // __cplusplus
+#pragma GCC visibility pop
+#endif
 
 #endif // __CXXABI_H
