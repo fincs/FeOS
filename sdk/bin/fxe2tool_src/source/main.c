@@ -1,15 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/param.h>
 
 #include "types.h"
 #include "elf.h"
 #include "fxe2.h"
-
-void AddImpCopy(word_t from, word_t to);
-int HasImpCopy();
-void WriteImpCopy(FILE* f);
+#include "impcopy.h"
 
 #define die(msg) do { fputs(msg "\n\n", stderr); return 1; } while(0)
 #define safe_call(a) do { int rc = a; if(rc != 0) return rc; } while(0)
@@ -20,7 +16,7 @@ char elf_name[FILENAME_MAX+1];
 char fx2_name[FILENAME_MAX+1];
 char imp_name[FILENAME_MAX+1];
 
-inline void buildname(char* buffer, const char* prefix, const char* suffix)
+void buildname(char* buffer, const char* prefix, const char* suffix)
 {
 	strncpy(buffer, prefix, FILENAME_MAX);
 	strncat(buffer, suffix, FILENAME_MAX);
@@ -134,7 +130,9 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		int rtype = ELF32_R_TYPE(rinfo);
 		Elf32_Sym* rsym = symtab + ELF32_R_SYM(rinfo);
 		hword_t rsymsect = eswap_hword(rsym->st_shndx);
-		Elf32_Shdr* symsect = cs->sects + rsymsect;
+		Elf32_Shdr* symsect = NULL;
+		if ( !(rsymsect >= SHN_LORESERVE && rsymsect <= SHN_HIRESERVE) )
+			symsect = cs->sects + rsymsect;
 		word_t rsymv = eswap_word(rsym->st_value);
 		// The following is only valid for ET_REL ELF files
 		//if(rsymsect < SHN_LORESERVE)
@@ -145,26 +143,28 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		word_t* rsymp = (word_t*)(cs->loaddata + rsymv);
 
 		const char* symname = cs->symnames + rsym->st_name;
-		const char* symsectname = cs->sectnames + symsect->sh_name;
 
-		if (strncmp(symsectname, ".imp.", 5) == 0 // It's in an import section
+		if (symsect && strncmp(cs->sectnames + symsect->sh_name, ".imp.", 5) == 0 // It's in an import section
 		  && *symname && strncmp(symname, "__imp_", 6) != 0 // ...and it's *not* a direct import
 		  && *rsymp == 0) // ...and it's a dummy import pointer
 		{
 			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
 			{
 				// Add an import copy entry
+				printf("Import?\n");
 				*rtarget = 0;
 				AddImpCopy(rsymv, vtarget);
 			}else
 				die("Non-pointer type non-function imports are not supported!");
 		}
 
-		//printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
-		//if(*symname)
-		//	printf(", symn=%s\n", symname);
-		//else
-		//	printf("\n");
+		/*
+		printf("....REL type=%d, target=%08X, syma=%08X [%d]", rtype, vtarget, rsymv, rsym->st_other);
+		if(*symname)
+			printf(", symn=%s\n", symname);
+		else
+			printf("\n");
+		*/
 
 		switch(rtype)
 		{

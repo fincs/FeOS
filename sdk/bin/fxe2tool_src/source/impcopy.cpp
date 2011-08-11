@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <sys/param.h>
 #include <map>
 
 #include "types.h"
