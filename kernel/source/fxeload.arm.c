@@ -270,12 +270,12 @@ _impcopy_err:
 			switch (*impcpy.pTo)
 			{
 				case 0: // simple copy
-				*impcpy.pTo = *impcpy.pFrom;
-				break;
+					*impcpy.pTo = *impcpy.pFrom;
+					break;
 
 				case 1: // relative offset
-				*impcpy.pTo = *impcpy.pFrom - impcpy.to;
-				break;
+					*impcpy.pTo = *impcpy.pFrom - impcpy.to;
+					break;
 
 				default: goto _impcopy_err;
 			}

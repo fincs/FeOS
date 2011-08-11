@@ -141,8 +141,8 @@ void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
 {
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
+	if (!rh->exidx.nentries) return NULL;
 	if (count) *count = rh->exidx.nentries;
-	if (!*count) return NULL;
 
 	return rh->exidx.table;
 }
