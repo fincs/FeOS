@@ -387,7 +387,8 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 	for(i = 0; i < cs->nsyms; i ++)
 	{
 		Elf32_Sym* sym = cs->syms + i;
-		if (ELF32_ST_BIND(sym->st_info) != STB_GLOBAL) continue;
+		if (ELF32_ST_BIND(sym->st_info) == STB_LOCAL) continue; // Ignore local symbols
+		if (ELF32_ST_BIND(sym->st_info) == STB_WEAK && !sym->st_shndx) continue; // Ignore undefined weak symbols
 		if (sym->st_other != STV_DEFAULT) { safe_call(CheckForImport(cs, sym, &imp_list, &imp_lastmodule)); continue; }
 		const char* symname = (const char*)(cs->symnames + eswap_word(sym->st_name));
 		if(!*symname) continue;
