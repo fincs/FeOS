@@ -161,6 +161,7 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 			}
 
 			AddImpCopy(rsymv, vtarget);
+			continue;
 		}
 
 		/*

@@ -11,7 +11,7 @@ static map<word_t, word_t> impcopytbl;
 
 extern "C" void AddImpCopy(word_t from, word_t to)
 {
-	impcopytbl[from] = to;
+	impcopytbl[to] = from;
 }
 
 extern "C" int HasImpCopy()
@@ -31,7 +31,7 @@ extern "C" void WriteImpCopy(FILE* f)
 	map<word_t, word_t>::iterator it;
 	for (it = impcopytbl.begin() ; it != impcopytbl.end(); it ++)
 	{
-		fxe2_impcopy_t st = { (*it).first, (*it).second };
+		fxe2_impcopy_t st = { (*it).second, (*it).first };
 		fwrite(&st, sizeof(fxe2_impcopy_t), 1, f);
 	}
 }
