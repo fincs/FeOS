@@ -111,23 +111,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(strftime)
 END_TABLE(FEOSBASE)
 
-extern void* _inst_FEOSBASE;
-
-fxe_runtime_header _header_FEOSBASE =
-{
-	&_inst_FEOSBASE, // hThis
-	"FEOSBASE", // name
-	1, // refcount
-	-1, // file
-	NULL, // entrypoint
-	MAKE_EXPORTSTRUCT(FEOSBASE), // exp
-	{ 0, NULL }, // imp
-	{ NULL, 0 }, // exidx
-	NULL, // next
-	NULL // prev
-};
-
-void* _inst_FEOSBASE = &_header_FEOSBASE;
+MAKE_FAKEMODULE(FEOSBASE)
 
 static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 {

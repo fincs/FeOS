@@ -22,21 +22,4 @@ BEGIN_TABLE(FEOSPOSIXEMU)
 	ADD_FUNC(stat)
 END_TABLE(FEOSPOSIXEMU)
 
-extern void* _inst_FEOSPOSIXEMU;
-
-fxe_runtime_header _header_FEOSPOSIXEMU =
-{
-	&_inst_FEOSPOSIXEMU, // hThis
-	"FEOSPOSIXEMU", // name
-	1, // refcount
-	-1, // file
-	NULL, // entrypoint
-	MAKE_EXPORTSTRUCT(FEOSPOSIXEMU), // exp
-	{ 0, NULL }, // imp
-	{ NULL, 0 }, // exidx
-	NULL, // next
-	NULL // prev
-};
-
-void* _inst_FEOSPOSIXEMU = &_header_FEOSPOSIXEMU;
-
+MAKE_FAKEMODULE(FEOSPOSIXEMU)

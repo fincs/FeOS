@@ -1,9 +1,10 @@
 #include "fxe.h"
 
+#define LINK_FAKEMODULE(NAME) \
+	extern fxe_runtime_header _header_##NAME; \
+	FeOS_ModuleListAdd(&_header_##NAME)
+
 extern fxe_runtime_header _header_FEOSBASE;
-extern fxe_runtime_header _header_FEOSSTDIO;
-extern fxe_runtime_header _header_FEOSPOSIXEMU;
-extern fxe_runtime_header _header_FEOSDSAPI;
 
 static fxe_runtime_header* mListHead = &_header_FEOSBASE;
 static fxe_runtime_header* mListTail = &_header_FEOSBASE;
@@ -11,9 +12,9 @@ static int nmodules = 1;
 
 void FeOS_ModuleListInit()
 {
-	FeOS_ModuleListAdd(&_header_FEOSSTDIO);
-	FeOS_ModuleListAdd(&_header_FEOSPOSIXEMU);
-	FeOS_ModuleListAdd(&_header_FEOSDSAPI);
+	LINK_FAKEMODULE(FEOSSTDIO);
+	LINK_FAKEMODULE(FEOSPOSIXEMU);
+	LINK_FAKEMODULE(FEOSDSAPI);
 }
 
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)

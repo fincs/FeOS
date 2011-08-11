@@ -86,20 +86,4 @@ BEGIN_TABLE(FEOSSTDIO)
 	ADD_FUNC(rename)
 END_TABLE(FEOSSTDIO)
 
-extern void* _inst_FEOSSTDIO;
-
-fxe_runtime_header _header_FEOSSTDIO =
-{
-	&_inst_FEOSSTDIO, // hThis
-	"FEOSSTDIO", // name
-	1, // refcount
-	-1, // file
-	NULL, // entrypoint
-	MAKE_EXPORTSTRUCT(FEOSSTDIO), // exp
-	{ 0, NULL }, // imp
-	{ NULL, 0 }, // exidx
-	NULL, // next
-	NULL // prev
-};
-
-void* _inst_FEOSSTDIO = &_header_FEOSSTDIO;
+MAKE_FAKEMODULE(FEOSSTDIO)
