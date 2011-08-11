@@ -13,6 +13,7 @@ FeOS_PushExitFunc \
 FeOS_PopExitFunc \
 FeOS_GetErrnoPtr \
 FeOS_GetModuleExidxTbl \
+FeOS_ModuleFromAddress \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \
@@ -90,8 +91,7 @@ all: $(SFILES)
 	@printf ".global %b\n" $(@:.s=) >> $@
 	@printf ".hidden %b\n" $(@:.s=) >> $@
 	@printf "%b:\n" $(@:.s=) >> $@
-	@printf "\tldr r12, [pc]\n" >> $@
-	@printf "\tbx r12\n" >> $@
+	@printf "\tldr pc, [pc, #-4]\n" >> $@
 	@printf "__imp_%b:\n" $(@:.s=) >> $@
 	@printf "\t.word 0" >> $@
 
