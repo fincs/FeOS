@@ -29,6 +29,8 @@ SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU sou
 DATA          := data
 INCLUDES      := include
 
+CONF_CXXFLAGS = -fno-exceptions -fno-rtti
+
 CONF_NOSTDLIB = 1
 THIS_MAKEFILE := libfeos.mk
 
