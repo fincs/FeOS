@@ -187,6 +187,10 @@ namespace std
     type_info(const type_info&);
   };
 
+#ifdef BUILD_FEOSCXX
+#pragma GCC visibility push(default)
+#endif
+
   /**
    *  @brief  Thrown during incorrect typecasting.
    *  @ingroup exceptions
@@ -225,7 +229,7 @@ namespace std
 } // namespace std
 
 #ifdef BUILD_FEOSCXX
-//#pragma GCC visibility pop
+#pragma GCC visibility pop
 #endif
 
 } // extern "C++"
