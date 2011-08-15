@@ -167,7 +167,7 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 			}
 
 			word_t offTopBits = offFromTrg >> 28;
-			if (offTopBits == 0x0 || offTopBits == 0xF)
+			if (offTopBits != 0x0 && offTopBits != 0xF)
 				die("Offset from non-function import target too big!");
 
 			*rtarget |= offFromTrg << 4;
