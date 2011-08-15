@@ -28,6 +28,14 @@
 #include "exception"
 #include <cxxabi.h>
 
+#pragma GCC visibility push(default)
+namespace std
+{
+	class exception;
+	class bad_exception;
+}
+#pragma GCC visibility pop
+
 std::exception::~exception() throw() { }
 
 std::bad_exception::~bad_exception() throw() { }
