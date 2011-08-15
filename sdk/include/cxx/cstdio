@@ -1,0 +1,48 @@
+//
+// FeOS C++ Standard Library
+// cstdio
+//     C stdio.h
+//
+
+#pragma once
+#include <stdio.h>
+
+namespace std
+{
+	using ::FILE;
+	using ::fopen;
+	using ::freopen;
+	using ::fclose;
+	using ::fread;
+	using ::fwrite;
+	using ::feof;
+	using ::fseek;
+	using ::ftell;
+	using ::rewind;
+	using ::fflush;
+	using ::ferror;
+	using ::clearerr;
+	using ::vfprintf;
+	using ::vsprintf;
+	using ::vfscanf;
+	using ::vsscanf;
+	using ::vprintf;
+	using ::vscanf;
+	using ::printf;
+	using ::fprintf;
+	using ::sprintf;
+	using ::scanf;
+	using ::fscanf;
+	using ::sscanf;
+	using ::fgetc;
+	using ::fputc;
+	using ::fgets;
+	using ::fputs;
+	using ::getchar;
+	using ::gets;
+	using ::ungetc;
+	using ::putchar;
+	using ::puts;
+	using ::remove;
+	using ::rename;
+}
