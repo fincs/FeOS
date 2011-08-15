@@ -549,6 +549,8 @@ namespace __cxxabiv1
 		__upcast_result& __restrict __result) const;
   };
 
+#pragma GCC visibility push(default)
+
   // Dynamic cast runtime.
   // src2dst has the following possible values
   //  >-1: src_type is a unique public non-virtual base of dst_type
@@ -567,6 +569,8 @@ namespace __cxxabiv1
   // null if there is none.
   extern "C" std::type_info*
   __cxa_current_exception_type() _GLIBCXX_NOTHROW __attribute__ ((__pure__));
+
+#pragma GCC visibility pop
 
   // A magic placeholder class that can be caught by reference
   // to recognize foreign exceptions.
