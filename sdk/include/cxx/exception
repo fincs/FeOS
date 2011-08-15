@@ -35,9 +35,8 @@
 #pragma GCC system_header
 
 #ifdef BUILD_FEOSCXX
-//#pragma GCC visibility push(default)
-
 #include <bits/c++config.h>
+#pragma GCC visibility push(default)
 #endif
 
 extern "C++" {
@@ -85,10 +84,6 @@ namespace std
     // See comment in eh_exception.cc.
     virtual const char* what() const throw();
   };
-
-#ifdef BUILD_FEOSCXX
-#pragma GCC visibility push(default)
-#endif
 
   /// If you write a replacement %terminate handler, it must be of this type.
   typedef void (*terminate_handler) ();
