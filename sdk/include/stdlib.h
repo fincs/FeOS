@@ -14,8 +14,8 @@ extern "C"
 #endif
 
 // String to integer conversions
-#define atol atoi
 int atoi(const char*);
+static inline long atol(const char* a) { return atoi(a); }
 int strtol(const char*, char**, int);
 unsigned int strtoul(const char*, char**, int);
 
@@ -44,14 +44,14 @@ void* bsearch(const void*, const void*, size_t, size_t, c_comparator);
 void qsort(void*, size_t, size_t, c_comparator);
 
 // Absolute value
-#define labs abs
 int abs(int);
+static inline long labs(long a) { return abs(a); }
 
 // Division
-#define ldiv div
-#define ldiv_t div_t
 typedef struct { int quot, rem; } div_t;
+typedef div_t ldiv_t;
 div_t div(int, int);
+static inline ldiv_t ldiv(int a, int b) { return div(a, b); }
 
 // These functions will never be implemented:
 // atof, strtod, getenv, system, mblen, mbtowc, wctomb, mbstowcs, wcstombs
