@@ -1,1 +1,0 @@
-<Project name="testbin"><MagicFolder excludeFolders="CVS;.svn" filter="*" name="source" path="source\"><File path="main.c"></File><File path="moretest.cpp"></File><File path="test.cpp"></File><File path="testclasses.h"></File></MagicFolder><File path="Makefile"></File></Project>
