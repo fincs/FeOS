@@ -267,14 +267,17 @@ _impcopy_err:
 			impcpy.from += (word_t) pMem;
 			impcpy.to += (word_t) pMem;
 
-			switch (*impcpy.pTo)
+			word_t impcpy_data = *impcpy.pTo;
+			word_t impcpy_off = (word_t)((int)impcpy_data >> 4);
+
+			switch (impcpy_data & 0xF)
 			{
 				case 0: // simple copy
-					*impcpy.pTo = *impcpy.pFrom;
+					*impcpy.pTo = *impcpy.pFrom + impcpy_off;
 					break;
 
 				case 1: // relative offset
-					*impcpy.pTo = *impcpy.pFrom - impcpy.to;
+					*impcpy.pTo = *impcpy.pFrom - impcpy.to + impcpy_off;
 					break;
 
 				default: goto _impcopy_err;

@@ -149,16 +149,27 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		  && *rsymp == 0) // ...and it's a dummy import pointer
 		{
 			// Add an import copy entry
+			word_t v_rtarget = *rtarget;
+			word_t offFromTrg = 0;
 
 			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
+			{
 				*rtarget = 0;
-			else if (rtype == R_ARM_TARGET2 || rtype == R_ARM_REL32)
+				offFromTrg = (word_t)((int)v_rtarget - (int)rsymv);
+			}else if (rtype == R_ARM_TARGET2 || rtype == R_ARM_REL32)
+			{
 				*rtarget = 1;
-			else
+				offFromTrg = (word_t)((int)v_rtarget - ((int)rsymv - (int)vtarget));
+			}else
 			{
 				printf("%d %s\n", rtype, symname);
-				die("Non-pointer type non-function imports are not supported!");
+				die("Non-supported type non-function imports are not supported!");
 			}
+
+			if (offFromTrg & 0xF0000000)
+				die("Offset from non-function import target too big!");
+
+			*rtarget |= offFromTrg << 4;
 
 			AddImpCopy(rsymv, vtarget);
 			continue;
