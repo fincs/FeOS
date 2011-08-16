@@ -30,6 +30,7 @@ DATA          := data
 INCLUDES      := source/cxx
 
 CONF_DEFINES = -DBUILD_FEOSCXX
+CONF_CXXFLAGS = -frtti
 
 CONF_NOCXXLIB = 1
 THIS_MAKEFILE := libfeoscxx.mk
