@@ -152,6 +152,22 @@ namespace std
 		return copySize;
 	}
 
+	size_t string::find(const char* str, size_t pos, size_t n) const
+	{
+		size_t strSize = size();
+		for(; pos < strSize; pos ++)
+			if (strncmp(mBuf + pos, str, n) == 0) return pos;
+		return npos;
+	}
+
+	size_t string::find(char c, size_t pos) const
+	{
+		size_t strSize = size();
+		for(; pos < strSize; pos ++)
+			if (mBuf[pos] == c) return pos;
+		return npos;
+	}
+
 	void string::reserve(size_t size)
 	{
 		size ++;

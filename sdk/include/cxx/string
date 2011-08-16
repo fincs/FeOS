@@ -105,6 +105,11 @@ namespace std
 
 		inline bool empty() const { return !*mBuf; }
 
+		inline size_t find(const string& str, size_t pos = 0) const { return find(str.mBuf, pos, str.size()); }
+		inline size_t find(const char* str, size_t pos = 0) const { return find(str, pos, strlen(str)); }
+		size_t find(const char* str, size_t pos, size_t n) const;
+		size_t find(char c, size_t pos = 0) const;
+
 		inline size_t length() const { return size(); }
 
 		inline size_t max_size() const { return 0xFFFFFFFF; }
