@@ -12,7 +12,7 @@ namespace std
 	struct auto_ptr_ref
 	{
 		T* ptr;
-		explicit auto_ptr_ref(T* _ptr): ptr(_ptr) {}
+		inline explicit auto_ptr_ref(T* _ptr): ptr(_ptr) {}
 	};
 
 	template <class T>
@@ -23,30 +23,30 @@ namespace std
 		typedef T element_type;
 
 		// Constructors
-		explicit auto_ptr(T* p = 0) throw() : ptr(p) {}
-		auto_ptr(auto_ptr& a) throw() : ptr(a.release()) {}
-		template <class T2> auto_ptr(auto_ptr<T2>& a) throw() : ptr(a.release()) {}
-		auto_ptr(auto_ptr_ref<T>& r) throw() : ptr(r.ptr) {}
+		inline explicit auto_ptr(T* p = 0) throw() : ptr(p) {}
+		inline auto_ptr(auto_ptr& a) throw() : ptr(a.release()) {}
+		template <class T2> inline auto_ptr(auto_ptr<T2>& a) throw() : ptr(a.release()) {}
+		inline auto_ptr(auto_ptr_ref<T>& r) throw() : ptr(r.ptr) {}
 
 		// Destructor
-		~auto_ptr() throw() { if (ptr) delete ptr; }
+		inline ~auto_ptr() throw() { if (ptr) delete ptr; }
 
 		// operator =
 
-		auto_ptr& operator =(auto_ptr& a) throw()
+		inline auto_ptr& operator =(auto_ptr& a) throw()
 		{
 			reset(a.release());
 			return *this;
 		}
 
 		template <class T2>
-		auto_ptr& operator =(auto_ptr<T2>& a) throw()
+		inline auto_ptr& operator =(auto_ptr<T2>& a) throw()
 		{
 			reset(a.release());
 			return *this;
 		}
 
-		auto_ptr& operator =(auto_ptr_ref<T> r) throw()
+		inline auto_ptr& operator =(auto_ptr_ref<T> r) throw()
 		{
 			if (r.ptr != this->get())
 			{
@@ -58,30 +58,30 @@ namespace std
 
 		// Casts
 
-		template <class T2> operator auto_ptr_ref<T2>() throw()
+		template <class T2> inline operator auto_ptr_ref<T2>() throw()
 		{
 			return auto_ptr_ref<T2>(this->release());
 		}
 
-		template <class T2> operator auto_ptr<T2>() throw()
+		template <class T2> inline operator auto_ptr<T2>() throw()
 		{
 			return auto_ptr<T2>(this->release());
 		}
 
 		// Functions
 
-		T& operator *() const throw() { return *ptr; }
-		T* operator ->() const throw() { return  ptr; }
-		T* get() const throw() { return ptr; }
+		inline T& operator *() const throw() { return *ptr; }
+		inline T* operator ->() const throw() { return  ptr; }
+		inline T* get() const throw() { return ptr; }
 
-		T* release() throw()
+		inline T* release() throw()
 		{
 			T* tmp = ptr;
 			ptr = 0;
 			return tmp;
 		}
 
-		void reset(T* p = 0) throw()
+		inline void reset(T* p = 0) throw()
 		{
 			if (p != ptr)
 			{
