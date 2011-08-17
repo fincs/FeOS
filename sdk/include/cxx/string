@@ -6,7 +6,7 @@
 
 #pragma once
 #include <string.h>
-#include <iter/CharIters.h>
+#include <iterator>
 
 #ifdef BUILD_FEOSSTL
 #pragma GCC visibility push(default)
@@ -37,10 +37,10 @@ namespace std
 	public:
 
 		static const size_t npos = -1;
-		typedef iter::CCharFwIter iterator;
-		typedef iter::CConstCharFwIter const_iterator;
-		typedef iter::CReverseCharFwIter reverse_iterator;
-		typedef iter::CReverseConstCharFwIter const_reverse_iterator;
+		typedef char* iterator;
+		typedef const char* const_iterator;
+		typedef std::reverse_iterator<char*> reverse_iterator;
+		typedef std::reverse_iterator<const char*> const_reverse_iterator;
 
 		///////////////////////////////////////////////////////////////////////
 		// Constructors and destructors
@@ -125,11 +125,11 @@ namespace std
 
 		inline size_t max_size() const { return 0xFFFFFFFF; }
 
-		inline reverse_iterator rbegin() { return reverse_iterator(mBuf + size() - 1); }
-		inline const_reverse_iterator rbegin() const { return const_reverse_iterator(mBuf + size() - 1); }
+		inline reverse_iterator rbegin() { return reverse_iterator(end()); }
+		inline const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
-		inline reverse_iterator rend() { return reverse_iterator(mBuf - 1); }
-		inline const_reverse_iterator rend() const { return const_reverse_iterator(mBuf - 1); }
+		inline reverse_iterator rend() { return reverse_iterator(begin()); }
+		inline const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
 		void reserve(size_t size = 0);
 
