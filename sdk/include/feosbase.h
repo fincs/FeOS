@@ -5,6 +5,7 @@
 //
 
 #pragma once
+#include <stdbool.h>
 
 typedef unsigned char byte_t;
 typedef unsigned short hword_t;
