@@ -31,6 +31,7 @@
 
 #include <nds.h>
 #include <dswifi7.h>
+#include "feos.h"
 
 void VBlankHandler()
 {
@@ -63,6 +64,7 @@ int main()
 	installWifiFIFO();
 	//installSoundFIFO();
 	installSystemFIFO();
+	installFeOSFIFO();
 
 	irqSet(IRQ_VCOUNT, VCountHandler);
 	irqSet(IRQ_VBLANK, VBlankHandler);
@@ -74,6 +76,7 @@ int main()
 	while (!exitflag)
 	{
 		swiWaitForVBlank();
+		FeOS_VBlankFunc();
 		if (!(REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)))
 			break;
 	}
