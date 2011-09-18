@@ -337,10 +337,8 @@ _shorterr:
 	void* pMem = malloc((readsize = head.loadsize + head.nrelocs*sizeof(fxe2_reloc_t)) + head.simports);
 	if(pMem == NULL) goto _shorterr;
 
-	void* pMemUncached = memUncached(pMem);
-
 	// Read loadable section + relocations
-	if(read(fd, pMemUncached, readsize) != readsize)
+	if(read(fd, pMem, readsize) != readsize)
 	{
 _fullerr:
 		free(pMem);
@@ -351,11 +349,11 @@ _fullerr:
 	lseek(fd, head.sexports, SEEK_CUR);
 
 	// Read imports
-	if(read(fd, (u8*)pMemUncached + readsize, head.simports) != head.simports)
+	if(read(fd, (u8*)pMem + readsize, head.simports) != head.simports)
 		goto _fullerr;
 
 	// Set the entrypoint
-	*(volatile word_t*)pMemUncached = head.entrypoint;
+	*(volatile word_t*)pMem = head.entrypoint;
 
 	// Fill in loadStruct structure
 	ldSt->data = pMem;
@@ -365,6 +363,8 @@ _fullerr:
 	ldSt->imps.table = (fxe2_import_t*)((u8*)pMem + readsize);
 	ldSt->nrelocs = head.nrelocs;
 	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
+
+	DC_FlushRange(pMem, readsize + head.simports);
 
 	// Tell the ARM7 to load the module
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
