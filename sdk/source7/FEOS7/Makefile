@@ -33,7 +33,13 @@ memset \
 strcpy \
 strcmp \
 strncpy \
-strncmp
+strncmp \
+__aeabi_idiv \
+__aeabi_idivmod \
+__aeabi_uidiv \
+__aeabi_uidivmod \
+__aeabi_ldivmod \
+__aeabi_uldivmod
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
