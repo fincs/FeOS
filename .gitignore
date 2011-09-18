@@ -12,6 +12,8 @@ build7/
 !/sdk/source/FEOSPOSIXEMU/Makefile
 /sdk/source/FEOSDSAPI/*
 !/sdk/source/FEOSDSAPI/Makefile
+/sdk/source/FEOSARM7/*
+!/sdk/source/FEOSARM7/Makefile
 /sdk/source7/FEOS7/*
 !/sdk/source7/FEOS7/Makefile
 *.exe

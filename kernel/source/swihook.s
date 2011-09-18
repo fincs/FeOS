@@ -92,7 +92,19 @@ __SVCTable:
 
 	.space 4*13
 
-	.space 4*192
+	@ FIFO functions
+	.word fifoSendAddress
+	.word fifoSendValue32
+	.word fifoSendDatamsg
+	.word fifoCheckAddress
+	.word fifoCheckValue32
+	.word fifoCheckDatamsg
+	.word fifoGetAddress
+	.word fifoGetValue32
+	.word fifoGetDatamsg
+	.space 4*7
+
+	.space 4*176
 
 .align 2
 __ResetHandler:
@@ -202,3 +214,13 @@ swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
 swiimp InstrCacheInvalidate 0x07
 swiimp InstrCacheInvalidateAll 0x08
+
+swiimp FifoSendAddress 0x40
+swiimp FifoSendValue32 0x41
+swiimp FifoSendDatamsg 0x42
+swiimp FifoCheckAddress 0x43
+swiimp FifoCheckValue32 0x44
+swiimp FifoCheckDatamsg 0x45
+swiimp FifoGetAddress 0x46
+swiimp FifoGetValue32 0x47
+swiimp FifoGetDatamsg 0x48

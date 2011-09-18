@@ -15,6 +15,7 @@ void FeOS_ModuleListInit()
 	LINK_FAKEMODULE(FEOSSTDIO);
 	LINK_FAKEMODULE(FEOSPOSIXEMU);
 	LINK_FAKEMODULE(FEOSDSAPI);
+	LINK_FAKEMODULE(FEOSARM7);
 }
 
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
