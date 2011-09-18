@@ -352,6 +352,8 @@ _fullerr:
 	if(read(fd, (u8*)pMem + readsize, head.simports) != head.simports)
 		goto _fullerr;
 
+	close(fd);
+
 	// Set the entrypoint
 	*(volatile word_t*)pMem = head.entrypoint;
 
