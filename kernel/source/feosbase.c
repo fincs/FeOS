@@ -9,6 +9,9 @@
 
 void FeOS_swi_DebugPrint(const char*);
 
+instance_t FeOS_swi_LoadModule_ARM7(const char*, int*);
+void FeOS_swi_FreeModule_ARM7(instance_t, int);
+
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 {
 	if (!AddressCheckMainRAM((void*) hinst))
@@ -28,6 +31,8 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
 	ADD_FUNC_ALIAS(FreeModule, FeOS_FreeModule),
+	ADD_FUNC_ALIAS(FeOS_swi_LoadModule_ARM7, FeOS_LoadARM7),
+	ADD_FUNC_ALIAS(FeOS_swi_FreeModule_ARM7, FeOS_FreeARM7),
 	ADD_FUNC(FeOS_Execute),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),

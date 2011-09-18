@@ -1,4 +1,5 @@
 #include "fxe.h"
+#include "feosfifo.h"
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -306,6 +307,89 @@ _impcopy_err:
 	}
 
 	return pMem;
+}
+
+static FeOSLoadStruct __ldSt;
+
+#define GET_LOADST() ((FeOSLoadStruct*)memUncached(&__ldSt))
+
+instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
+{
+	FeOSLoadStruct* ldSt = GET_LOADST();
+	FeOSFifoMsg msg;
+	msg.type = FEOS_ARM7_LOAD_MODULE;
+	msg.loadStruct = ldSt;
+
+	int fd = open(aFilename, O_RDONLY);
+	if(fd == -1)
+		return NULL;
+
+	fxe2_header_t head;
+	if(read(fd, &head, sizeof(fxe2_header_t)) != sizeof(fxe2_header_t)
+		|| head.magic != 0x31305A46 /* FX01 */)
+	{
+_shorterr:
+		close(fd);
+		return NULL;
+	}
+
+	size_t readsize;
+	void* pMem = malloc((readsize = head.loadsize + head.nrelocs*sizeof(fxe2_reloc_t)) + head.simports);
+	if(pMem == NULL) goto _shorterr;
+
+	void* pMemUncached = memUncached(pMem);
+
+	// Read loadable section + relocations
+	if(read(fd, pMemUncached, readsize) != readsize)
+	{
+_fullerr:
+		free(pMem);
+		goto _shorterr;
+	}
+
+	// Skip over exports
+	lseek(fd, head.sexports, SEEK_CUR);
+
+	// Read imports
+	if(read(fd, (u8*)pMemUncached + readsize, head.simports) != head.simports)
+		goto _fullerr;
+
+	// Set the entrypoint
+	*(volatile word_t*)pMemUncached = head.entrypoint;
+
+	// Fill in loadStruct structure
+	ldSt->data = pMem;
+	ldSt->size = head.loadsize;
+	ldSt->bsssize = head.bsssize;
+	ldSt->imps.count = head.nimports;
+	ldSt->imps.table = (fxe2_import_t*)((u8*)pMem + readsize);
+	ldSt->nrelocs = head.nrelocs;
+	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
+
+	// Tell the ARM7 to load the module
+	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+
+	// Wait for it to load
+	while(!fifoCheckDatamsg(FIFO_FEOS));
+
+	// Free the temporary memory
+	free(pMem);
+
+	// Return
+	fifoGetDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+	*pFifoCh = msg.fifoCh;
+	return msg.hModule;
+}
+
+void FreeModule_ARM7(instance_t hModule, int fifoCh)
+{
+	FeOSFifoMsg msg;
+	msg.type = FEOS_ARM7_UNLOAD_MODULE;
+	msg.hModule = hModule;
+	msg.fifoCh = fifoCh;
+	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+	while(!fifoCheckValue32(FIFO_FEOS));
+	fifoGetValue32(FIFO_FEOS);
 }
 
 void FreeModule(instance_t hInst)

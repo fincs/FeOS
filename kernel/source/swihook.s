@@ -49,10 +49,10 @@ __SWIHandler:
 __SVCTable:
 	@ Public functions
 	.word 0
-	.word 0 @ FeOS_PAIFind
-	.word 0 @ FeOS_PAIRegister
-	.word malloc
-	.word free
+	.word LoadModule_ARM7
+	.word FreeModule_ARM7
+	.word 0 @ malloc
+	.word 0 @ free
 	.word FeOS_DataCacheFlush
 	.word FeOS_DataCacheFlushAll
 	.word FeOS_InstrCacheInvalidate
@@ -195,6 +195,8 @@ FeOS_swi_\name\():
 	bx lr
 .endm
 
+swiimp LoadModule_ARM7 0x01
+swiimp FreeModule_ARM7 0x02
 swiimp DebugPrint 0x10
 swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
