@@ -8,12 +8,14 @@ APPS     := $(patsubst %/,%,$(dir $(wildcard apps/*/Makefile)))
 
 all:
 	@$(MAKE) --no-print-directory -C sdk || exit 1
+	@$(MAKE) --no-print-directory -C arm7 || exit 1
 	@$(MAKE) --no-print-directory -C kernel || exit 1
 	@$(MAKE) --no-print-directory -C cmdprompt || exit 1
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
 
 clean:
 	@$(MAKE) --no-print-directory -C sdk clean
+	@$(MAKE) --no-print-directory -C arm7 clean
 	@$(MAKE) --no-print-directory -C kernel clean
 	@$(MAKE) --no-print-directory -C cmdprompt clean
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i clean || { exit 1;} done
