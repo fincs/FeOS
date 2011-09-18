@@ -72,7 +72,7 @@ void FeOS_VBlankFunc()
 	}
 }
 
-static bool FeOS_ResolveImp(word_t* addr, const char* name);
+bool FeOS_ResolveImp(word_t* addr, const char* name);
 
 void FeOS_LoadModule()
 {
@@ -136,12 +136,4 @@ void FeOS_LoadModule()
 
 _return:
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
-}
-
-static void _infloop() { for(;;); }
-
-bool FeOS_ResolveImp(word_t* addr, const char* name)
-{
-	*addr = (word_t) _infloop;
-	return true;
 }
