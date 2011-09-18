@@ -114,7 +114,7 @@ void FeOS_LoadModule()
 			if (imps[i].address == FX2_IMP_SELECT_MODULE)
 				continue;
 
-			word_t* addr = (word_t*)(imps[i].addr + (word_t)hModule);
+			word_t* addr = (word_t*)(imps[i].address + (word_t)hModule);
 			const char* name = (const char*)(imps[i].nameoffset + (word_t) imps);
 
 			if (!FeOS_ResolveImp(addr, name))
