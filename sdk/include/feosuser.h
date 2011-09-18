@@ -35,6 +35,11 @@ int FeOS_Execute(int, const char*[]);
 void FeOS_DebugPrint(const char*);
 void FeOS_WaitForVBlank();
 
+void FeOS_DataCacheFlush(const void*, word_t);
+void FeOS_DataCacheFlushAll();
+void FeOS_InstrCacheInvalidate(const void*, word_t);
+void FeOS_InstrCacheInvalidateAll();
+
 int FeOS_PushExitFunc(FeOSExitFunc func);
 void FeOS_PopExitFunc();
 

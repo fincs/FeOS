@@ -59,7 +59,7 @@ int FeOS_IsValidName(const char* path);
 void FeOS_WaitForVBlank();
 
 void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
-void FeOS_swi_DataCacheFlush();
+void FeOS_swi_DataCacheFlushAll();
 void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
 void FeOS_swi_InstrCacheInvalidateAll();
 #endif

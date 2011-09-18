@@ -10,6 +10,10 @@ FeOS_LoadARM7 \
 FeOS_FreeARM7 \
 FeOS_Execute \
 FeOS_WaitForVBlank \
+FeOS_DataCacheFlush \
+FeOS_DataCacheFlushAll \
+FeOS_InstrCacheInvalidate \
+FeOS_InstrCacheInvalidateAll \
 FeOS_DebugPrint \
 FeOS_PushExitFunc \
 FeOS_PopExitFunc \
