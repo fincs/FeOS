@@ -27,6 +27,9 @@ instance_t FeOS_LoadModule(const char*);
 void* FeOS_FindSymbol(instance_t, const char*);
 void FeOS_FreeModule(instance_t);
 
+instance_t FeOS_LoadARM7(const char*, int*);
+void FeOS_FreeARM7(instance_t, int);
+
 int FeOS_Execute(int, const char*[]);
 
 void FeOS_DebugPrint(const char*);
