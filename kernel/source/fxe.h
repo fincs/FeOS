@@ -122,6 +122,8 @@ typedef struct
 	fxe2_import_t* table;
 } fxe_inmem_imports;
 
+#ifdef ARM9
+
 typedef struct tag_fxe_runtime_header
 {
 	instance_t hThis;
@@ -163,3 +165,5 @@ void FeOS_PopExitFunc();
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
 void* FeOS_ModuleFromAddress(void*);
+
+#endif

@@ -1,10 +1,13 @@
 #pragma once
 #include <nds.h>
 
+#ifdef ARM9
 #define ITCM_DATA __attribute__((section(".itcm")))
+#endif
 
 #define FeOS_AllocStack(a) __builtin_alloca(a)
 
+#ifdef ARM9
 #define BEGIN_TABLE(_NAME_) static const fxe2_export_t _exp_##_NAME_##_tbl[] = {
 #define ADD_FUNC(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
 #define ADD_FUNC_ALIAS(FUNC, NAME) {{(word_t)#NAME}, {(word_t)FUNC}}
@@ -30,6 +33,7 @@
 	}; \
 	\
 	void* _inst_##_NAME_ = &_header_##_NAME_;
+#endif
 
 typedef unsigned int word_t;
 typedef unsigned short hword_t;
@@ -37,6 +41,7 @@ typedef unsigned char byte_t;
 typedef word_t bool_t;
 typedef void* instance_t;
 
+#ifdef ARM9
 void DoTheUserMode();
 void PrepareUserMode();
 
@@ -57,3 +62,4 @@ void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlush();
 void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
 void FeOS_swi_InstrCacheInvalidateAll();
+#endif
