@@ -51,8 +51,8 @@ __SVCTable:
 	.word __FeOS_IRQPoll
 	.word LoadModule_ARM7
 	.word FreeModule_ARM7
-	.word 0 @ malloc
-	.word 0 @ free
+	.word keyboardUpdate
+	.word 0
 	.word FeOS_DataCacheFlush
 	.word FeOS_DataCacheFlushAll
 	.word FeOS_InstrCacheInvalidate
@@ -64,9 +64,8 @@ __SVCTable:
 	.word swiWaitForVBlank
 	.word FeOS_IsValidName
 	writehook conwrite
-	writehook conread
 	writehook conerr
-	.space 4*10
+	.space 4*11
 
 	@ FAT hooks
 
@@ -233,6 +232,7 @@ FeOS_swi_\name\():
 
 swiimp LoadModule_ARM7 0x01
 swiimp FreeModule_ARM7 0x02
+swiimp keyboardUpdate 0x03
 swiimp DebugPrint 0x10
 swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
