@@ -7,7 +7,7 @@
 	.word _\name\()hook
 .endm
 
-.global __SWIHandler, __ResetHandler, __SVCTable, DoTheUserMode, PrepareUserMode, FeOS_WaitForVBlank
+.global __SWIHandler, __ResetHandler, __SVCTable, DoTheUserMode, PrepareUserMode
 
 __BIOS_SWI:
 .word 0xFFFF0008
@@ -48,7 +48,7 @@ __SWIHandler:
 .align 2
 __SVCTable:
 	@ Public functions
-	.word 0
+	.word __FeOS_IRQPoll
 	.word LoadModule_ARM7
 	.word FreeModule_ARM7
 	.word 0 @ malloc
@@ -115,6 +115,24 @@ __ResetHandler:
 	msr cpsr, r0
 	.word 0xF7F000F0
 
+.align 2
+__FeOS_IRQPoll:
+	@ savedIME = REG_IME, REG_IME = 1
+	mov r2, #1
+	mov r12, #0x4000000
+	ldrb r3, [r12, #0x208]
+	strb r2, [r12, #0x208]
+	
+	@ Wait for IRQ
+	mov r2, #0
+	mcr 15, 0, r2, c7, c0, 4
+	
+	@ REG_IME = savedIME
+	strb r3, [r12, #0x208]
+	
+	@ return
+	bx lr
+
 .text
 .align 2
 PrepareUserMode:
@@ -129,6 +147,18 @@ AccessSettings:
 	@.word 0x31113151
 	@.word 0x32113551
 	@.word 0x32313551
+
+.align 2
+.global FeOS_IRQPoll
+FeOS_IRQPoll:
+	mrs r0, cpsr
+	tst r0, #0xF
+	beq .Lpoll_from_user_mode
+	ldr pc, =__FeOS_IRQPoll
+
+.Lpoll_from_user_mode:
+	swi 0x000000
+	bx lr
 
 .align 2
 DoTheUserMode:
@@ -190,12 +220,6 @@ __setSWIStack:
 	msr cpsr, r1
 
 	@ Return
-	bx lr
-
-.align 2
-.thumb_func
-FeOS_WaitForVBlank:
-	swi 0x11
 	bx lr
 
 .macro swiimp name num

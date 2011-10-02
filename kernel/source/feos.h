@@ -56,7 +56,11 @@ static inline bool AddressCheckMainRAM(const void* addr)
 
 int FeOS_IsValidName(const char* path);
 
-void FeOS_WaitForVBlank();
+void FeOS_WaitForIRQ(word_t);
+static inline void FeOS_WaitForVBlank()
+{
+	FeOS_WaitForIRQ(IRQ_VBLANK);
+}
 
 void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlushAll();
