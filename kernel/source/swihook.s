@@ -7,11 +7,10 @@
 	.word _\name\()hook
 .endm
 
-.global __SWIHandler, __ResetHandler, __SVCTable, DoTheUserMode, PrepareUserMode
-
 __BIOS_SWI:
 .word 0xFFFF0008
 
+.global __SWIHandler
 __SWIHandler:
 	@ Redirect to the BIOS if the caller is not user mode
 	mrs r12, spsr
@@ -46,6 +45,7 @@ __SWIHandler:
 	movs pc, lr
 
 .align 2
+.global __SVCTable
 __SVCTable:
 	@ Public functions
 	.word __FeOS_IRQPoll
@@ -106,6 +106,7 @@ __SVCTable:
 	.space 4*176
 
 .align 2
+.global __ResetHandler
 __ResetHandler:
 	@ Huh??
 	@ Let the exception handler run
@@ -134,6 +135,7 @@ __FeOS_IRQPoll:
 
 .text
 .align 2
+.global PrepareUserMode
 PrepareUserMode:
 	@ Set new access settings
 	ldr r0, AccessSettings
@@ -160,6 +162,7 @@ FeOS_IRQPoll:
 	bx lr
 
 .align 2
+.global DoTheUserMode
 DoTheUserMode:
 	@ Switch to user mode
 	mrs r0, cpsr
