@@ -11,6 +11,7 @@
 #include <filesystem.h>
 #endif
 
+#include "hudicons.h"
 
 void __SWIHandler();
 void __ResetHandler();
@@ -32,9 +33,14 @@ void irq_vblank()
 	scanKeys();
 	touchRead((touchPosition*)&touchPos);
 	bgUpdate();
+	oamSub.oamMemory[0].isHidden = !__inFAT;
+	oamSub.oamMemory[1].isHidden = !stdioRead;
+	oamUpdate(&oamSub);
 
 	if (!stdioRead) keyboardUpdate();
 }
+
+u16* hudicon_gfx[2];
 
 void videoInit()
 {
@@ -48,11 +54,27 @@ void videoInit()
 	vramSetBankC(VRAM_C_LCD);
 	dmaFillWords(0, VRAM_C, 128*1024); // keyboardInit() does not clear the full tilemap...
 	vramSetBankC(VRAM_C_SUB_BG);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
 
 	// Initialize the console background
 	con   = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
 	conbg = con->bgId;
 
+	// Prepare sub screen OAM
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+	dmaCopyWords(3, hudiconsTiles, SPRITE_GFX_SUB, hudiconsTilesLen);
+	hudicon_gfx[0] = SPRITE_GFX_SUB;
+	hudicon_gfx[1] = SPRITE_GFX_SUB + (32*32)/2;
+
+	oamSet(&oamSub, 0, 8, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
+		hudicon_gfx[0], -1, false, false, false, false, false);
+	oamSet(&oamSub, 1, 216, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
+		hudicon_gfx[1], -1, false, false, false, false, false);
+	oamSub.oamMemory[0].isHidden = true;
+	oamSub.oamMemory[1].isHidden = true;
+
+	// Copy the HUD icon palette
+	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
 
 	irqSet(IRQ_VBLANK, irq_vblank);
 }
