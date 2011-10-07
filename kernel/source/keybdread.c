@@ -33,6 +33,10 @@ ssize_t FeOS_KeybdRead(struct _reent *r, int unused, char *ptr, size_t len)
 	}
 	*/
 
+	// FeOS: clear key buffer
+	keyBufferOffset = 0;
+	keyBufferLength = 0;
+
 	do
 	{
 		// FeOS: wait for VBlank.
