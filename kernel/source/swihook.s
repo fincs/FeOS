@@ -57,7 +57,9 @@ __SVCTable:
 	.word FeOS_DataCacheFlushAll
 	.word FeOS_InstrCacheInvalidate
 	.word FeOS_InstrCacheInvalidateAll
-	.space 4*7
+	.word irqEnable
+	.word irqDisable
+	.space 4*5
 
 	@ Kernel functions
 	.word FeOS_DebugPrint
@@ -248,6 +250,8 @@ swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
 swiimp InstrCacheInvalidate 0x07
 swiimp InstrCacheInvalidateAll 0x08
+swiimp IrqEnable 0x09
+swiimp IrqDisable 0x0A
 
 swiimp FifoSendAddress 0x40
 swiimp FifoSendValue32 0x41

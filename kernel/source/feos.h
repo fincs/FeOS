@@ -78,4 +78,6 @@ void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlushAll();
 void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
 void FeOS_swi_InstrCacheInvalidateAll();
+void FeOS_swi_IrqEnable(word_t mask);
+void FeOS_swi_IrqDisable(word_t mask);
 #endif
