@@ -1,5 +1,6 @@
 #pragma once
 #include "feos.h"
+#include "fxe.h"
 
 #define FIFO_BASE_CH FIFO_USER_01
 #define FIFO_FEOS (FIFO_USER_01)

@@ -45,6 +45,8 @@ typedef void* instance_t;
 void DoTheUserMode();
 void PrepareUserMode();
 
+word_t __ARMSWP(word_t value, volatile word_t* addr);
+
 static inline bool AddressCheckMainRAM(const void* addr)
 {
 	return (word_t)addr >= 0x02000000 && (word_t)addr <= 0x03000000;
@@ -61,6 +63,14 @@ static inline void FeOS_WaitForVBlank()
 {
 	FeOS_WaitForIRQ(IRQ_VBLANK);
 }
+
+void FeOS_RunFifoQueue();
+void FeOS_FifoSetDatamsgHandler(int channel, VoidFn handler, void* userdata);
+void FeOS_FifoSetValue32Handler(int channel, VoidFn handler, void* userdata);
+void FeOS_FifoSetAddressHandler(int channel, VoidFn handler, void* userdata);
+VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn);
+word_t FeOS_CheckPendingIRQs();
+void FeOS_WaitForIRQ(word_t mask);
 
 void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlushAll();

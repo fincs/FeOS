@@ -170,6 +170,13 @@ DoTheUserMode:
 	msr cpsr, r0
 	bx lr
 
+@ word_t __ARMSWP(word_t value, word_t* addr)
+.align 2
+.global __ARMSWP
+__ARMSWP:
+	swp r0, r0, [r1]
+	bx lr
+
 .align 2
 .global __getIRQStack
 __getIRQStack:
