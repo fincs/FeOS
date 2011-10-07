@@ -47,6 +47,8 @@ void PrepareUserMode();
 
 word_t __ARMSWP(word_t value, volatile word_t* addr);
 
+extern bool_t __inFAT;
+
 static inline bool AddressCheckMainRAM(const void* addr)
 {
 	return (word_t)addr >= 0x02000000 && (word_t)addr <= 0x03000000;

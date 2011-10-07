@@ -3,7 +3,7 @@
 .arm
 .align 2
 
-.macro makehook name, swinum
+.macro makehook name, swinum, isfat=1
 .global _\name\()hook, _\name\()hook_knl, _\name\()hook_addr
 
 _\name\()hook:
@@ -14,15 +14,19 @@ _\name\()hook:
 	bx lr
 
 _\name\()hook_knl:
-	ldr r12, [pc]
+	ldr r12, _\name\()hook_addr
+	.if \isfat
+	b _FAT_jumpAddr
+	.else
 	bx r12
+	.endif
 
 _\name\()hook_addr:
 	.word 0
 .endm
 
-makehook conwrite, 0x13
-makehook conerr, 0x14
+makehook conwrite, 0x13, 0
+makehook conerr, 0x14, 0
 
 @ FAT hooks
 
@@ -45,3 +49,17 @@ makehook fatdirclose, 0x2F
 makehook fatstatvfs, 0x30
 makehook fatftruncate, 0x31
 makehook fatfsync, 0x32
+
+.align 2
+_FAT_jumpAddr:
+	push {lr}
+	mov lr, #1
+	str lr, __inFAT
+	blx r12
+	mov lr, #0
+	str lr, __inFAT
+	pop {pc}
+
+.global __inFAT
+__inFAT:
+	.word 0
