@@ -6,7 +6,12 @@ FUNCS := \
 FeOS_GetKeysDown \
 FeOS_GetKeysHeld \
 FeOS_GetKeysUp \
-FeOS_GetStylusPos
+FeOS_GetStylusPos \
+FeOS_SetInterrupt \
+FeOS_CheckPendingIRQs \
+FeOS_WaitForIRQ \
+FeOS_IrqDisable \
+FeOS_IrqEnable
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
