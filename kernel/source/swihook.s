@@ -48,11 +48,11 @@ __SWIHandler:
 .global __SVCTable
 __SVCTable:
 	@ Public functions
-	.word __FeOS_IRQPoll
+	.word 0
 	.word LoadModule_ARM7
 	.word FreeModule_ARM7
 	.word keyboardUpdate
-	.word 0
+	.word __FeOS_IRQPoll
 	.word FeOS_DataCacheFlush
 	.word FeOS_DataCacheFlushAll
 	.word FeOS_InstrCacheInvalidate
@@ -160,7 +160,7 @@ FeOS_IRQPoll:
 	ldr pc, =__FeOS_IRQPoll
 
 .Lpoll_from_user_mode:
-	swi 0x000000
+	swi 0x040000
 	bx lr
 
 .align 2
