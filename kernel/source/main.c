@@ -25,6 +25,8 @@ extern bool stdioRead;
 
 volatile touchPosition touchPos;
 
+bool conMode = true;
+
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
@@ -32,15 +34,22 @@ void irq_vblank()
 
 	scanKeys();
 	touchRead((touchPosition*)&touchPos);
+
 	bgUpdate();
-	oamSub.oamMemory[0].isHidden = !__inFAT;
-	oamSub.oamMemory[1].isHidden = !stdioRead;
+	if (conMode)
+	{
+		oamSub.oamMemory[0].isHidden = !__inFAT;
+		oamSub.oamMemory[1].isHidden = !stdioRead;
+	}
+	oamUpdate(&oamMain);
 	oamUpdate(&oamSub);
 
-	if (!stdioRead) keyboardUpdate();
+	if (conMode && !stdioRead) keyboardUpdate();
 }
 
 u16* hudicon_gfx[2];
+
+void kbd_key();
 
 void videoInit()
 {
@@ -77,9 +86,53 @@ void videoInit()
 	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
 
 	irqSet(IRQ_VBLANK, irq_vblank);
+
+	// Initialize the keyboard
+	Keyboard* kbd = keyboardDemoInit();
+	kbd->OnKeyPressed = kbd_key;
+	kbd->scrollSpeed = 0;
+	keyboardShow();
 }
 
 void InstallThunks();
+void InstallConThunks();
+void InstallConDummy();
+
+void videoReset()
+{
+	dmaFillWords(0, (void*)0x04000000, 0x56);
+	dmaFillWords(0, (void*)0x04001008, 0x56);
+	videoSetModeSub(0);
+
+	vramDefault();
+
+	VRAM_E_CR = 0;
+	VRAM_F_CR = 0;
+	VRAM_G_CR = 0;
+	VRAM_H_CR = 0;
+	VRAM_I_CR = 0;
+
+	irqEnable(IRQ_VBLANK);
+}
+
+void InitConMode()
+{
+	int cS = enterCriticalSection();
+	videoReset();
+	videoInit();
+	InstallConThunks();
+	conMode = true;
+	leaveCriticalSection(cS);
+}
+
+void InitFreeMode()
+{
+	int cS = enterCriticalSection();
+	videoReset();
+	InstallConDummy();
+	conMode = false;
+	leaveCriticalSection(cS);
+}
 
 void ForcefulExit()
 {
@@ -177,11 +230,6 @@ int main()
 {
 	videoInit();
 	consoleDebugInit(DebugDevice_CONSOLE);
-
-	Keyboard* kbd = keyboardDemoInit();
-	kbd->OnKeyPressed = kbd_key;
-	kbd->scrollSpeed = 0;
-	keyboardShow();
 	
 	defaultExceptionHandler();
 	SystemVectors.reset = (u32) __ResetHandler;
