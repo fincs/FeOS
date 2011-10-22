@@ -311,7 +311,8 @@ _impcopy_err:
 
 static FeOSLoadStruct __ldSt;
 
-#define GET_LOADST() ((FeOSLoadStruct*)memUncached(&__ldSt))
+//#define GET_LOADST() ((FeOSLoadStruct*)memUncached(&__ldSt))
+#define GET_LOADST() (&__ldSt)
 
 instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
 {
@@ -367,6 +368,7 @@ _fullerr:
 	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
 
 	DC_FlushRange(pMem, readsize + head.simports);
+	DC_FlushRange(ldSt, sizeof(FeOSLoadStruct));
 
 	// Tell the ARM7 to load the module
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
