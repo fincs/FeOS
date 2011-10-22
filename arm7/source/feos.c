@@ -28,8 +28,9 @@ void installFeOSFIFO()
 	fifoSetDatamsgHandler(FIFO_FEOS, FeOSFifoHandler, NULL);
 }
 
-static volatile FeOSLoadStruct* ldSt = NULL;
-static volatile instance_t freeMod = NULL;
+static FeOSLoadStruct* ldSt = NULL;
+static instance_t freeMod = NULL;
+static int freeChn;
 
 void FeOSFifoHandler(int size, void* userdata)
 {
@@ -48,7 +49,7 @@ void FeOSFifoHandler(int size, void* userdata)
 		case FEOS_ARM7_UNLOAD_MODULE:
 		{
 			freeMod = msg.hModule;
-			freeFifoChannel(msg.fifoCh);
+			freeChn = msg.fifoCh;
 			break;
 		}
 	}
@@ -67,6 +68,7 @@ void FeOS_VBlankFunc()
 	{
 		(*(FeOSMain*)freeMod)(FEOS_EP_FINI, 0, 0, 0);
 		free(freeMod);
+		freeFifoChannel(freeChn);
 		freeMod = NULL;
 		fifoSendValue32(FIFO_FEOS, 0);
 	}
