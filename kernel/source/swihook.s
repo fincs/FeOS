@@ -151,6 +151,23 @@ AccessSettings:
 	@.word 0x32113551
 	@.word 0x32313551
 
+AccessSettings2:
+	.word 0x33311153
+
+.align 2
+.global UnblockIORegion
+UnblockIORegion:
+	ldr r0, AccessSettings2
+	mcr p15, 0, r0, c5, c0, 2 @ data
+	bx  lr
+
+.align 2
+.global BlockIORegion
+BlockIORegion:
+	ldr r0, AccessSettings
+	mcr p15, 0, r0, c5, c0, 2 @ data
+	bx  lr
+
 .align 2
 .global FeOS_IRQPoll
 FeOS_IRQPoll:

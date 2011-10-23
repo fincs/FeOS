@@ -98,6 +98,9 @@ void InstallThunks();
 void InstallConThunks();
 void InstallConDummy();
 
+void UnblockIORegion();
+void BlockIORegion();
+
 void videoReset()
 {
 	dmaFillWords(0, (void*)0x04000000, 0x56);
@@ -121,6 +124,7 @@ void InitConMode()
 	videoReset();
 	videoInit();
 	InstallConThunks();
+	BlockIORegion();
 	conMode = true;
 	leaveCriticalSection(cS);
 }
@@ -130,6 +134,7 @@ void InitFreeMode()
 	int cS = enterCriticalSection();
 	videoReset();
 	InstallConDummy();
+	UnblockIORegion();
 	conMode = false;
 	leaveCriticalSection(cS);
 }
