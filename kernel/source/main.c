@@ -27,6 +27,9 @@ volatile touchPosition touchPos;
 
 bool conMode = true;
 
+extern int keyBufferOffset;
+extern int keyBufferLength;
+
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
@@ -44,7 +47,12 @@ void irq_vblank()
 	oamUpdate(&oamMain);
 	oamUpdate(&oamSub);
 
-	if (conMode && !stdioRead) keyboardUpdate();
+	if (conMode && !stdioRead)
+	{
+		int oldOff = keyBufferOffset, oldLen = keyBufferLength;
+		keyboardUpdate();
+		keyBufferOffset = oldOff, keyBufferLength = oldLen;
+	}
 }
 
 u16* hudicon_gfx[2];
