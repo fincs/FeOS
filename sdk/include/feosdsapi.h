@@ -36,6 +36,12 @@ enum
 	IRQ_TIMER3 = BIT(6), // Timer 3
 };
 
+enum
+{
+	MODE_DIRECT = 0,
+	MODE_CONSOLE = 1
+};
+
 keys_t FeOS_GetKeysDown();
 keys_t FeOS_GetKeysHeld();
 keys_t FeOS_GetKeysUp();
@@ -46,3 +52,7 @@ word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t);
 void FeOS_IrqEnable(word_t);
 void FeOS_IrqDisable(word_t);
+
+void FeOS_ConsoleMode();
+void FeOS_DirectMode();
+int FeOS_GetMode();

@@ -11,7 +11,10 @@ FeOS_SetInterrupt \
 FeOS_CheckPendingIRQs \
 FeOS_WaitForIRQ \
 FeOS_IrqDisable \
-FeOS_IrqEnable
+FeOS_IrqEnable \
+FeOS_ConsoleMode \
+FeOS_DirectMode \
+FeOS_GetMode
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

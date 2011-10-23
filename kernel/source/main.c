@@ -139,6 +139,11 @@ void InitFreeMode()
 	leaveCriticalSection(cS);
 }
 
+int GetCurMode()
+{
+	return (int)conMode;
+}
+
 void ForcefulExit()
 {
 	FeOS_CallExitFunc(E_APPKILLED);
