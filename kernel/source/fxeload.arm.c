@@ -1,4 +1,5 @@
 #include "fxe.h"
+#include "feosfifo.h"
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -166,6 +167,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	rh->name = namebuf;
 	rh->refcount = 1;
 	rh->file = fd;
+	rh->size = head.loadsize + head.bsssize;
 	rh->entrypoint = (FeOSMain) (pMem + head.entrypoint);
 	rh->exp.count = head.nexports;
 	rh->imp.count = head.nimports;
@@ -266,7 +268,21 @@ _impcopy_err:
 			impcpy.from += (word_t) pMem;
 			impcpy.to += (word_t) pMem;
 
-			*impcpy.pTo = *impcpy.pFrom;
+			word_t impcpy_data = *impcpy.pTo;
+			word_t impcpy_off = (word_t)((int)impcpy_data >> 4);
+
+			switch (impcpy_data & 0xF)
+			{
+				case 0: // simple copy
+					*impcpy.pTo = *impcpy.pFrom + impcpy_off;
+					break;
+
+				case 1: // relative offset
+					*impcpy.pTo = *impcpy.pFrom - impcpy.to + impcpy_off;
+					break;
+
+				default: goto _impcopy_err;
+			}
 		}
 	}
 
@@ -283,7 +299,101 @@ _impcopy_err:
 	// Run the constructors
 	rh->entrypoint(FEOS_EP_INIT, 0, 0, 0);
 
+	// Get the exception index table
+	if (rh->entrypoint(FEOS_EP_GETEXIDXTBL, (word_t) &rh->exidx, 0, 0) != FEOS_RC_OK)
+	{
+		rh->exidx.table = NULL;
+		rh->exidx.nentries = 0;
+	}
+
 	return pMem;
+}
+
+static FeOSLoadStruct __ldSt;
+
+//#define GET_LOADST() ((FeOSLoadStruct*)memUncached(&__ldSt))
+#define GET_LOADST() (&__ldSt)
+
+instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
+{
+	FeOSLoadStruct* ldSt = GET_LOADST();
+	FeOSFifoMsg msg;
+	msg.type = FEOS_ARM7_LOAD_MODULE;
+	msg.loadStruct = ldSt;
+
+	int fd = open(aFilename, O_RDONLY);
+	if(fd == -1)
+		return NULL;
+
+	fxe2_header_t head;
+	if(read(fd, &head, sizeof(fxe2_header_t)) != sizeof(fxe2_header_t)
+		|| head.magic != 0x31305A46 /* FX01 */)
+	{
+_shorterr:
+		close(fd);
+		return NULL;
+	}
+
+	size_t readsize;
+	void* pMem = malloc((readsize = head.loadsize + head.nrelocs*sizeof(fxe2_reloc_t)) + head.simports);
+	if(pMem == NULL) goto _shorterr;
+
+	// Read loadable section + relocations
+	if(read(fd, pMem, readsize) != readsize)
+	{
+_fullerr:
+		free(pMem);
+		goto _shorterr;
+	}
+
+	// Skip over exports
+	lseek(fd, head.sexports, SEEK_CUR);
+
+	// Read imports
+	if(read(fd, (u8*)pMem + readsize, head.simports) != head.simports)
+		goto _fullerr;
+
+	close(fd);
+
+	// Set the entrypoint
+	*(volatile word_t*)pMem = head.entrypoint;
+
+	// Fill in loadStruct structure
+	ldSt->data = pMem;
+	ldSt->size = head.loadsize;
+	ldSt->bsssize = head.bsssize;
+	ldSt->imps.count = head.nimports;
+	ldSt->imps.table = (fxe2_import_t*)((u8*)pMem + readsize);
+	ldSt->nrelocs = head.nrelocs;
+	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
+
+	DC_FlushRange(pMem, readsize + head.simports);
+	DC_FlushRange(ldSt, sizeof(FeOSLoadStruct));
+
+	// Tell the ARM7 to load the module
+	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+
+	// Wait for it to load
+	while(!fifoCheckDatamsg(FIFO_FEOS));
+
+	// Free the temporary memory
+	free(pMem);
+
+	// Return
+	fifoGetDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+	*pFifoCh = msg.fifoCh;
+	return msg.hModule;
+}
+
+void FreeModule_ARM7(instance_t hModule, int fifoCh)
+{
+	FeOSFifoMsg msg;
+	msg.type = FEOS_ARM7_UNLOAD_MODULE;
+	msg.hModule = hModule;
+	msg.fifoCh = fifoCh;
+	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
+	while(!fifoCheckValue32(FIFO_FEOS));
+	fifoGetValue32(FIFO_FEOS);
 }
 
 void FreeModule(instance_t hInst)

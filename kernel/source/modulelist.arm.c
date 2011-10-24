@@ -1,9 +1,10 @@
 #include "fxe.h"
 
+#define LINK_FAKEMODULE(NAME) \
+	extern fxe_runtime_header _header_##NAME; \
+	FeOS_ModuleListAdd(&_header_##NAME)
+
 extern fxe_runtime_header _header_FEOSBASE;
-extern fxe_runtime_header _header_FEOSSTDIO;
-extern fxe_runtime_header _header_FEOSPOSIXEMU;
-extern fxe_runtime_header _header_FEOSDSAPI;
 
 static fxe_runtime_header* mListHead = &_header_FEOSBASE;
 static fxe_runtime_header* mListTail = &_header_FEOSBASE;
@@ -11,9 +12,10 @@ static int nmodules = 1;
 
 void FeOS_ModuleListInit()
 {
-	FeOS_ModuleListAdd(&_header_FEOSSTDIO);
-	FeOS_ModuleListAdd(&_header_FEOSPOSIXEMU);
-	FeOS_ModuleListAdd(&_header_FEOSDSAPI);
+	LINK_FAKEMODULE(FEOSSTDIO);
+	LINK_FAKEMODULE(FEOSPOSIXEMU);
+	LINK_FAKEMODULE(FEOSDSAPI);
+	LINK_FAKEMODULE(FEOSARM7);
 }
 
 void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
@@ -44,5 +46,24 @@ fxe_runtime_header* FeOS_ModuleListFind(const char* name)
 	fxe_runtime_header* item;
 	for (item = mListHead; item != NULL; item = item->next)
 		if (stricmp(name, item->name) == 0) return item;
+	return NULL;
+}
+
+void* FeOS_ModuleFromAddress(void* addr)
+{
+	word_t addrw = (word_t) addr;
+
+	fxe_runtime_header* item;
+	for (item = mListHead; item != NULL; item = item->next)
+	{
+		if (item->file == -1) continue; // Ignore fake modules
+
+		word_t m_bottom = (word_t) item->hThis;
+		word_t m_top = m_bottom + item->size;
+
+		if (addrw >= m_bottom && addrw <= m_top)
+			return item->hThis;
+	}
+
 	return NULL;
 }

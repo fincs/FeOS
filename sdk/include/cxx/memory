@@ -1,0 +1,93 @@
+////
+// FeOS C++ Standard Library
+// memory
+//     Memory utilities
+//
+
+#pragma once
+
+namespace std
+{
+	template <class T>
+	struct auto_ptr_ref
+	{
+		T* ptr;
+		inline explicit auto_ptr_ref(T* _ptr): ptr(_ptr) {}
+	};
+
+	template <class T>
+	class auto_ptr
+	{
+		T* ptr;
+	public:
+		typedef T element_type;
+
+		// Constructors
+		inline explicit auto_ptr(T* p = 0) throw() : ptr(p) {}
+		inline auto_ptr(auto_ptr& a) throw() : ptr(a.release()) {}
+		template <class T2> inline auto_ptr(auto_ptr<T2>& a) throw() : ptr(a.release()) {}
+		inline auto_ptr(auto_ptr_ref<T>& r) throw() : ptr(r.ptr) {}
+
+		// Destructor
+		inline ~auto_ptr() throw() { if (ptr) delete ptr; }
+
+		// operator =
+
+		inline auto_ptr& operator =(auto_ptr& a) throw()
+		{
+			reset(a.release());
+			return *this;
+		}
+
+		template <class T2>
+		inline auto_ptr& operator =(auto_ptr<T2>& a) throw()
+		{
+			reset(a.release());
+			return *this;
+		}
+
+		inline auto_ptr& operator =(auto_ptr_ref<T> r) throw()
+		{
+			if (r.ptr != this->get())
+			{
+				delete ptr;
+				ptr = r.ptr;
+			}
+			return *this;
+		}
+
+		// Casts
+
+		template <class T2> inline operator auto_ptr_ref<T2>() throw()
+		{
+			return auto_ptr_ref<T2>(this->release());
+		}
+
+		template <class T2> inline operator auto_ptr<T2>() throw()
+		{
+			return auto_ptr<T2>(this->release());
+		}
+
+		// Functions
+
+		inline T& operator *() const throw() { return *ptr; }
+		inline T* operator ->() const throw() { return  ptr; }
+		inline T* get() const throw() { return ptr; }
+
+		inline T* release() throw()
+		{
+			T* tmp = ptr;
+			ptr = 0;
+			return tmp;
+		}
+
+		inline void reset(T* p = 0) throw()
+		{
+			if (p != ptr)
+			{
+				delete ptr;
+				ptr = p;
+			}
+		}
+	};
+}

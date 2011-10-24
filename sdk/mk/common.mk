@@ -19,7 +19,16 @@ export OBJCOPY := $(PREFIX)objcopy
 # options for code generation
 #---------------------------------------------------------------------------------
 DEFINES   := -DFEOS $(CONF_DEFINES)
-ARCH      := -mcpu=arm946e-s -mtune=arm946e-s
+
+ifeq ($(CONF_ARM7),)
+ARCH       := -mcpu=arm946e-s -mtune=arm946e-s
+DEFINES    += -DARM9
+INCLUDECXX := -I$(FEOSSDK)/include/cxx
+else
+ARCH      := -mcpu=arm7tdmi -mtune=arm7tdmi
+DEFINES   += -DARM7
+endif
+
 ARMARCH   := -marm
 THUMBARCH := -mthumb
 ifeq ($(strip $(DEFARCH)),)
@@ -28,15 +37,25 @@ endif
 
 CFLAGS   := -g0 -Wall -O2 -save-temps -fvisibility=hidden\
             $(ARCH) -fomit-frame-pointer -ffast-math\
-            -mthumb-interwork $(INCLUDE) $(DEFINES) -nostdinc $(CONF_CFLAGS)
+            -mthumb-interwork -mword-relocations $(INCLUDE) $(DEFINES) -nostdinc $(CONF_CFLAGS)
 
-CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
+CXXFLAGS := $(CFLAGS) $(INCLUDECXX) -fno-rtti -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
+
+ifneq ($(CONF_ARM7),)
+CXXFLAGS += -fno-exceptions
+endif
 
 ASFLAGS  := -g0 $(ARCH) $(DEFINES)
-LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld -g $(ARCH) -Wl,-d,-q,-Map,$(TARGET).map
+LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld -g $(ARCH) -Wl,-d,-q,--pic-veneer,-Map,$(TARGET).map
 
-ifneq ($(CONF_NOSTDLIB),1)
-LIBS     := -lfeos
+ifeq ($(CONF_ARM7),)
+DEFLIB := -lfeos
+else
+DEFLIB := -lfeos7
+endif
+
+ifeq ($(CONF_NOSTDLIB),)
+LIBS     := $(CXXLIB) $(DEFLIB)
 endif
 LIBS     := $(CONF_LIBS) $(LIBS)
 
@@ -46,6 +65,9 @@ LIBS     := $(CONF_LIBS) $(LIBS)
 #---------------------------------------------------------------------------------
 ifneq ($(CONF_NOSTDLIB),1)
 LIBDIRS := $(FEOSSDK)
+ifneq ($(CONF_ARM7),)
+LIBDIRS += $(DEVKITPRO)/libnds
+endif
 endif
 LIBDIRS += $(CONF_LIBDIRS)
 
@@ -82,6 +104,14 @@ ifeq ($(strip $(CPPFILES)),)
 	export LD := $(CC)
 else
 	export LD := $(CXX)
+ifeq ($(CONF_ARM7),)
+ifneq ($(CONF_NOCXXLIB),1)
+	export CXXLIB := -lfeoscxx
+ifneq ($(CONF_NOSTL),1)
+	CXXLIB += -lfeosstl
+endif
+endif
+endif
 endif
 
 export OFILES   := $(addsuffix .o,$(BINFILES)) \

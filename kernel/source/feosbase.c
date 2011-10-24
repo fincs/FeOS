@@ -9,6 +9,9 @@
 
 void FeOS_swi_DebugPrint(const char*);
 
+instance_t FeOS_swi_LoadModule_ARM7(const char*, int*);
+void FeOS_swi_FreeModule_ARM7(instance_t, int);
+
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 {
 	if (!AddressCheckMainRAM((void*) hinst))
@@ -28,13 +31,21 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
 	ADD_FUNC_ALIAS(FreeModule, FeOS_FreeModule),
+	ADD_FUNC_ALIAS(FeOS_swi_LoadModule_ARM7, FeOS_LoadARM7),
+	ADD_FUNC_ALIAS(FeOS_swi_FreeModule_ARM7, FeOS_FreeARM7),
 	ADD_FUNC(FeOS_Execute),
 	ADD_FUNC(FeOS_WaitForVBlank),
 	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
+	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlush, FeOS_DataCacheFlush),
+	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlushAll, FeOS_DataCacheFlushAll),
+	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidate, FeOS_InstrCacheInvalidate),
+	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidateAll, FeOS_InstrCacheInvalidateAll),
 	ADD_FUNC(FeOS_PushExitFunc),
 	ADD_FUNC(FeOS_PopExitFunc),
 	ADD_FUNC_ALIAS(FeOS_CallExitFunc, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
+	ADD_FUNC(FeOS_GetModuleExidxTbl),
+	ADD_FUNC(FeOS_ModuleFromAddress),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),
@@ -110,22 +121,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(strftime)
 END_TABLE(FEOSBASE)
 
-extern void* _inst_FEOSBASE;
-
-fxe_runtime_header _header_FEOSBASE =
-{
-	&_inst_FEOSBASE, // hThis
-	"FEOSBASE", // name
-	1, // refcount
-	-1, // file
-	NULL, // entrypoint
-	MAKE_EXPORTSTRUCT(FEOSBASE), // exp
-	{ 0, NULL }, // imp
-	NULL, // next
-	NULL // prev
-};
-
-void* _inst_FEOSBASE = &_header_FEOSBASE;
+MAKE_FAKEMODULE(FEOSBASE)
 
 static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 {
@@ -148,6 +144,16 @@ int FeOS_Execute(int argc, const char* argv[])
 
 	FreeModule(hInst);
 	return rc;
+}
+
+void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
+{
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+
+	if (!rh->exidx.nentries) return NULL;
+	if (count) *count = rh->exidx.nentries;
+
+	return rh->exidx.table;
 }
 
 void FeOS_DataCacheFlush(const void* mem, size_t size)

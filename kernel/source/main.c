@@ -11,37 +11,24 @@
 #include <filesystem.h>
 #endif
 
-#include "uigfx_bin.h"
-#include "uipal_bin.h"
+#include "hudicons.h"
 
 void __SWIHandler();
 void __ResetHandler();
 
 PrintConsole* con; // Am I the only one that finds this offensive?
-int conbg, tilebg, bmpbg;
-
-// BEWARE: Crappy test functions ahead!
-
-#define MAPIDX(a, x, y) a[((y) * 32) + (x)]
-
-static inline void drawbox(u16* map, int x, int y)
-{
-	MAPIDX(map, x+0, y+0) = 8;
-	MAPIDX(map, x+1, y+0) = 9;
-	MAPIDX(map, x+2, y+0) = 10;
-	MAPIDX(map, x+0, y+1) = 11;
-	MAPIDX(map, x+1, y+1) = 2;
-	MAPIDX(map, x+2, y+1) = 11 | BIT(10);
-	MAPIDX(map, x+0, y+2) = 8 | BIT(11);
-	MAPIDX(map, x+1, y+2) = 9 | BIT(11);
-	MAPIDX(map, x+2, y+2) = 10 | BIT(11);
-}
+int conbg;
 
 void chk_exit();
 
 extern bool stdioRead;
 
 volatile touchPosition touchPos;
+
+bool conMode = true;
+
+extern int keyBufferOffset;
+extern int keyBufferLength;
 
 void irq_vblank()
 {
@@ -50,20 +37,32 @@ void irq_vblank()
 
 	scanKeys();
 	touchRead((touchPosition*)&touchPos);
+
 	bgUpdate();
+	if (conMode)
+	{
+		oamSub.oamMemory[0].isHidden = !__inFAT;
+		oamSub.oamMemory[1].isHidden = !stdioRead;
+	}
+	oamUpdate(&oamMain);
+	oamUpdate(&oamSub);
 
-#ifdef VIDEOTEST
-	bgScroll(tilebg, -1, 0);
-	bgScroll(bmpbg, -1, -1);
-#endif
-
-	if (!stdioRead) keyboardUpdate();
+	if (conMode && !stdioRead)
+	{
+		int oldOff = keyBufferOffset, oldLen = keyBufferLength;
+		keyboardUpdate();
+		keyBufferOffset = oldOff, keyBufferLength = oldLen;
+	}
 }
+
+u16* hudicon_gfx[2];
+
+void kbd_key();
 
 void videoInit()
 {
 	// Set up the main engine
-	videoSetMode(MODE_3_2D | DISPLAY_BG_EXT_PALETTE);
+	videoSetMode(MODE_3_2D);
 	// Set up the sub engine
 	videoSetModeSub(MODE_0_2D);
 
@@ -72,42 +71,86 @@ void videoInit()
 	vramSetBankC(VRAM_C_LCD);
 	dmaFillWords(0, VRAM_C, 128*1024); // keyboardInit() does not clear the full tilemap...
 	vramSetBankC(VRAM_C_SUB_BG);
+	vramSetBankD(VRAM_D_SUB_SPRITE);
 
-	// Initialize three backgrounds: console, text and bitmap
-	con    = consoleInit(NULL, 2, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
-	conbg  = con->bgId;
-	tilebg = bgInit(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);
-	bmpbg  = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
+	// Initialize the console background
+	con   = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
+	conbg = con->bgId;
 
-	// Set the priority: console->text->bitmap->{3D}
-	bgSetPriority(conbg,  3);
-	bgSetPriority(tilebg, 2);
-	bgSetPriority(bmpbg,  1);
-	bgWrapOn(bmpbg);
+	// Prepare sub screen OAM
+	oamInit(&oamSub, SpriteMapping_1D_128, false);
+	dmaCopyWords(3, hudiconsTiles, SPRITE_GFX_SUB, hudiconsTilesLen);
+	hudicon_gfx[0] = SPRITE_GFX_SUB;
+	hudicon_gfx[1] = SPRITE_GFX_SUB + (32*32)/2;
 
-	// Clear the text and bitmap backgrounds
-	dmaFillHalfWords(0, bgGetMapPtr(tilebg), 2*1024);
-	//dmaFillHalfWords(0, bgGetGfxPtr(tilebg), 16*1024);
-	dmaCopyHalfWords(3, uigfx_bin, bgGetGfxPtr(tilebg), 32*1024);
-	vramSetBankE(VRAM_E_LCD);
-	dmaCopyHalfWords(3, uipal_bin, VRAM_E_EXT_PALETTE[1], 2*256);
-	vramSetBankE(VRAM_E_BG_EXT_PALETTE);
-	dmaFillHalfWords(0, bgGetGfxPtr(bmpbg), 256*256);
-	
-#ifdef VIDEOTEST
-	drawbox(bgGetMapPtr(tilebg), 29, 21);
-	drawbox(bgGetMapPtr(tilebg), 27, 19);
-	drawbox(bgGetMapPtr(tilebg), 25, 17);
+	oamSet(&oamSub, 0, 8, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
+		hudicon_gfx[0], -1, false, false, false, false, false);
+	oamSet(&oamSub, 1, 216, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
+		hudicon_gfx[1], -1, false, false, false, false, false);
+	oamSub.oamMemory[0].isHidden = true;
+	oamSub.oamMemory[1].isHidden = true;
 
-#define MKCOL(a) ((u32)(a) | ((u32)(a) << 8))
-
-	dmaFillHalfWords(MKCOL(10 * 16 - 1), bgGetGfxPtr(bmpbg), 4*256);
-#endif
+	// Copy the HUD icon palette
+	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
 
 	irqSet(IRQ_VBLANK, irq_vblank);
+
+	// Initialize the keyboard
+	Keyboard* kbd = keyboardDemoInit();
+	kbd->OnKeyPressed = kbd_key;
+	kbd->scrollSpeed = 0;
+	keyboardShow();
 }
 
 void InstallThunks();
+void InstallConThunks();
+void InstallConDummy();
+
+void UnblockIORegion();
+void BlockIORegion();
+
+void videoReset()
+{
+	dmaFillWords(0, (void*)0x04000000, 0x56);
+	dmaFillWords(0, (void*)0x04001008, 0x56);
+	videoSetModeSub(0);
+
+	vramDefault();
+
+	VRAM_E_CR = 0;
+	VRAM_F_CR = 0;
+	VRAM_G_CR = 0;
+	VRAM_H_CR = 0;
+	VRAM_I_CR = 0;
+
+	irqEnable(IRQ_VBLANK);
+}
+
+void InitConMode()
+{
+	int cS = enterCriticalSection();
+	videoReset();
+	videoInit();
+	InstallConThunks();
+	BlockIORegion();
+	conMode = true;
+	leaveCriticalSection(cS);
+}
+
+void InitFreeMode()
+{
+	int cS = enterCriticalSection();
+	videoReset();
+	InstallConDummy();
+	UnblockIORegion();
+	conMode = false;
+	leaveCriticalSection(cS);
+}
+
+int GetCurMode()
+{
+	return (int)conMode;
+}
 
 void ForcefulExit()
 {
@@ -205,11 +248,6 @@ int main()
 {
 	videoInit();
 	consoleDebugInit(DebugDevice_CONSOLE);
-
-	Keyboard* kbd = keyboardDemoInit();
-	kbd->OnKeyPressed = kbd_key;
-	kbd->scrollSpeed = 0;
-	keyboardShow();
 	
 	defaultExceptionHandler();
 	SystemVectors.reset = (u32) __ResetHandler;

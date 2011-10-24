@@ -7,11 +7,10 @@
 	.word _\name\()hook
 .endm
 
-.global __SWIHandler, __ResetHandler, __SVCTable, DoTheUserMode, PrepareUserMode, FeOS_WaitForVBlank
-
 __BIOS_SWI:
 .word 0xFFFF0008
 
+.global __SWIHandler
 __SWIHandler:
 	@ Redirect to the BIOS if the caller is not user mode
 	mrs r12, spsr
@@ -46,27 +45,31 @@ __SWIHandler:
 	movs pc, lr
 
 .align 2
+.global __SVCTable
 __SVCTable:
 	@ Public functions
 	.word 0
-	.word 0 @ FeOS_PAIFind
-	.word 0 @ FeOS_PAIRegister
-	.word malloc
-	.word free
+	.word LoadModule_ARM7
+	.word FreeModule_ARM7
+	.word keyboardUpdate
+	.word __FeOS_IRQPoll
 	.word FeOS_DataCacheFlush
 	.word FeOS_DataCacheFlushAll
 	.word FeOS_InstrCacheInvalidate
 	.word FeOS_InstrCacheInvalidateAll
-	.space 4*7
+	.word irqEnable
+	.word irqDisable
+	.word InitConMode
+	.word InitFreeMode
+	.space 4*3
 
 	@ Kernel functions
 	.word FeOS_DebugPrint
 	.word swiWaitForVBlank
 	.word FeOS_IsValidName
 	writehook conwrite
-	writehook conread
 	writehook conerr
-	.space 4*10
+	.space 4*11
 
 	@ FAT hooks
 
@@ -92,9 +95,22 @@ __SVCTable:
 
 	.space 4*13
 
-	.space 4*192
+	@ FIFO functions
+	.word fifoSendAddress
+	.word fifoSendValue32
+	.word fifoSendDatamsg
+	.word fifoCheckAddress
+	.word fifoCheckValue32
+	.word fifoCheckDatamsg
+	.word fifoGetAddress
+	.word fifoGetValue32
+	.word fifoGetDatamsg
+	.space 4*7
+
+	.space 4*176
 
 .align 2
+.global __ResetHandler
 __ResetHandler:
 	@ Huh??
 	@ Let the exception handler run
@@ -103,8 +119,27 @@ __ResetHandler:
 	msr cpsr, r0
 	.word 0xF7F000F0
 
+.align 2
+__FeOS_IRQPoll:
+	@ savedIME = REG_IME, REG_IME = 1
+	mov r2, #1
+	mov r12, #0x4000000
+	ldrb r3, [r12, #0x208]
+	strb r2, [r12, #0x208]
+	
+	@ Wait for IRQ
+	mov r2, #0
+	mcr 15, 0, r2, c7, c0, 4
+	
+	@ REG_IME = savedIME
+	strb r3, [r12, #0x208]
+	
+	@ return
+	bx lr
+
 .text
 .align 2
+.global PrepareUserMode
 PrepareUserMode:
 	@ Set new access settings
 	ldr r0, AccessSettings
@@ -118,12 +153,49 @@ AccessSettings:
 	@.word 0x32113551
 	@.word 0x32313551
 
+AccessSettings2:
+	.word 0x33311153
+
 .align 2
+.global UnblockIORegion
+UnblockIORegion:
+	ldr r0, AccessSettings2
+	mcr p15, 0, r0, c5, c0, 2 @ data
+	bx  lr
+
+.align 2
+.global BlockIORegion
+BlockIORegion:
+	ldr r0, AccessSettings
+	mcr p15, 0, r0, c5, c0, 2 @ data
+	bx  lr
+
+.align 2
+.global FeOS_IRQPoll
+FeOS_IRQPoll:
+	mrs r0, cpsr
+	tst r0, #0xF
+	beq .Lpoll_from_user_mode
+	ldr pc, =__FeOS_IRQPoll
+
+.Lpoll_from_user_mode:
+	swi 0x040000
+	bx lr
+
+.align 2
+.global DoTheUserMode
 DoTheUserMode:
 	@ Switch to user mode
 	mrs r0, cpsr
 	bic r0, r0, #0xF
 	msr cpsr, r0
+	bx lr
+
+@ word_t __ARMSWP(word_t value, word_t* addr)
+.align 2
+.global __ARMSWP
+__ARMSWP:
+	swp r0, r0, [r1]
 	bx lr
 
 .align 2
@@ -180,12 +252,6 @@ __setSWIStack:
 	@ Return
 	bx lr
 
-.align 2
-.thumb_func
-FeOS_WaitForVBlank:
-	swi 0x11
-	bx lr
-
 .macro swiimp name num
 .align 2
 .global FeOS_swi_\name
@@ -195,8 +261,25 @@ FeOS_swi_\name\():
 	bx lr
 .endm
 
+swiimp LoadModule_ARM7 0x01
+swiimp FreeModule_ARM7 0x02
+swiimp keyboardUpdate 0x03
 swiimp DebugPrint 0x10
 swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
 swiimp InstrCacheInvalidate 0x07
 swiimp InstrCacheInvalidateAll 0x08
+swiimp IrqEnable 0x09
+swiimp IrqDisable 0x0A
+swiimp ConsoleMode 0x0B
+swiimp DirectMode 0x0C
+
+swiimp FifoSendAddress 0x40
+swiimp FifoSendValue32 0x41
+swiimp FifoSendDatamsg 0x42
+swiimp FifoCheckAddress 0x43
+swiimp FifoCheckValue32 0x44
+swiimp FifoCheckDatamsg 0x45
+swiimp FifoGetAddress 0x46
+swiimp FifoGetValue32 0x47
+swiimp FifoGetDatamsg 0x48

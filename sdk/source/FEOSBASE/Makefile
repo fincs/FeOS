@@ -6,12 +6,20 @@ FUNCS := \
 FeOS_LoadModule \
 FeOS_FindSymbol \
 FeOS_FreeModule \
+FeOS_LoadARM7 \
+FeOS_FreeARM7 \
 FeOS_Execute \
 FeOS_WaitForVBlank \
+FeOS_DataCacheFlush \
+FeOS_DataCacheFlushAll \
+FeOS_InstrCacheInvalidate \
+FeOS_InstrCacheInvalidateAll \
 FeOS_DebugPrint \
 FeOS_PushExitFunc \
 FeOS_PopExitFunc \
 FeOS_GetErrnoPtr \
+FeOS_GetModuleExidxTbl \
+FeOS_ModuleFromAddress \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \
@@ -89,8 +97,7 @@ all: $(SFILES)
 	@printf ".global %b\n" $(@:.s=) >> $@
 	@printf ".hidden %b\n" $(@:.s=) >> $@
 	@printf "%b:\n" $(@:.s=) >> $@
-	@printf "\tldr r12, [pc]\n" >> $@
-	@printf "\tbx r12\n" >> $@
+	@printf "\tldr pc, [pc, #-4]\n" >> $@
 	@printf "__imp_%b:\n" $(@:.s=) >> $@
 	@printf "\t.word 0" >> $@
 

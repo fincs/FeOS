@@ -27,6 +27,18 @@ word_t __FeOSMain(word_t event, word_t prm1, word_t prm2, word_t prm3)
 			crt0_fini();
 			return FEOS_RC_OK;
 
+		case FEOS_EP_GETEXIDXTBL:
+		{
+			typedef struct { word_t offset, size; } exidx_entry_t;
+			extern exidx_entry_t* __exidx_start;
+			extern exidx_entry_t* __exidx_end;
+
+			FeOS_GetExidxTbl_t* out = (FeOS_GetExidxTbl_t*) prm1;
+			out->table = &__exidx_start;
+			out->nentries = &__exidx_end - &__exidx_start;
+			return FEOS_RC_OK;
+		}
+
 		case FEOS_EP_MAIN:
 		{
 			word_t* bk_buf = NULL;

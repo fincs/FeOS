@@ -6,7 +6,15 @@ FUNCS := \
 FeOS_GetKeysDown \
 FeOS_GetKeysHeld \
 FeOS_GetKeysUp \
-FeOS_GetStylusPos
+FeOS_GetStylusPos \
+FeOS_SetInterrupt \
+FeOS_CheckPendingIRQs \
+FeOS_WaitForIRQ \
+FeOS_IrqDisable \
+FeOS_IrqEnable \
+FeOS_ConsoleMode \
+FeOS_DirectMode \
+FeOS_GetMode
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
@@ -22,8 +30,7 @@ all: $(SFILES)
 	@printf ".global %b\n" $(@:.s=) >> $@
 	@printf ".hidden %b\n" $(@:.s=) >> $@
 	@printf "%b:\n" $(@:.s=) >> $@
-	@printf "\tldr r12, [pc]\n" >> $@
-	@printf "\tbx r12\n" >> $@
+	@printf "\tldr pc, [pc, #-4]\n" >> $@
 	@printf "__imp_%b:\n" $(@:.s=) >> $@
 	@printf "\t.word 0" >> $@
 

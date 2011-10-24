@@ -148,14 +148,32 @@ int PrerelocateSection(elf2fx2_cnvstruct_t* cs, word_t vsect, byte_t* sect, Elf3
 		  && *symname && strncmp(symname, "__imp_", 6) != 0 // ...and it's *not* a direct import
 		  && *rsymp == 0) // ...and it's a dummy import pointer
 		{
+			// Add an import copy entry
+			word_t v_rtarget = *rtarget;
+			word_t offFromTrg = 0;
+
 			if (rtype == R_ARM_ABS32 || rtype == R_ARM_TARGET1)
 			{
-				// Add an import copy entry
-				printf("Import?\n");
 				*rtarget = 0;
-				AddImpCopy(rsymv, vtarget);
+				offFromTrg = (word_t)((int)v_rtarget - (int)rsymv);
+			}else if (rtype == R_ARM_TARGET2 || rtype == R_ARM_REL32)
+			{
+				*rtarget = 1;
+				offFromTrg = (word_t)((int)v_rtarget - ((int)rsymv - (int)vtarget));
 			}else
-				die("Non-pointer type non-function imports are not supported!");
+			{
+				printf("%d %s\n", rtype, symname);
+				die("Non-supported type non-function imports are not supported!");
+			}
+
+			word_t offTopBits = offFromTrg >> 28;
+			if (offTopBits != 0x0 && offTopBits != 0xF)
+				die("Offset from non-function import target too big!");
+
+			*rtarget |= offFromTrg << 4;
+
+			AddImpCopy(rsymv, vtarget);
+			continue;
 		}
 
 		/*
@@ -387,7 +405,8 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 	for(i = 0; i < cs->nsyms; i ++)
 	{
 		Elf32_Sym* sym = cs->syms + i;
-		if (ELF32_ST_BIND(sym->st_info) != STB_GLOBAL) continue;
+		if (ELF32_ST_BIND(sym->st_info) == STB_LOCAL) continue; // Ignore local symbols
+		if (ELF32_ST_BIND(sym->st_info) == STB_WEAK && !sym->st_shndx) continue; // Ignore undefined weak symbols
 		if (sym->st_other != STV_DEFAULT) { safe_call(CheckForImport(cs, sym, &imp_list, &imp_lastmodule)); continue; }
 		const char* symname = (const char*)(cs->symnames + eswap_word(sym->st_name));
 		if(!*symname) continue;
@@ -413,7 +432,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		fprintf(tempfile, ".section .imp.%s, \"ax\", %%progbits\n.global __imp_%s\n.hidden __imp_%s\n", argv_name, symname, symname);
 		if (ELF32_ST_TYPE(sym->st_info) == STT_FUNC)
 			fprintf(tempfile, ".global %s\n.hidden %s\n", symname, symname),
-			fprintf(tempfile, "%s:\n\tldr r12, [pc]\n\tbx r12\n", symname);
+			fprintf(tempfile, "%s:\n\tldr pc, [pc, #-4]\n", symname);
 		else
 			fprintf(tempfile, ".global %s\n.hidden %s\n%s:", symname, symname, symname);
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);

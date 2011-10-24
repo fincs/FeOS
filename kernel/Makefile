@@ -96,6 +96,9 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-iquote $(CURDIR)/$(dir)) \
  
 export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
+export ARM7BIN	:=	$(CURDIR)/../arm7/FeOS.elf
+export _ADDFILES	:=	-7 $(ARM7BIN)
+
 icons := $(wildcard *.bmp)
 
 ifneq (,$(findstring $(TARGET).bmp,$(icons)))
@@ -125,7 +128,7 @@ else
 # main targets
 #---------------------------------------------------------------------------------
 $(OUTPUT).nds	: 	$(OUTPUT).elf
-$(OUTPUT).elf	:	$(OFILES)
+$(OUTPUT).elf	:	$(OFILES) $(ARM7BIN)
  
 #---------------------------------------------------------------------------------
 %.bin.o	:	%.bin

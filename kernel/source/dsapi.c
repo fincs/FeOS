@@ -11,27 +11,23 @@ void FeOS_GetStylusPos(styluspos_t* pos)
 	pos->y = touchPos.py;
 }
 
+void FeOS_swi_ConsoleMode();
+void FeOS_swi_DirectMode();
+int GetCurMode();
+
 BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
 	ADD_FUNC_ALIAS(keysHeld, FeOS_GetKeysHeld),
 	ADD_FUNC_ALIAS(keysUp, FeOS_GetKeysUp),
-	ADD_FUNC(FeOS_GetStylusPos)
+	ADD_FUNC(FeOS_GetStylusPos),
+	ADD_FUNC(FeOS_SetInterrupt),
+	ADD_FUNC(FeOS_CheckPendingIRQs),
+	ADD_FUNC(FeOS_WaitForIRQ),
+	ADD_FUNC_ALIAS(FeOS_swi_IrqDisable, FeOS_IrqDisable),
+	ADD_FUNC_ALIAS(FeOS_swi_IrqEnable, FeOS_IrqEnable),
+	ADD_FUNC_ALIAS(FeOS_swi_ConsoleMode, FeOS_ConsoleMode),
+	ADD_FUNC_ALIAS(FeOS_swi_DirectMode, FeOS_DirectMode),
+	ADD_FUNC_ALIAS(GetCurMode, FeOS_GetMode)
 END_TABLE(FEOSDSAPI)
 
-extern void* _inst_FEOSDSAPI;
-
-fxe_runtime_header _header_FEOSDSAPI =
-{
-	&_inst_FEOSDSAPI, // hThis
-	"FEOSDSAPI", // name
-	1, // refcount
-	-1, // file
-	NULL, // entrypoint
-	MAKE_EXPORTSTRUCT(FEOSDSAPI), // exp
-	{ 0, NULL }, // imp
-	NULL, // next
-	NULL // prev
-};
-
-void* _inst_FEOSDSAPI = &_header_FEOSDSAPI;
-
+MAKE_FAKEMODULE(FEOSDSAPI)

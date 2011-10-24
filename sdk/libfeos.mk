@@ -25,9 +25,11 @@ FEOSMK = $(FEOSSDK)/mk
 #---------------------------------------------------------------------------------
 TARGET        := feos
 BUILD         := build
-SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSDSAPI source/stdio
+SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSDSAPI source/FEOSARM7 source/stdio
 DATA          := data
 INCLUDES      := include
+
+CONF_CXXFLAGS = -fno-exceptions -fno-rtti
 
 CONF_NOSTDLIB = 1
 THIS_MAKEFILE := libfeos.mk
