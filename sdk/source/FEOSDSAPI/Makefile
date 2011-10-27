@@ -14,7 +14,30 @@ FeOS_IrqDisable \
 FeOS_IrqEnable \
 FeOS_ConsoleMode \
 FeOS_DirectMode \
-FeOS_GetMode
+FeOS_GetMode \
+dmaCopyWords \
+dmaCopyHalfWords \
+dmaFillWords \
+dmaFillHalfWords \
+vramSetPrimaryBanks \
+vramSetBanks_EFG \
+vramRestorePrimaryBanks \
+vramRestoreBanks_EFG \
+vramSetBankA \
+vramSetBankB \
+vramSetBankC \
+vramSetBankD \
+vramSetBankE \
+vramSetBankF \
+vramSetBankG \
+vramSetBankH \
+vramSetBankI \
+videoSetMode \
+videoSetModeSub \
+videoGetMode \
+videoGetModeSub \
+video3DEnabled \
+setBrightness
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

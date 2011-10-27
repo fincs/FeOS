@@ -15,6 +15,8 @@ extern "C"
 #include <feoserror.h>
 #include <feosuser.h>
 #include <feosdsapi.h>
+#include <feosdsspr.h>
+#include <feosdsbg.h>
 #include <feoscrt.h>
 
 #ifdef __cplusplus
