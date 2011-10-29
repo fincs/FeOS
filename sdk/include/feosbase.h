@@ -19,7 +19,9 @@ typedef word_t bool_t;
 typedef long_t off_t;
 typedef void (* fp_t)();
 
+#ifndef BIT
 #define BIT(n) (1<<(n))
+#endif
 
 extern char __hinstance[];
 #define FeOS_hInstance ((instance_t) __hinstance)
