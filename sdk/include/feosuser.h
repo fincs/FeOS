@@ -26,6 +26,11 @@ typedef struct
 instance_t FeOS_LoadModule(const char*);
 void* FeOS_FindSymbol(instance_t, const char*);
 void FeOS_FreeModule(instance_t);
+void FeOS_LockModule(instance_t);
+void FeOS_UnlockModule(instance_t);
+
+#define FeOS_StayResident() FeOS_LockModule(FeOS_hInstance)
+#define FeOS_EndStayResident() FeOS_UnlockModule(FeOS_hInstance)
 
 instance_t FeOS_LoadARM7(const char*, int*);
 void FeOS_FreeARM7(instance_t, int);

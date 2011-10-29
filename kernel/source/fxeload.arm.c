@@ -427,6 +427,16 @@ void FreeModule(instance_t hInst)
 	free(hInst);
 }
 
+void ModuleLock(instance_t hInst)
+{
+	GetRuntimeData(hInst)->refcount ++;
+}
+
+void ModuleUnlock(instance_t hInst)
+{
+	GetRuntimeData(hInst)->refcount --;
+}
+
 extern const fxe_inmem_exports _exp_FEOSBASE;
 
 void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name)
