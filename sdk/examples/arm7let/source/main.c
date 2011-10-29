@@ -18,5 +18,6 @@ void arm7_fini()
 	SCHANNEL_CR(8) = 0;
 	REG_SOUNDCNT &= ~SOUND_ENABLE;
 	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_AMP ) | PM_SOUND_MUTE );
-	powerOff(POWER_SOUND);
+	// WORKAROUND: The following mustn't be used until the lid closing bug in libnds gets fixed
+	//powerOff(POWER_SOUND);
 }
