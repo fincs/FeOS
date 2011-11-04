@@ -329,3 +329,6 @@ word_t videoGetMode();
 word_t videoGetModeSub();
 bool video3DEnabled();
 void setBrightness(int screen, int level);
+void lcdSwap();
+void lcdMainOnTop();
+void lcdMainOnBottom();

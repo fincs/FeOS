@@ -39,7 +39,10 @@ videoSetModeSub \
 videoGetMode \
 videoGetModeSub \
 video3DEnabled \
-setBrightness
+setBrightness \
+lcdSwap \
+lcdMainOnTop \
+lcdMainOnBottom
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
