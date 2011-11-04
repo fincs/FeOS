@@ -45,7 +45,7 @@ ifneq ($(CONF_ARM7),)
 CXXFLAGS += -fno-exceptions
 endif
 
-ASFLAGS  := -g0 $(ARCH) $(DEFINES)
+ASFLAGS  := -g0 $(ARCH) $(DEFINES) $(INCLUDE)
 LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld -g $(ARCH) -Wl,-d,-q,--pic-veneer,-Map,$(TARGET).map
 
 ifeq ($(CONF_ARM7),)
