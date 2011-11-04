@@ -61,7 +61,9 @@ __SVCTable:
 	.word irqDisable
 	.word InitConMode
 	.word InitFreeMode
-	.space 4*3
+	.word _SetDatamsgHandler
+	.word _SetValue32Handler
+	.word _SetAddressHandler
 
 	@ Kernel functions
 	.word FeOS_DebugPrint
@@ -273,6 +275,9 @@ swiimp IrqEnable 0x09
 swiimp IrqDisable 0x0A
 swiimp ConsoleMode 0x0B
 swiimp DirectMode 0x0C
+swiimp SetDatamsgHandler 0x0D
+swiimp SetValue32Handler 0x0E
+swiimp SetAddressHandler 0x0F
 
 swiimp FifoSendAddress 0x40
 swiimp FifoSendValue32 0x41

@@ -11,7 +11,10 @@ FeOS_FifoCheckValue32 \
 FeOS_FifoCheckDatamsg \
 FeOS_FifoGetAddress \
 FeOS_FifoGetValue32 \
-FeOS_FifoGetDatamsg
+FeOS_FifoGetDatamsg \
+FeOS_FifoSetDatamsgHandler \
+FeOS_FifoSetValue32Handler \
+FeOS_FifoSetAddressHandler
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
