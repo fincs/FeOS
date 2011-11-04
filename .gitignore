@@ -12,6 +12,10 @@ build7/
 !/sdk/source/FEOSPOSIXEMU/Makefile
 /sdk/source/FEOSDSAPI/*
 !/sdk/source/FEOSDSAPI/Makefile
+/sdk/source/FEOSDSSPR/*
+!/sdk/source/FEOSDSSPR/Makefile
+/sdk/source/FEOSDSBG/*
+!/sdk/source/FEOSDSBG/Makefile
 /sdk/source/FEOSARM7/*
 !/sdk/source/FEOSARM7/Makefile
 /sdk/source7/FEOS7/*

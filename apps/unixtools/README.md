@@ -21,6 +21,15 @@ Usage:
 
     cd <PATH>
 
+clear
+-----
+
+Clear the screen
+
+Usage:
+
+    clear
+
 cp
 --
 

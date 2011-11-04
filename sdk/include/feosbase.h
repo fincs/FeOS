@@ -7,6 +7,14 @@
 #pragma once
 #include <stdbool.h>
 
+#define FEOS_EP_INIT 0x00000001
+#define FEOS_EP_FINI 0x00000002
+#define FEOS_EP_GETEXIDXTBL 0x00000003
+#define FEOS_EP_MAIN 0x00000100
+
+#define FEOS_RC_OK 0
+#define FEOS_RC_ERR 0xFFFFFFFF
+
 typedef unsigned char byte_t;
 typedef unsigned short hword_t;
 typedef unsigned int word_t;
@@ -19,7 +27,9 @@ typedef word_t bool_t;
 typedef long_t off_t;
 typedef void (* fp_t)();
 
+#ifndef BIT
 #define BIT(n) (1<<(n))
+#endif
 
 extern char __hinstance[];
 #define FeOS_hInstance ((instance_t) __hinstance)

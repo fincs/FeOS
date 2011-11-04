@@ -22,7 +22,10 @@ BEGIN_TABLE(FEOSARM7)
 	ADD_FUNC2(FifoCheckDatamsg),
 	ADD_FUNC2(FifoGetAddress),
 	ADD_FUNC2(FifoGetValue32),
-	ADD_FUNC2(FifoGetDatamsg)
+	ADD_FUNC2(FifoGetDatamsg),
+	ADD_FUNC(FeOS_FifoSetDatamsgHandler),
+	ADD_FUNC(FeOS_FifoSetValue32Handler),
+	ADD_FUNC(FeOS_FifoSetAddressHandler)
 END_TABLE(FEOSARM7)
 
 MAKE_FAKEMODULE(FEOSARM7)

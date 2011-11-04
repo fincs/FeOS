@@ -23,15 +23,15 @@ FEOSMK = $(FEOSSDK)/mk
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
-TARGET        := feos
+TARGET        := $(notdir $(CURDIR))
 BUILD         := build
-SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSDSAPI source/FEOSDSSPR source/FEOSDSBG source/FEOSARM7 source/stdio
+SOURCES       := source
 DATA          := data
 INCLUDES      := include
 
-CONF_CXXFLAGS = -fno-exceptions -fno-rtti
+CONF_DEFINES =
+CONF_LIBDIRS =
+CONF_LIBS =
 
-CONF_NOSTDLIB = 1
-THIS_MAKEFILE := libfeos.mk
+include $(FEOSMK)/app.mk
 
-include $(FEOSMK)/staticlib.mk

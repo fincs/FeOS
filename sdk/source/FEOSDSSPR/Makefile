@@ -3,18 +3,22 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_FifoSendAddress \
-FeOS_FifoSendValue32 \
-FeOS_FifoSendDatamsg \
-FeOS_FifoCheckAddress \
-FeOS_FifoCheckValue32 \
-FeOS_FifoCheckDatamsg \
-FeOS_FifoGetAddress \
-FeOS_FifoGetValue32 \
-FeOS_FifoGetDatamsg \
-FeOS_FifoSetDatamsgHandler \
-FeOS_FifoSetValue32Handler \
-FeOS_FifoSetAddressHandler
+FeOS_GetMainOAM \
+FeOS_GetSubOAM \
+FeOS_GetOAMMemory \
+oamInit \
+oamDisable \
+oamEnable \
+oamGetGfxPtr \
+oamAllocateGfx \
+oamFreeGfx \
+oamSetMosaic \
+oamSetMosaicSub \
+oamSet \
+oamClear \
+oamClearSprite \
+oamRotateScale \
+oamAffineTransformation
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

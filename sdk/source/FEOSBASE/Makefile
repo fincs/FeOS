@@ -6,6 +6,8 @@ FUNCS := \
 FeOS_LoadModule \
 FeOS_FindSymbol \
 FeOS_FreeModule \
+FeOS_LockModule \
+FeOS_UnlockModule \
 FeOS_LoadARM7 \
 FeOS_FreeARM7 \
 FeOS_Execute \
@@ -14,6 +16,10 @@ FeOS_DataCacheFlush \
 FeOS_DataCacheFlushAll \
 FeOS_InstrCacheInvalidate \
 FeOS_InstrCacheInvalidateAll \
+FeOS_DrainWriteBuffer \
+FeOS_WaitForMemAddr \
+FeOS_SuspendIRQ_t \
+FeOS_RestoreIRQ_t \
 FeOS_DebugPrint \
 FeOS_PushExitFunc \
 FeOS_PopExitFunc \

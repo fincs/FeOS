@@ -3,18 +3,33 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_FifoSendAddress \
-FeOS_FifoSendValue32 \
-FeOS_FifoSendDatamsg \
-FeOS_FifoCheckAddress \
-FeOS_FifoCheckValue32 \
-FeOS_FifoCheckDatamsg \
-FeOS_FifoGetAddress \
-FeOS_FifoGetValue32 \
-FeOS_FifoGetDatamsg \
-FeOS_FifoSetDatamsgHandler \
-FeOS_FifoSetValue32Handler \
-FeOS_FifoSetAddressHandler
+bgSetRotate \
+bgRotate \
+bgSet \
+bgSetRotateScale \
+bgSetScale \
+bgInit \
+bgInitSub \
+bgSetControlBits \
+bgClearControlBits \
+bgSetPriority \
+bgSetMapBase \
+bgSetTileBase \
+bgSetScrollf \
+bgMosaicEnable \
+bgMosaicDisable \
+bgSetMosaic \
+bgSetMosaicSub \
+bgGetMapPtr \
+bgGetGfxPtr \
+bgGetPriority \
+bgGetMapBase \
+bgGetTileBase \
+bgScrollf \
+bgShow \
+bgHide \
+bgSetCenterf \
+bgSetAffineMatrixScroll
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

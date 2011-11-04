@@ -67,9 +67,9 @@ static inline void FeOS_WaitForVBlank()
 }
 
 void FeOS_RunFifoQueue();
-void FeOS_FifoSetDatamsgHandler(int channel, VoidFn handler, void* userdata);
-void FeOS_FifoSetValue32Handler(int channel, VoidFn handler, void* userdata);
-void FeOS_FifoSetAddressHandler(int channel, VoidFn handler, void* userdata);
+void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata);
+void FeOS_FifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata);
+void FeOS_FifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, void* userdata);
 VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t mask);
@@ -80,4 +80,7 @@ void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
 void FeOS_swi_InstrCacheInvalidateAll();
 void FeOS_swi_IrqEnable(word_t mask);
 void FeOS_swi_IrqDisable(word_t mask);
+void FeOS_swi_SetDatamsgHandler(int, bool);
+void FeOS_swi_SetValue32Handler(int, bool);
+void FeOS_swi_SetAddressHandler(int, bool);
 #endif

@@ -147,6 +147,9 @@ static inline fxe_runtime_header* GetRuntimeData(instance_t hinst)
 instance_t LoadModule(const char* aFilename);
 void FreeModule(instance_t hInst);
 
+void ModuleLock(instance_t hInst);
+void ModuleUnlock(instance_t hInst);
+
 int FeOS_Execute(int, const char*[]);
 
 int ResolveImports(fxe2_import_t* imptbl, int count);

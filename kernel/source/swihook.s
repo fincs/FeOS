@@ -61,7 +61,9 @@ __SVCTable:
 	.word irqDisable
 	.word InitConMode
 	.word InitFreeMode
-	.space 4*3
+	.word _SetDatamsgHandler
+	.word _SetValue32Handler
+	.word _SetAddressHandler
 
 	@ Kernel functions
 	.word FeOS_DebugPrint
@@ -69,7 +71,13 @@ __SVCTable:
 	.word FeOS_IsValidName
 	writehook conwrite
 	writehook conerr
-	.space 4*11
+	.word __FeOS_SuspendIRQ_t
+	.word __FeOS_RestoreIRQ_t
+	.word __FeOS_DrainWriteBuffer
+	.word __FeOS_WaitForMemAddr
+	.word _TimerWrite
+	.word _TimerTick
+	.space 4*5
 
 	@ FAT hooks
 
@@ -135,6 +143,37 @@ __FeOS_IRQPoll:
 	strb r3, [r12, #0x208]
 	
 	@ return
+	bx lr
+
+.align 2
+__FeOS_SuspendIRQ_t:
+	mrs r1, cpsr
+	and r0, r1, #0x80
+	orr r1, #0x80
+	msr cpsr, r1
+	bx lr
+
+.align 2
+__FeOS_RestoreIRQ_t:
+	mrs r1, cpsr
+	bic r0, #0x80
+	orr r1, r0
+	msr cpsr, r1
+	bx lr
+
+.align 2
+__FeOS_DrainWriteBuffer:
+	mcr p15, 0, r0, c7, c10, 4
+	bx lr
+
+.align 2
+__FeOS_WaitForMemAddr:
+	bic r3, r0, #0x1F
+.Lwait_addr:
+	mcr p15, 0, r3, c7, c14, 1 // invalidate line
+	ldrb r2, [r0]
+	cmp r2, r1
+	bne .Lwait_addr
 	bx lr
 
 .text
@@ -269,10 +308,20 @@ swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06
 swiimp InstrCacheInvalidate 0x07
 swiimp InstrCacheInvalidateAll 0x08
+swiimp DrainWriteBuffer 0x17
 swiimp IrqEnable 0x09
 swiimp IrqDisable 0x0A
 swiimp ConsoleMode 0x0B
 swiimp DirectMode 0x0C
+swiimp SetDatamsgHandler 0x0D
+swiimp SetValue32Handler 0x0E
+swiimp SetAddressHandler 0x0F
+
+swiimp SuspendIRQ_t 0x15
+swiimp RestoreIRQ_t 0x16
+swiimp WaitForMemAddr 0x18
+swiimp TimerWrite 0x19
+swiimp TimerTick 0x1A
 
 swiimp FifoSendAddress 0x40
 swiimp FifoSendValue32 0x41
