@@ -93,6 +93,8 @@ static void FeOS_AddFifoMsgToQueue(FifoMsgQueueEntry* msg)
 	leaveCriticalSection(cs);
 }
 
+int FeOS_swi_FifoGetDatamsg(int, word_t, void*);
+
 void FeOS_RunFifoQueue()
 {
 	FifoMsgQueueEntry* ent;
@@ -104,13 +106,18 @@ void FeOS_RunFifoQueue()
 		switch(ent->type)
 		{
 			case QUEUE_DATAMSG:
-				datamsghnd_array[chn](ent->datamsgSize, userdata);
+				if (datamsghnd_array[chn])
+					datamsghnd_array[chn](ent->datamsgSize, userdata);
+				else
+					FeOS_swi_FifoGetDatamsg(ent->channel, 0, NULL); // delete the data msg
 				break;
 			case QUEUE_VALUE32:
-				value32hnd_array[chn](ent->value32, userdata);
+				if (value32hnd_array[chn])
+					value32hnd_array[chn](ent->value32, userdata);
 				break;
 			case QUEUE_ADDRESS:
-				addresshnd_array[chn](ent->address, userdata);
+				if (addresshnd_array[chn])
+					addresshnd_array[chn](ent->address, userdata);
 				break;
 		}
 	}
@@ -122,28 +129,28 @@ void FeOS_RunFifoQueue()
 static void StubFifoDatamsgHandler(int datamsgSize, void* userdata)
 {
 	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
+	FeOS_AddFifoMsgToQueue(msg);
 	msg->type = QUEUE_DATAMSG;
 	msg->channel = (u16) (word_t) userdata;
 	msg->datamsgSize = datamsgSize;
-	FeOS_AddFifoMsgToQueue(msg);
 }
 
 static void StubFifoValue32Handler(word_t value32, void* userdata)
 {
 	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
+	FeOS_AddFifoMsgToQueue(msg);
 	msg->type = QUEUE_VALUE32;
 	msg->channel = (u16) (word_t) userdata;
 	msg->value32 = value32;
-	FeOS_AddFifoMsgToQueue(msg);
 }
 
 static void StubFifoAddressHandler(void* address, void* userdata)
 {
 	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
+	FeOS_AddFifoMsgToQueue(msg);
 	msg->type = QUEUE_ADDRESS;
 	msg->channel = (u16) (word_t) userdata;
 	msg->address = address;
-	FeOS_AddFifoMsgToQueue(msg);
 }
 
 void _SetDatamsgHandler(int channel, bool set)
@@ -232,12 +239,12 @@ VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn)
 static void FeOS_ProcessIRQ(word_t flags)
 {
 	// Check for FIFO recv IRQ before everything else
-	if (flags & IRQ_FIFO_EMPTY)
+	if (flags & IRQ_FIFO_NOT_EMPTY)
 	{
 		FeOS_RunFifoQueue();
 
 		// We don't want user code responding to this IRQ
-		flags &= ~IRQ_FIFO_EMPTY;
+		flags &= ~IRQ_FIFO_NOT_EMPTY;
 	}
 
 	int i; word_t mask; VoidFn fn;
