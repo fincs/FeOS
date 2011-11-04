@@ -27,6 +27,11 @@ unsigned int __aeabi_uidivmod(unsigned int, unsigned int);
 long long __aeabi_ldivmod(long long, long long);
 unsigned long long __aeabi_uldivmod(unsigned long long, unsigned long long);
 
+int FeOS_swi_SuspendIRQ_t();
+void FeOS_swi_RestoreIRQ_t(int);
+void FeOS_swi_DrainWriteBuffer();
+void FeOS_swi_WaitForMemAddr(volatile byte_t*, byte_t);
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -42,6 +47,10 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlushAll, FeOS_DataCacheFlushAll),
 	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidate, FeOS_InstrCacheInvalidate),
 	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidateAll, FeOS_InstrCacheInvalidateAll),
+	ADD_FUNC_ALIAS(FeOS_swi_DrainWriteBuffer, FeOS_DrainWriteBuffer),
+	ADD_FUNC_ALIAS(FeOS_swi_WaitForMemAddr, FeOS_WaitForMemAddr),
+	ADD_FUNC_ALIAS(FeOS_swi_SuspendIRQ_t, FeOS_SuspendIRQ_t),
+	ADD_FUNC_ALIAS(FeOS_swi_RestoreIRQ_t, FeOS_RestoreIRQ_t),
 	ADD_FUNC(FeOS_PushExitFunc),
 	ADD_FUNC(FeOS_PopExitFunc),
 	ADD_FUNC_ALIAS(FeOS_CallExitFunc, exit),
