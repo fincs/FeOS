@@ -59,3 +59,9 @@ int FeOS_FifoGetDatamsg(int, word_t, void*);
 void FeOS_FifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
 void FeOS_FifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
 void FeOS_FifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
+
+// Misc functions
+int FeOS_SuspendIRQ_t();
+void FeOS_RestoreIRQ_t(int);
+void FeOS_DrainWriteBuffer();
+void FeOS_WaitForMemAddr(volatile byte_t*, byte_t);
