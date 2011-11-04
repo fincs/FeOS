@@ -123,7 +123,10 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC(videoGetMode),
 	ADD_FUNC(videoGetModeSub),
 	ADD_FUNC(video3DEnabled),
-	ADD_FUNC(setBrightness)
+	ADD_FUNC(setBrightness),
+	ADD_FUNC(lcdSwap),
+	ADD_FUNC(lcdMainOnTop),
+	ADD_FUNC(lcdMainOnBottom)
 END_TABLE(FEOSDSAPI)
 
 MAKE_FAKEMODULE(FEOSDSAPI)
