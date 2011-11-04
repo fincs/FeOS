@@ -12,12 +12,15 @@ extern "C"
 #endif
 
 #include <feosbase.h>
+
+#ifndef ARM7
 #include <feoserror.h>
 #include <feosuser.h>
 #include <feosdsapi.h>
 #include <feosdsspr.h>
 #include <feosdsbg.h>
 #include <feoscrt.h>
+#endif
 
 #ifdef __cplusplus
 }
