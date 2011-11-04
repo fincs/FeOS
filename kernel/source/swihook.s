@@ -75,7 +75,9 @@ __SVCTable:
 	.word __FeOS_RestoreIRQ_t
 	.word __FeOS_DrainWriteBuffer
 	.word __FeOS_WaitForMemAddr
-	.space 4*7
+	.word _TimerWrite
+	.word _TimerTick
+	.space 4*5
 
 	@ FAT hooks
 
@@ -318,6 +320,8 @@ swiimp SetAddressHandler 0x0F
 swiimp SuspendIRQ_t 0x15
 swiimp RestoreIRQ_t 0x16
 swiimp WaitForMemAddr 0x18
+swiimp TimerWrite 0x19
+swiimp TimerTick 0x1A
 
 swiimp FifoSendAddress 0x40
 swiimp FifoSendValue32 0x41

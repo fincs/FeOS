@@ -14,6 +14,8 @@ FeOS_IrqDisable \
 FeOS_IrqEnable \
 FeOS_ConsoleMode \
 FeOS_DirectMode \
+FeOS_TimerWrite \
+FeOS_TimerTick \
 FeOS_GetMode \
 dmaCopyWords \
 dmaCopyHalfWords \

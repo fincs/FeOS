@@ -72,6 +72,19 @@ static void _FeOS_oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
 	oamAllocReset(oam);
 }
 
+#define TIMER_CR_32(n) (*(vu32*)(0x04000102+((n)<<2)))
+
+void FeOS_swi_TimerWrite(int timer, word_t v);
+void _TimerWrite(int timer, word_t v)
+{
+	TIMER_CR_32(timer&3) = v;
+}
+
+u16 FeOS_swi_TimerTick(int timer);
+u16 _TimerTick(int timer)
+{
+	return TIMER_DATA(timer&3);
+}
 
 BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
@@ -85,6 +98,8 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(FeOS_swi_IrqEnable, FeOS_IrqEnable),
 	ADD_FUNC_ALIAS(FeOS_swi_ConsoleMode, FeOS_ConsoleMode),
 	ADD_FUNC_ALIAS(FeOS_swi_DirectMode, FeOS_DirectMode),
+	ADD_FUNC_ALIAS(FeOS_swi_TimerWrite, FeOS_TimerWrite),
+	ADD_FUNC_ALIAS(FeOS_swi_TimerTick, FeOS_TimerTick),
 	ADD_FUNC_ALIAS(GetCurMode, FeOS_GetMode),
 	ADD_FUNC(dmaCopyWords),
 	ADD_FUNC(dmaCopyHalfWords),
