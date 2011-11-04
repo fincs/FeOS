@@ -9,19 +9,15 @@
 
 #define FeOS_GetInstance() FeOS_hInstance
 
-#define FEOS_EP_INIT 0x00000001
-#define FEOS_EP_FINI 0x00000002
-#define FEOS_EP_GETEXIDXTBL 0x00000003
-#define FEOS_EP_MAIN 0x00000100
-
 typedef struct
 {
 	void* table;
 	int nentries;
 } FeOS_GetExidxTbl_t;
 
-#define FEOS_RC_OK 0
-#define FEOS_RC_ERR 0xFFFFFFFF
+typedef void (*FifoAddressHandlerFunc)(void*, void*);
+typedef void (*FifoValue32HandlerFunc)(word_t, void*);
+typedef void (*FifoDatamsgHandlerFunc)(int, void*);
 
 instance_t FeOS_LoadModule(const char*);
 void* FeOS_FindSymbol(instance_t, const char*);
@@ -60,3 +56,6 @@ bool FeOS_FifoCheckDatamsg(int);
 void* FeOS_FifoGetAddress(int);
 word_t FeOS_FifoGetValue32(int);
 int FeOS_FifoGetDatamsg(int, word_t, void*);
+void FeOS_FifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
+void FeOS_FifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
+void FeOS_FifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
