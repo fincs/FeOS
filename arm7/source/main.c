@@ -33,11 +33,6 @@
 #include <dswifi7.h>
 #include "feos.h"
 
-void VBlankHandler()
-{
-	Wifi_Update();
-}
-
 void VCountHandler()
 {
 	inputGetAndSend();
@@ -67,7 +62,6 @@ int main()
 	installFeOSFIFO();
 
 	irqSet(IRQ_VCOUNT, VCountHandler);
-	irqSet(IRQ_VBLANK, VBlankHandler);
 
 	irqEnable(IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
 
@@ -79,6 +73,7 @@ int main()
 		FeOS_VBlankFunc();
 		if (!(REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)))
 			break;
+		Wifi_Update();
 	}
 	return 0;
 }
