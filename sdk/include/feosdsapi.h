@@ -18,6 +18,8 @@ typedef word_t keys_t;
 #define keysDown           FeOS_GetKeysDown
 #define keysHeld           FeOS_GetKeysHeld
 #define keysUp             FeOS_GetKeysUp
+#define keysDownRepeat     FeOS_GetKeysDownRepeat
+#define keysSetRepeat      FeOS_SetKeyRepeat
 #define irqSet             FeOS_SetInterrupt
 #define irqEnable          FeOS_IrqEnable
 #define irqDisable         FeOS_IrqDisable
@@ -280,6 +282,8 @@ enum
 keys_t FeOS_GetKeysDown();
 keys_t FeOS_GetKeysHeld();
 keys_t FeOS_GetKeysUp();
+keys_t FeOS_GetKeysDownRepeat();
+void FeOS_SetKeyRepeat(byte_t, byte_t);
 void FeOS_GetStylusPos(styluspos_t*);
 
 fp_t FeOS_SetInterrupt(word_t, fp_t);

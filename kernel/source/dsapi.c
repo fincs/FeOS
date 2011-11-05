@@ -90,6 +90,8 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
 	ADD_FUNC_ALIAS(keysHeld, FeOS_GetKeysHeld),
 	ADD_FUNC_ALIAS(keysUp, FeOS_GetKeysUp),
+	ADD_FUNC_ALIAS(keysDownRepeat, FeOS_GetKeysDownRepeat),
+	ADD_FUNC_ALIAS(keysSetRepeat, FeOS_SetKeyRepeat),
 	ADD_FUNC(FeOS_GetStylusPos),
 	ADD_FUNC(FeOS_SetInterrupt),
 	ADD_FUNC(FeOS_CheckPendingIRQs),
