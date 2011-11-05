@@ -267,17 +267,33 @@ int WriteRelocations(elf2fx2_cnvstruct_t* cs)
 
 	// Write the relocation bitmap
 	word_t nwords = cs->fxe2hdr.loadsize >> 2;
-	word_t i;
+	word_t i, rs, rp;
 	for(i = 0; i < nwords; cs->fxe2hdr.nrelocs ++)
 	{
 		fxe2_reloc_t reloc;
-		reloc.skip = 0;
-		reloc.patch = 0;
-		while((i < nwords) && !loaddata[i]) i ++, reloc.skip ++;
-		while((i < nwords) && loaddata[i]) i ++, reloc.patch ++;
-		reloc.skip = eswap_hword(reloc.skip);
-		reloc.patch = eswap_hword(reloc.patch);
-		safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+		rs = 0;
+		rp = 0;
+		while((i < nwords) && !loaddata[i]) i ++, rs ++;
+		while((i < nwords) && loaddata[i]) i ++, rp ++;
+
+		// Write excess skip relocations
+		for(reloc.skip = 0xFFFF, reloc.patch = 0; rs > 0xFFFF; rs -= 0xFFFF)
+			safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+
+		// Write excess patch relocations
+		for(reloc.skip = eswap_hword(rs), reloc.patch = 0xFFFF; rp > 0xFFFF; rp -= 0xFFFF)
+		{
+			safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+			rs = reloc.skip = 0;
+		}
+
+		// Write remaining relocations
+		if (rs || rp)
+		{
+			reloc.skip = eswap_hword(rs);
+			reloc.patch = eswap_hword(rp);
+			safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+		}
 	}
 
 	return 0;
