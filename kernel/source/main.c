@@ -114,6 +114,7 @@ void videoReset()
 	dmaFillWords(0, (void*)0x04000000, 0x56);
 	dmaFillWords(0, (void*)0x04001008, 0x56);
 	videoSetModeSub(0);
+	lcdMainOnTop();
 
 	vramDefault();
 
