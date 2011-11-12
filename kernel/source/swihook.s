@@ -67,8 +67,8 @@ __SVCTable:
 
 	@ Kernel functions
 	.word FeOS_DebugPrint
-	.word swiWaitForVBlank
-	.word FeOS_IsValidName
+	.word 0 @swiWaitForVBlank
+	.word 0
 	writehook conwrite
 	writehook conerr
 	.word __FeOS_SuspendIRQ_t
