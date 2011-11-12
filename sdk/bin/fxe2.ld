@@ -56,12 +56,6 @@ SECTIONS
 		KEEP( *(SORT(.fini_array.*)) )
 		__feos_fini_size = . ;
 		LONG((__feos_fini_size - __feos_fini_array) / 4);
-
-		/* (Experimental) Exception Frame */
-		KEEP( *(.eh_frame) )
-
-		/* (Experimental) GCC excpt metadata */
-		*(.gcc_except_table)
 	} : loadable
 
 	__text_end =  . ;
@@ -71,7 +65,6 @@ SECTIONS
 		*(.rodata)
 		*(.roda)
 		*(.rodata.*)
-		*(.pai)
 		*all.rodata*(*)
 		*(.gnu.linkonce.r*)
 		SORT(CONSTRUCTORS)
