@@ -72,7 +72,7 @@ static void _FeOS_oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
 	oamAllocReset(oam);
 }
 
-#define TIMER_CR_32(n) (*(vu32*)(0x04000102+((n)<<2)))
+#define TIMER_CR_32(n) (*(vu32*)(0x04000100+((n)<<2)))
 
 void FeOS_swi_TimerWrite(int timer, word_t v);
 void _TimerWrite(int timer, word_t v)
