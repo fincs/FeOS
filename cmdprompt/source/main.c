@@ -47,6 +47,8 @@ int parse_cmdline(char* cmdline, const char* argv[])
 
 		if (*bufp) *bufp++ = '\0';
 	}
+
+	argv[argc] = NULL;
 	
 	return argc;
 }

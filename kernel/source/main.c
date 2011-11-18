@@ -155,7 +155,7 @@ int GetCurMode()
 
 void ForcefulExit()
 {
-	FeOS_CallExitFunc(E_APPKILLED);
+	FeOS_ModuleExit(E_APPKILLED);
 }
 
 word_t* __getIRQStack();

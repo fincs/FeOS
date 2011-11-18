@@ -32,6 +32,8 @@ __aeabi_uidiv \
 __aeabi_uidivmod \
 __aeabi_ldivmod \
 __aeabi_uldivmod \
+setjmp \
+longjmp \
 atoi \
 strtol \
 strtoul \

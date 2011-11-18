@@ -42,6 +42,8 @@ typedef word_t bool_t;
 typedef void* instance_t;
 
 #ifdef ARM9
+#include "feos_setjmp.h"
+
 void DoTheUserMode();
 void PrepareUserMode();
 

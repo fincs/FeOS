@@ -32,6 +32,11 @@ void FeOS_swi_RestoreIRQ_t(int);
 void FeOS_swi_DrainWriteBuffer();
 void FeOS_swi_WaitForMemAddr(volatile byte_t*, byte_t);
 
+// Compat. functions
+
+static int FeOS_PushExitFunc(FeOSExitFunc func) { return 1; }
+static void FeOS_PopExitFunc() { }
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -53,7 +58,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_swi_RestoreIRQ_t, FeOS_RestoreIRQ_t),
 	ADD_FUNC(FeOS_PushExitFunc),
 	ADD_FUNC(FeOS_PopExitFunc),
-	ADD_FUNC_ALIAS(FeOS_CallExitFunc, exit),
+	ADD_FUNC_ALIAS(FeOS_ModuleExit, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
 	ADD_FUNC(FeOS_GetModuleExidxTbl),
 	ADD_FUNC(FeOS_ModuleFromAddress),
@@ -63,6 +68,10 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(__aeabi_uidivmod),
 	ADD_FUNC(__aeabi_ldivmod),
 	ADD_FUNC(__aeabi_uldivmod),
+
+	// setjmp.h
+	ADD_FUNC(setjmp),
+	ADD_FUNC(longjmp),
 
 	// stdlib.h
 	ADD_FUNC(atoi),
@@ -139,6 +148,10 @@ static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 	return FEOS_RC_OK;
 }
 
+instance_t FeOS_CurInstance = NULL;
+static word_t* FeOS_ExitBuf;
+static bool FeOS_ExitDone = false;
+
 int FeOS_Execute(int argc, const char* argv[])
 {
 	if (argc == 0) return E_INVALIDARG;
@@ -148,13 +161,35 @@ int FeOS_Execute(int argc, const char* argv[])
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
 	int rc = E_INVALIDARG;
-	if (rh->entrypoint) rc = rh->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
+	if (rh->entrypoint)
+	{
+		instance_t instbak = FeOS_CurInstance;
+		FeOS_CurInstance = hInst;
+
+		jmp_buf exitbuf;
+		word_t* exitbufbak = FeOS_ExitBuf;
+		FeOS_ExitBuf = exitbuf;
+		rc = setjmp(exitbuf);
+		if (!FeOS_ExitDone)
+			rc = rh->entrypoint(FEOS_EP_MAIN, (word_t)argc, (word_t)argv, 0);
+		else
+			FeOS_ExitDone = false;
+
+		FeOS_ExitBuf = exitbufbak;
+		FeOS_CurInstance = instbak;
+	}
 
 	// If the app was forcefully killed we don't want FreeModule() to run the destructors
 	if ((int)rc == E_APPKILLED) rh->entrypoint = dummy_entrypoint;
 
 	FreeModule(hInst);
 	return rc;
+}
+
+void FeOS_ModuleExit(int rc)
+{
+	FeOS_ExitDone = true;
+	longjmp(FeOS_ExitBuf, rc);
 }
 
 void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)

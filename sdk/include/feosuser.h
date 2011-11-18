@@ -41,8 +41,11 @@ void FeOS_DataCacheFlushAll();
 void FeOS_InstrCacheInvalidate(const void*, word_t);
 void FeOS_InstrCacheInvalidateAll();
 
-int FeOS_PushExitFunc(FeOSExitFunc func);
-void FeOS_PopExitFunc();
+// DEPRECATED
+//int FeOS_PushExitFunc(FeOSExitFunc func);
+//void FeOS_PopExitFunc();
+static inline int FeOS_PushExitFunc(FeOSExitFunc func) { return 1; }
+static inline void FeOS_PopExitFunc() { }
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
 void* FeOS_ModuleFromAddress(void*);
