@@ -15,5 +15,4 @@ typedef int mode_t;
 typedef int ino_t;
 typedef unsigned short uid_t;
 typedef unsigned short gid_t;
-typedef int off_t;
 typedef unsigned short nlink_t;
