@@ -162,11 +162,13 @@ void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
 int FeOS_ModuleListCount();
 fxe_runtime_header* FeOS_ModuleListFind(const char* name);
 
-int FeOS_PushExitFunc(FeOSExitFunc func);
-void FeOS_CallExitFunc(int);
-void FeOS_PopExitFunc();
+//int FeOS_PushExitFunc(FeOSExitFunc func);
+void FeOS_ModuleExit(int);
+//void FeOS_PopExitFunc();
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
 void* FeOS_ModuleFromAddress(void*);
+
+extern instance_t FeOS_CurInstance;
 
 #endif

@@ -1,11 +1,4 @@
-//
-// FeOS C Standard Library
-// setjmp.h
-//     Jump buffer functions
-//
-
 #pragma once
-#include <stddef.h>
 
 // r4..r11, sp & lr
 typedef word_t jmp_buf[10];

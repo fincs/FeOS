@@ -9,11 +9,6 @@ int FEOS_WEAK main(int, const char*[]);
 
 void crt0_init();
 void crt0_fini();
-void this_exit(int);
-
-jmp_buf __exit_buf;
-volatile int __exit_done;
-volatile int __ninstances = 0;
 
 word_t __FeOSMain(word_t event, word_t prm1, word_t prm2, word_t prm3)
 {
@@ -40,38 +35,8 @@ word_t __FeOSMain(word_t event, word_t prm1, word_t prm2, word_t prm3)
 		}
 
 		case FEOS_EP_MAIN:
-		{
-			word_t* bk_buf = NULL;
-
 			if (!main) return FEOS_RC_ERR;
-
-			if (__ninstances)
-			{
-				// Backup the exit jump buffer
-				bk_buf = alloca(sizeof(jmp_buf));
-				memcpy(bk_buf, __exit_buf, sizeof(jmp_buf));
-			}
-
-			if (!FeOS_PushExitFunc(this_exit)) return FEOS_RC_ERR;
-
-			__ninstances ++;
-			__exit_done = 0;
-			int rc = setjmp(__exit_buf);
-
-			if (__exit_done)
-			{
-				__ninstances --;
-				if (bk_buf) memcpy(__exit_buf, bk_buf, sizeof(jmp_buf));
-				return (word_t) rc;
-			}
-
-			word_t rc2 = (word_t) main((int) prm1, (const char**) prm2);
-			FeOS_PopExitFunc();
-
-			__ninstances --;
-			if (bk_buf) memcpy(__exit_buf, bk_buf, sizeof(jmp_buf));
-			return rc2;
-		}
+			return (word_t) main((int) prm1, (const char**) prm2);
 
 		default:
 			if (FeOSMain) return FeOSMain(event, prm1, prm2, prm3);
