@@ -69,6 +69,7 @@ ifneq ($(CONF_ARM7),)
 LIBDIRS += $(DEVKITPRO)/libnds
 endif
 endif
+LIBDIRS += $(foreach lib,$(CONF_USERLIBS),$(FEOSSDK)/userlib/$(lib))
 LIBDIRS += $(CONF_LIBDIRS)
 
 #---------------------------------------------------------------------------------

@@ -20,6 +20,8 @@ build7/
 !/sdk/source/FEOSARM7/Makefile
 /sdk/source7/FEOS7/*
 !/sdk/source7/FEOS7/Makefile
+/sdk/userlib/*
+!/sdk/userlib/README.txt
 *.exe
 *.nds
 *.elf
