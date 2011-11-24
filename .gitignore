@@ -22,6 +22,7 @@ build7/
 !/sdk/source7/FEOS7/Makefile
 /sdk/userlib/*
 !/sdk/userlib/README.txt
+!/sdk/userlib/feoswifi/
 *.exe
 *.nds
 *.elf
