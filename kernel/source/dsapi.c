@@ -107,6 +107,8 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC(dmaCopyHalfWords),
 	ADD_FUNC(dmaFillWords),
 	ADD_FUNC(dmaFillHalfWords),
+	ADD_FUNC(memUncached),
+	ADD_FUNC(memCached),
 	ADD_FUNC(vramSetPrimaryBanks),
 	ADD_FUNC(vramSetBanks_EFG),
 	ADD_FUNC(vramRestorePrimaryBanks),

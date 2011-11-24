@@ -308,6 +308,8 @@ void dmaCopyWords(int, const void*, void*, word_t);
 void dmaCopyHalfWords(int, const void*, void*, word_t);
 void dmaFillWords(word_t, void*, word_t);
 void dmaFillHalfWords(word_t, void*, word_t);
+void* memUncached(void*);
+void* memCached(void*);
 static inline void dmaCopy(const void* in, void* out, word_t size)
 {
 	dmaCopyHalfWords(3, in, out, size);

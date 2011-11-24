@@ -23,6 +23,8 @@ dmaCopyWords \
 dmaCopyHalfWords \
 dmaFillWords \
 dmaFillHalfWords \
+memUncached \
+memCached \
 vramSetPrimaryBanks \
 vramSetBanks_EFG \
 vramRestorePrimaryBanks \
