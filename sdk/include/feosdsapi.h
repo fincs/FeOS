@@ -9,6 +9,26 @@
 typedef struct { int x, y; } styluspos_t;
 typedef word_t keys_t;
 
+// libnds-compatible type defines
+
+typedef byte_t u8;
+typedef char_t s8;
+typedef hword_t u16;
+typedef short_t s16;
+typedef word_t u32;
+typedef long_t s32;
+typedef unsigned long long u64;
+typedef long long s64;
+
+typedef volatile byte_t vu8;
+typedef volatile char_t vs8;
+typedef volatile hword_t vu16;
+typedef volatile short_t vs16;
+typedef volatile word_t vu32;
+typedef volatile long_t vs32;
+typedef volatile unsigned long long vu64;
+typedef volatile long long vs64;
+
 // libnds compatibility defines
 #define DC_FlushRange      FeOS_DataCacheFlush
 #define DC_FlushAll        FeOS_DataCacheFlushAll
