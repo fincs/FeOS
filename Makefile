@@ -3,8 +3,9 @@ export DEST := $(CURDIR)/FeOS
 
 SUBDIRS  := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
 APPS     := $(patsubst %/,%,$(dir $(wildcard apps/*/Makefile)))
+USERLIBS := $(patsubst %/,%,$(dir $(wildcard sdk/userlib/*/Makefile)))
 
-.PHONY: clean install
+.PHONY: all clean install liball libclean libinstall
 
 all:
 	@$(MAKE) --no-print-directory -C sdk || exit 1
@@ -12,6 +13,9 @@ all:
 	@$(MAKE) --no-print-directory -C kernel || exit 1
 	@$(MAKE) --no-print-directory -C cmdprompt || exit 1
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
+
+liball:
+	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
 
 clean:
 	@$(MAKE) --no-print-directory -C sdk clean
@@ -21,6 +25,10 @@ clean:
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i clean || { exit 1;} done
 	@rm -f $(DEST)/data/FeOS/bin/*
 	@rm -f $(DEST)/data/FeOS/lib/*
+	@rm -f $(DEST)/data/FeOS/arm7/*
+
+libclean:
+	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i clean || { exit 1;} done
 
 install: all
 	@mkdir -p $(DEST)/data/FeOS/bin || exit 1
@@ -30,3 +38,6 @@ install: all
 	@cp sdk/feosstl.fx2 $(DEST)/data/FeOS/lib/feosstl.fx2 || exit 1
 	@cp cmdprompt/cmd.fx2 $(DEST)/data/FeOS/bin/cmd.fx2 || exit 1
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i install; done
+
+libinstall: liball
+	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i install; done
