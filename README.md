@@ -19,6 +19,17 @@ You need the following in order to build FeOS:
 
 Before building, you must set the `FEOSSDK` environment variable to point to the `/sdk` directory (if on Windows, you **must** use Unix-style paths, like `/c/Users/.../gitrepos/FeOS/sdk`).
 
+Environmental Variables
+-----------------------
+
+The following Environmental Variables are available to configure FeOS:
+
+| Name          | Function                                             | Default Value        |
+|:--------------|:-----------------------------------------------------|:---------------------|
+| FEOSSDK       | Path to `/sdk` directory                             | MUST BE USER-DEFINED |
+| FEOSDEST      | Base path to place files with `make install` command | ${FEOSSDK}/../FeOS   |
+| FEOSBUILD_ALL | Components to build with the `make all` command      | sdk lib apps         |
+
 How to build FeOS (including the SDK)
 -------------------------------------
 
