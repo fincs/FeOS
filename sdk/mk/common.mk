@@ -4,6 +4,10 @@
 
 FEOSBIN = $(FEOSSDK)/bin
 
+ifeq ($(FEOSDEST),)
+export FEOSDEST = $(FEOSSDK)/../FeOS
+endif
+
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
