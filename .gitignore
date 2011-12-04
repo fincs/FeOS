@@ -1,5 +1,7 @@
 build/
 build7/
+/apps/*
+!/apps/unixtools/
 /FeOS/
 /testbin/
 /sdk/lib/
