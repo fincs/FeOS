@@ -2,7 +2,10 @@
 #include "fxe.h"
 #include <unistd.h>
 #include <dirent.h>
+#include <stdio.h>
 #include <sys/stat.h>
+
+static inline int _fileno_helper(FILE* f) { return fileno(f); }
 
 BEGIN_TABLE(FEOSPOSIXEMU)
 	// Directory functions
@@ -13,6 +16,8 @@ BEGIN_TABLE(FEOSPOSIXEMU)
 	ADD_FUNC(seekdir),
 	ADD_FUNC(telldir),
 	ADD_FUNC(mkdir),
+	ADD_FUNC(fstat),
+	ADD_FUNC_ALIAS(_fileno_helper, fileno),
 
 	// CWD functions
 	ADD_FUNC(chdir),

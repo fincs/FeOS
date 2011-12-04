@@ -12,7 +12,9 @@ telldir \
 mkdir \
 chdir \
 getcwd \
-stat
+stat \
+fstat \
+fileno
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

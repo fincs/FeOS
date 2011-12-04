@@ -99,6 +99,8 @@ int puts(const char*);
 int remove(const char*);
 int rename(const char*, const char*);
 
+int fileno(FILE*);
+
 #ifdef __cplusplus
 }
 #endif
