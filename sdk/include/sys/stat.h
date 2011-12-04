@@ -67,6 +67,8 @@ struct stat
 
 int mkdir(const char*, mode_t);
 int stat(const char*, struct stat*);
+int fstat(int, struct stat*);
+
 
 #ifdef __cplusplus
 }
