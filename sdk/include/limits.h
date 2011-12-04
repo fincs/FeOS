@@ -22,3 +22,4 @@
 #define INT_MIN    LONG_MIN
 #define INT_MAX    LONG_MAX
 #define UINT_MAX   ULONG_MAX
+#define SIZE_MAX   UINT_MAX
