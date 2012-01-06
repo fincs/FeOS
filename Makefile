@@ -1,6 +1,5 @@
 SUBDIRS  := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
 APPS     := $(patsubst %/,%,$(dir $(wildcard apps/*/Makefile)))
-USERLIBS := $(patsubst %/,%,$(dir $(wildcard sdk/userlib/*/Makefile)))
 
 ifeq ($(FEOSDEST),)
 export FEOSDEST = $(FEOSSDK)/../FeOS
@@ -42,7 +41,7 @@ sdk:
 	@$(MAKE) --no-print-directory -C cmdprompt || exit 1
 
 lib:
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
+	@$(MAKE) --no-print-directory -C sdk/userlib || exit 1
 
 apps:
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
@@ -57,7 +56,7 @@ sdkclean:
 	@$(MAKE) --no-print-directory -C cmdprompt clean
 
 libclean:
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i clean || { exit 1;} done
+	@$(MAKE) --no-print-directory -C sdk/userlib clean || exit 1
 
 appsclean:
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i clean || { exit 1;} done
@@ -75,7 +74,7 @@ libinstall: lib
 	@mkdir -p $(FEOSDEST)/data/FeOS/bin  || exit 1
 	@mkdir -p $(FEOSDEST)/data/FeOS/lib  || exit 1
 	@mkdir -p $(FEOSDEST)/data/FeOS/arm7 || exit 1
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i install; done
+	@$(MAKE) --no-print-directory -C sdk/userlib install || exit 1
 
 appsinstall: apps
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i install; done
