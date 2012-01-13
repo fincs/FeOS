@@ -47,8 +47,8 @@ __SWIHandler:
 .align 2
 .global __SVCTable
 __SVCTable:
-	@ Public functions
-	.word 0
+	@ Public functions (0x0Z)
+	.word __SWIEXHandler
 	.word LoadModule_ARM7
 	.word FreeModule_ARM7
 	.word keyboardUpdate
@@ -65,7 +65,7 @@ __SVCTable:
 	.word _SetValue32Handler
 	.word _SetAddressHandler
 
-	@ Kernel functions
+	@ Kernel functions (0x1Z)
 	.word FeOS_DebugPrint
 	.word 0 @swiWaitForVBlank
 	.word 0
@@ -79,7 +79,7 @@ __SVCTable:
 	.word _TimerTick
 	.space 4*5
 
-	@ FAT hooks
+	@ FAT hooks (0x2Z ~ 0x3Z)
 
 	writehook fatopen
 	writehook fatclose
@@ -100,10 +100,9 @@ __SVCTable:
 	writehook fatstatvfs
 	writehook fatftruncate
 	writehook fatfsync
-
 	.space 4*13
 
-	@ FIFO functions
+	@ FIFO functions (0x4Z)
 	.word fifoSendAddress
 	.word fifoSendValue32
 	.word fifoSendDatamsg
