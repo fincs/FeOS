@@ -12,6 +12,8 @@ build7/
 !/sdk/source/FEOSSTDIO/Makefile
 /sdk/source/FEOSPOSIXEMU/*
 !/sdk/source/FEOSPOSIXEMU/Makefile
+/sdk/source/FEOSMATH/*
+!/sdk/source/FEOSMATH/Makefile
 /sdk/source/FEOSDSAPI/*
 !/sdk/source/FEOSDSAPI/Makefile
 /sdk/source/FEOSDSSPR/*

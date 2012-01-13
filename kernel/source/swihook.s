@@ -113,8 +113,20 @@ __SVCTable:
 	.word fifoGetValue32
 	.word fifoGetDatamsg
 	.space 4*7
+	
+	@ Math functions (0x5Z)
+	.word FeOS_div3232
+	.word FeOS_mod3232
+	.word FeOS_div6432
+	.word FeOS_mod6432
+	.word FeOS_div6464
+	.word FeOS_mod6464
+	.word FeOS_sqrt32
+	.word FeOS_sqrt64
+	.space 4*8
 
-	.space 4*176
+	.space 4*160
+
 
 .align 2
 .global __ResetHandler
@@ -290,6 +302,13 @@ __setSWIStack:
 	@ Return
 	bx lr
 
+.align 2
+.global __getMode
+__getMode:
+	mrs r0, cpsr
+	and r0, r0, #0x1F
+	bx  lr
+
 .macro swiimp name num
 .align 2
 .global FeOS_swi_\name
@@ -331,3 +350,12 @@ swiimp FifoCheckDatamsg 0x45
 swiimp FifoGetAddress 0x46
 swiimp FifoGetValue32 0x47
 swiimp FifoGetDatamsg 0x48
+
+swiimp div3232 0x50
+swiimp mod3232 0x51
+swiimp div6432 0x52
+swiimp mod6432 0x53
+swiimp div6464 0x54
+swiimp mod6464 0x55
+swiimp sqrt32  0x56
+swiimp sqrt64  0x57

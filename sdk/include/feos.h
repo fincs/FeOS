@@ -16,6 +16,7 @@ extern "C"
 #ifndef ARM7
 #include <feoserror.h>
 #include <feosuser.h>
+#include <feosmath.h>
 #include <feosdsapi.h>
 #include <feosdsspr.h>
 #include <feosdsbg.h>

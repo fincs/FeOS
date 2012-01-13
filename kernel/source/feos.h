@@ -74,6 +74,9 @@ VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t mask);
 
+int __getMode();
+#define isUserMode() (__getMode() == 0x10)
+
 void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlushAll();
 void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
