@@ -130,7 +130,9 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC(setBrightness),
 	ADD_FUNC(lcdSwap),
 	ADD_FUNC(lcdMainOnTop),
-	ADD_FUNC(lcdMainOnBottom)
+	ADD_FUNC(lcdMainOnBottom),
+	ADD_FUNC(powerOn),
+	ADD_FUNC(powerOff)
 END_TABLE(FEOSDSAPI)
 
 MAKE_FAKEMODULE(FEOSDSAPI)

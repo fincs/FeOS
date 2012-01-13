@@ -46,7 +46,9 @@ video3DEnabled \
 setBrightness \
 lcdSwap \
 lcdMainOnTop \
-lcdMainOnBottom
+lcdMainOnBottom \
+powerOn \
+powerOff
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

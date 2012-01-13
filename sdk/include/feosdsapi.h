@@ -299,6 +299,25 @@ enum
 	DISPLAY_SPR_WIN_ON = BIT(15),
 };
 
+#define PM_ARM9_DIRECT BIT(16)
+enum
+{
+	PM_SOUND_AMP        = BIT(0), // Power the sound hardware (needed to hear stuff in GBA mode too).
+	PM_SOUND_MUTE       = BIT(1), // Mute the main speakers, headphone output will still work.
+	PM_BACKLIGHT_BOTTOM = BIT(2), // Enable the bottom backlight if set.
+	PM_BACKLIGHT_TOP    = BIT(3), // Enable the top backlight if set.
+	PM_SYSTEM_PWR       = BIT(6), // Turn the power *off* if set.
+
+	POWER_LCD       = PM_ARM9_DIRECT | BIT(0),  // Controls the power for both LCD screens.
+	POWER_2D_A      = PM_ARM9_DIRECT | BIT(1),  // Controls the power for the main 2D core.
+	POWER_MATRIX    = PM_ARM9_DIRECT | BIT(2),  // Controls the power for the 3D matrix.
+	POWER_3D_CORE   = PM_ARM9_DIRECT | BIT(3),  // Controls the power for the main 3D core.
+	POWER_2D_B      = PM_ARM9_DIRECT | BIT(9),  // Controls the power for the sub 2D core.
+	POWER_SWAP_LCDS = PM_ARM9_DIRECT | BIT(15), // Controls which screen should use the main core.
+	POWER_ALL_2D    = PM_ARM9_DIRECT | POWER_LCD | POWER_2D_A | POWER_2D_B,        // Power just 2D hardware.
+	POWER_ALL       = PM_ARM9_DIRECT | POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX // Power everything.
+};
+
 keys_t FeOS_GetKeysDown();
 keys_t FeOS_GetKeysHeld();
 keys_t FeOS_GetKeysUp();
@@ -358,3 +377,5 @@ void setBrightness(int screen, int level);
 void lcdSwap();
 void lcdMainOnTop();
 void lcdMainOnBottom();
+void powerOn(int);
+void powerOff(int);
