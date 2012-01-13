@@ -28,8 +28,10 @@ build7/
 !/sdk/userlib/Makefile
 !/sdk/userlib/README.txt
 !/sdk/userlib/feoswifi/
+!/sdk/userlib/feos3d/
 *.exe
 *.nds
 *.elf
 *.fx2
 *.a
+*~
