@@ -145,7 +145,7 @@ typedef long long int64;
 
 static inline void swiCopy(const void* source, void* dest, word_t flags)
 {
-	int i;
+	word_t i;
 	word_t size = flags & ~0xFFE00000;
 
 	if (flags & COPY_MODE_FILL)
