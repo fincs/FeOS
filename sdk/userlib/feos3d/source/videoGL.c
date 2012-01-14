@@ -611,6 +611,8 @@ FEOS_EXPORT void glDeinit()
 
 	powerOff(POWER_3D_CORE | POWER_MATRIX);
 
+	glResetTextures();
+
 	vramBlock_Deconstruct(glGlob->vramBlocks[0]);
 	vramBlock_Deconstruct(glGlob->vramBlocks[1]);
 
