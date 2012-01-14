@@ -48,7 +48,7 @@ __SWIHandler:
 .global __SVCTable
 __SVCTable:
 	@ Public functions (0x0Z)
-	.word __SWIEXHandler
+	.word 0
 	.word LoadModule_ARM7
 	.word FreeModule_ARM7
 	.word keyboardUpdate
