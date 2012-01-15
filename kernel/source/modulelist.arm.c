@@ -35,6 +35,7 @@ void FeOS_ModuleListRemove(fxe_runtime_header* pModule)
 	if (pModule->file == -1) return; // thwart attempts at doing evil
 
 	pModule->prev->next = pModule->next;
+	if (pModule->next) pModule->next->prev = pModule->prev;
 	if (mListTail == pModule) mListTail = pModule->prev;
 	nmodules --;
 }
