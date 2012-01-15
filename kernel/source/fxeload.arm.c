@@ -44,12 +44,12 @@ instance_t LoadModule(const char* aFilename)
 			if (header)
 			{
 				header->refcount ++;
+				free(aModuleName);
 				return header->hThis;
 			}
 		}
 
 		instance_t ret = _LoadModule_imp(aFilename, aModuleName);
-
 		free(aModuleName);
 		return ret;
 	}else
@@ -66,22 +66,29 @@ instance_t LoadModule(const char* aFilename)
 
 		// The module name was specified, we have to find the path to the module itself
 		{
-			char buf[PATH_MAX+1];
+			char* buf = (char*) malloc(PATH_MAX+1);
+			if (!buf) return NULL;
+
 			struct stat st;
 
 			// First look at the lib folder
-			snprintf(buf, sizeof(buf), "/data/FeOS/lib/%s.fx2", aFilename);
+			snprintf(buf, PATH_MAX+1, "/data/FeOS/lib/%s.fx2", aFilename);
 			if (stat(buf, &st) == 0) goto __LM_win;
 
 			// Then at the bin folder
-			snprintf(buf, sizeof(buf), "/data/FeOS/bin/%s.fx2", aFilename);
+			snprintf(buf, PATH_MAX+1, "/data/FeOS/bin/%s.fx2", aFilename);
 			if (stat(buf, &st) == 0) goto __LM_win;
 
 			// Fail; we can't find the module
+			free(buf);
 			return NULL;
 
 __LM_win:
-			return _LoadModule_imp(buf, aFilename);
+			{
+				instance_t ret = _LoadModule_imp(buf, aFilename);
+				free(buf);
+				return ret;
+			}
 		}
 	}
 }
