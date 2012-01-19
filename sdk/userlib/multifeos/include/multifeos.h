@@ -42,6 +42,14 @@ MULTIFEOS_API void FeOS_IRQWaitCheck();
 MULTIFEOS_API void FeOS_InstallYieldIRQ();
 MULTIFEOS_API void FeOS_UninstallYieldIRQ();
 
+#define FeOS_ThreadJoin FeOS_ThreadWaitClose
+
+static inline int FeOS_ThreadWaitClose(thread_t hThread)
+{
+	while (FeOS_IsThreadActive(hThread)) FeOS_Yield();
+	return FeOS_GetThreadRC(hThread);
+}
+
 #ifdef __cplusplus
 }
 #endif
