@@ -132,7 +132,7 @@ void FeOS_SetThreadPrio(thread_t hThread, int prio)
 {
 	threadSt* t = (threadSt*) hThread;
 	word_t flag = (prio == PRIORITY_HIGH) ? THREAD_HIGHPRIO : 0;
-	if (!(t->flags & flag)) return;
+	if ((t->flags & flag) == flag) return;
 	t->flags &= ~THREAD_HIGHPRIO;
 	t->flags |= flag;
 
