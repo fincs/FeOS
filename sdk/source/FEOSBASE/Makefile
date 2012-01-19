@@ -26,6 +26,11 @@ FeOS_PopExitFunc \
 FeOS_GetErrnoPtr \
 FeOS_GetModuleExidxTbl \
 FeOS_ModuleFromAddress \
+FeOS_ExecStatusCreate \
+FeOS_ExecStatusAddRef \
+FeOS_ExecStatusRelease \
+FeOS_SetCurExecStatus \
+FeOS_GetCurExecStatus \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \

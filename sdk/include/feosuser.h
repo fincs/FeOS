@@ -15,6 +15,8 @@ typedef struct
 	int nentries;
 } FeOS_GetExidxTbl_t;
 
+typedef void* execstat_t;
+
 typedef void (*FifoAddressHandlerFunc)(void*, void*);
 typedef void (*FifoValue32HandlerFunc)(word_t, void*);
 typedef void (*FifoDatamsgHandlerFunc)(int, void*);
@@ -27,6 +29,12 @@ void FeOS_UnlockModule(instance_t);
 
 #define FeOS_StayResident() FeOS_LockModule(FeOS_hInstance)
 #define FeOS_EndStayResident() FeOS_UnlockModule(FeOS_hInstance)
+
+execstat_t FeOS_ExecStatusCreate();
+void FeOS_ExecStatusAddRef(execstat_t);
+void FeOS_ExecStatusRelease(execstat_t);
+void FeOS_SetCurExecStatus(execstat_t);
+execstat_t FeOS_GetCurExecStatus();
 
 instance_t FeOS_LoadARM7(const char*, int*);
 void FeOS_FreeARM7(instance_t, int);
