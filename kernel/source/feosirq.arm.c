@@ -271,7 +271,7 @@ word_t FeOS_CheckPendingIRQs()
 	return totalflags;
 };
 
-void FeOS_WaitForIRQ(word_t mask)
+static void _FeOS_WaitForIRQ(word_t mask)
 {
 	FeOS_CheckPendingIRQs();
 	for(;;)
@@ -280,4 +280,33 @@ void FeOS_WaitForIRQ(word_t mask)
 		if (FeOS_CheckPendingIRQs() & mask)
 			break;
 	}
+}
+
+static irqWaitFunc_t irqWaitFunc = NULL;
+
+void FeOS_WaitForIRQ(word_t mask)
+{
+	(irqWaitFunc ? irqWaitFunc : &_FeOS_WaitForIRQ)(mask);
+}
+
+irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc)
+{
+	irqWaitFunc_t oldFunc = irqWaitFunc;
+	if (newFunc != GET_IRQFUNC)
+		irqWaitFunc = newFunc;
+	return oldFunc;
+}
+
+word_t FeOS_NextIRQ()
+{
+	word_t flags = 0;
+	for(;;)
+	{
+		flags = FeOS_CheckPendingIRQs();
+		if (flags == 0)
+			FeOS_IRQPoll(); // wait for *any* IRQs to happen
+		else
+			break;
+	}
+	return flags;
 }

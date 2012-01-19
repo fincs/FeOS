@@ -12,6 +12,8 @@ FeOS_GetStylusPos \
 FeOS_SetInterrupt \
 FeOS_CheckPendingIRQs \
 FeOS_WaitForIRQ \
+FeOS_SetIRQWaitFunc \
+FeOS_NextIRQ \
 FeOS_IrqDisable \
 FeOS_IrqEnable \
 FeOS_ConsoleMode \

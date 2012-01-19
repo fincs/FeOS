@@ -66,6 +66,8 @@ static inline void FeOS_WaitForVBlank()
 	FeOS_WaitForIRQ(IRQ_VBLANK);
 }
 
+typedef void (*irqWaitFunc_t)(word_t);
+
 void FeOS_RunFifoQueue();
 void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata);
 void FeOS_FifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata);
@@ -73,6 +75,10 @@ void FeOS_FifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, voi
 VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t mask);
+word_t FeOS_NextIRQ();
+
+#define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
+irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
 
 int __getMode();
 #define isUserMode() (__getMode() == 0x10)

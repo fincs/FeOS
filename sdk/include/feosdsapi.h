@@ -325,11 +325,17 @@ keys_t FeOS_GetKeysDownRepeat();
 void FeOS_SetKeyRepeat(byte_t, byte_t);
 void FeOS_GetStylusPos(styluspos_t*);
 
+#define DEFAULT_IRQFUNC ((irqWaitFunc_t)0)
+#define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
+typedef void (*irqWaitFunc_t)(word_t);
+
 fp_t FeOS_SetInterrupt(word_t, fp_t);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t);
+irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
 void FeOS_IrqEnable(word_t);
 void FeOS_IrqDisable(word_t);
+word_t FeOS_NextIRQ();
 
 void FeOS_TimerWrite(int, word_t);
 hword_t FeOS_TimerTick(int);

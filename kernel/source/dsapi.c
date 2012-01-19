@@ -96,6 +96,8 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC(FeOS_SetInterrupt),
 	ADD_FUNC(FeOS_CheckPendingIRQs),
 	ADD_FUNC(FeOS_WaitForIRQ),
+	ADD_FUNC(FeOS_SetIRQWaitFunc),
+	ADD_FUNC(FeOS_NextIRQ),
 	ADD_FUNC_ALIAS(FeOS_swi_IrqDisable, FeOS_IrqDisable),
 	ADD_FUNC_ALIAS(FeOS_swi_IrqEnable, FeOS_IrqEnable),
 	ADD_FUNC_ALIAS(FeOS_swi_ConsoleMode, FeOS_ConsoleMode),
