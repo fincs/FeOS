@@ -29,6 +29,7 @@ build7/
 !/sdk/userlib/README.txt
 !/sdk/userlib/feoswifi/
 !/sdk/userlib/feos3d/
+!/sdk/userlib/multifeos/
 *.exe
 *.nds
 *.elf
