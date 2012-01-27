@@ -10,7 +10,6 @@
 
 typedef struct
 {
-	size_t  CustomSize;
 	int     (*Open) (void*);
 	void    (*Close)(void*);
 	ssize_t (*Write)(void*, const char*, size_t);
@@ -64,48 +63,31 @@ void FeOS_InitStreams()
 	AddDevice(&dotab_stm);
 }
 
-FILE* FeOS_OpenStream(const stream_t* pStm)
+static stmfile_t _stmCtor;
+
+FILE* FeOS_OpenStream(const stream_t* pStm, void* cData)
 {
-	char buf[14];
-	siprintf(buf, "stm:/%08X", (word_t) pStm);
-	return fopen(buf, "r+");
+	if (!pStm) return NULL;
+
+	_stmCtor.pStm = pStm;
+	_stmCtor.cData = cData;
+	FILE* r = fopen("stm:/dummy", "r+");
+	_stmCtor.pStm = NULL;
+	return r;
 }
 
 int stm_open_r(struct _reent* r, void* fileStruct, const char* path, int flags, int mode)
 {
 	stmfile_t* sFile = (stmfile_t*) fileStruct;
+	memcpy(sFile, &_stmCtor, sizeof(stmfile_t));
 
-	// Skip the stm: if present
-	if(strchr(path, ':') != NULL)
-		path = strchr (path, ':') + 1;
-	if(strchr(path, ':') != NULL)
+	const stream_t* pStm = sFile->pStm;
+	if (!pStm)
 	{
-		r->_errno = EINVAL;
+		r->_errno = EBADF;
 		return -1;
 	}
-
-	word_t d = strtoul(path+1, NULL, 16);
-	if (!d)
-	{
-		r->_errno = EINVAL;
-		return -1;
-	}
-
-	const stream_t* pStm = (const stream_t*) d;
-
-	sFile->pStm = pStm;
-	sFile->cData = NULL;
-
-	if (pStm->CustomSize)
-	{
-		sFile->cData = malloc(pStm->CustomSize);
-		if (!sFile->cData)
-		{
-			r->_errno = ENOMEM;
-			return -1;
-		}
-	}
-
+	
 	if (pStm->Open)
 		r->_errno = pStm->Open(sFile->cData);
 
@@ -120,9 +102,6 @@ int stm_close_r(struct _reent* r, int fd)
 	if (pStm->Close)
 		pStm->Close(sFile->cData);
 
-	if (sFile->cData)
-		free(sFile->cData);
-
 	return 0;
 }
 
@@ -133,7 +112,7 @@ ssize_t stm_write_r(struct _reent* r, int fd, const char* ptr, size_t len)
 
 	if (!pStm->Write)
 	{
-		r->_errno = EBADF;
+		r->_errno = ENOTSUP;
 		return -1;
 	}
 
@@ -147,7 +126,7 @@ ssize_t stm_read_r(struct _reent* r, int fd, char* ptr, size_t len)
 
 	if (!pStm->Read)
 	{
-		r->_errno = EBADF;
+		r->_errno = ENOTSUP;
 		return -1;
 	}
 
@@ -161,7 +140,7 @@ off_t stm_seek_r(struct _reent* r, int fd, off_t pos, int dir)
 
 	if (!pStm->Seek)
 	{
-		r->_errno = EBADF;
+		r->_errno = ENOTSUP;
 		return -1;
 	}
 

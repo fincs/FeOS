@@ -20,8 +20,7 @@ typedef struct
 
 typedef struct
 {
-	size_t  CustomSize;
-	int     (*Open) (void*);
+	int     (*Open) (void*); // 0 = success, anything else (errno.h): failure
 	void    (*Close)(void*);
 	ssize_t (*Write)(void*, const char*, size_t);
 	ssize_t (*Read) (void*, char*, size_t);
@@ -34,7 +33,7 @@ FILE* FeOS_GetStderr();
 FILE* FeOS_SetStdin(FILE*);
 FILE* FeOS_SetStdout(FILE*);
 FILE* FeOS_SetStderr(FILE*);
-FILE* FeOS_OpenStream(const stream_t*);
+FILE* FeOS_OpenStream(const stream_t*, void*);
 
 #define stdin  FeOS_GetStdin()
 #define stdout FeOS_GetStdout()
