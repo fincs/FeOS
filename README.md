@@ -1,5 +1,5 @@
-FeOS v0.0-prerelease
-====================
+FeOS v0.0-prerelease (WIP)
+==========================
 
 Introduction
 ------------
@@ -11,10 +11,9 @@ Build prerequisites
 
 You need the following in order to build FeOS:
 
-- devkitARM r34 or higher
-- libnds 1.5.3 or higher
+- devkitARM r36 or higher
+- libnds 1.5.5 or higher
 - libfat 1.0.10 or higher
-- default ARM7 0.5.22 or higher
 - A working C compiler for the host (Windows users: use MinGW)
 
 Before building, you must set the `FEOSSDK` environment variable to point to the `/sdk` directory (if on Windows, you **must** use Unix-style paths, like `/c/Users/.../gitrepos/FeOS/sdk`).
@@ -39,33 +38,39 @@ How to build FeOS (including the SDK)
 
 When it's done compiling, transfer the contents of the generated `FeOS` folder to the root of your SD card.
 
-How to transfer a FeOS application to the SD card
--------------------------------------------------
+How to transfer a FeOS module to the SD card
+--------------------------------------------
 
-Just copy the fx2 file to the `/data/FeOS/bin/` folder in the SD card.
+Use the following command to compile the project:
 
-The application might have dependencies on some libraries. If so, then copy the libraries to the `/data/FeOS/lib/` folder.
+    make install
+
+The module might have dependencies on some libraries. If so, then repeat this procedure for them.
 
 Demo applications
 -----------------
 
 This repo contains some demo applications:
 
-- `/testbin`: it tests some FeOS features.
 - `/sdk/examples/hello_world`: the classic Hello World program.
-- `/sdk/example/time`: it prints the current time and date.
+- `/sdk/examples/time`: it prints the current time and date.
+- `/sdk/examples/inputtest`: basic keypad/touchscreen test.
+- `/sdk/examples/irqdemo`: basic IRQ hooking test.
+- `/sdk/examples/directmode`: shows how to build a simple Direct mode application.
+- `/sdk/examples/arm7let`: shows how to build a simple ARM7 extension module.
+- `/sdk/examples/load_arm7`: shows how to load the before-mentioned ARM7 module.
 
 Default commands
 ----------------
 
-FeOS comes with several Unix-like commands: `ls`, `cd`, `pwd` and `cat`; courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
+FeOS comes with several Unix-like commands, courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
 
 When an application hangs...
 ----------------------------
 
 When an application hangs, you can terminate said application by holding down Down on the D-pad then pressing the "Menu" key on the on-screen keyboard.
 
-**WARNING**: This feature forcefully exits the application. It could lead to system unstability, memory leaks, disk corruption and/or data loss. **Use with caution**.
+**WARNING**: This feature forcefully exits the application. It could lead to system unstability, memory leaks, disk corruption and/or data loss. **Use with caution**. It also does not work with multi-threaded code.
 
 Opening the source in Programmers Notepad
 -----------------------------------------
