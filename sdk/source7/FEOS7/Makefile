@@ -34,12 +34,15 @@ strcpy \
 strcmp \
 strncpy \
 strncmp \
+malloc \
+free \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \
 __aeabi_uidivmod \
 __aeabi_ldivmod \
-__aeabi_uldivmod
+__aeabi_uldivmod \
+__aeabi_lmul
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
