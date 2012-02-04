@@ -61,6 +61,11 @@ typedef volatile long long vs64;
 
 enum
 {
+	SCREEN_WIDTH = 256, SCREEN_HEIGHT = 192
+};
+
+enum
+{
 	KEY_A      = BIT(0),  // A button
 	KEY_B      = BIT(1),  // B button
 	KEY_SELECT = BIT(2),  // SELECT button
