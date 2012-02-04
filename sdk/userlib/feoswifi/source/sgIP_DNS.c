@@ -463,7 +463,7 @@ dns_listenonly:
    return he;
 }
 
-unsigned long inet_addr(const char *cp) {
+FEOS_EXPORT unsigned long inet_addr(const char *cp) {
 	unsigned long IP;
 	if(sgIP_DNS_isipaddress(cp,&IP)) {
 		return IP;
@@ -471,7 +471,7 @@ unsigned long inet_addr(const char *cp) {
 	return 0xFFFFFFFF;
 }
 
-int inet_aton(const char *cp, struct in_addr *inp) {
+FEOS_EXPORT int inet_aton(const char *cp, struct in_addr *inp) {
 	unsigned long IP;
 	
 	if(sgIP_DNS_isipaddress(cp,&IP)) {
@@ -483,7 +483,7 @@ int inet_aton(const char *cp, struct in_addr *inp) {
 }
 
 
-char *inet_ntoa(struct in_addr in) {
+FEOS_EXPORT char *inet_ntoa(struct in_addr in) {
 	sgIP_ntoa(in.s_addr);
 	return (char *)ipaddr_alias;
 }
