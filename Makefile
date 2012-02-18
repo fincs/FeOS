@@ -67,7 +67,6 @@ appsclean:
 sdkinstall: sdk
 	@cp kernel/FeOS.nds $(FEOSDEST)/FeOS.nds || exit 1
 	@cp sdk/feoscxx.fx2 $(FEOSDEST)/data/FeOS/lib/feoscxx.fx2 || exit 1
-	@cp sdk/feosstl.fx2 $(FEOSDEST)/data/FeOS/lib/feosstl.fx2 || exit 1
 	@cp cmdprompt/cmd.fx2 $(FEOSDEST)/data/FeOS/bin/cmd.fx2 || exit 1
 
 libinstall: lib

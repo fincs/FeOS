@@ -16,7 +16,6 @@ all:
 	@make -f libfeos.mk
 	@make -f libfeos7.mk
 	@make -f libfeoscxx.mk
-	@make -f libfeosstl.mk
 
 clean:
 	@make -C bin/fxe2tool_src clean
@@ -32,4 +31,3 @@ clean:
 	@make -f libfeos.mk clean
 	@make -f libfeos7.mk clean
 	@make -f libfeoscxx.mk clean
-	@make -f libfeosstl.mk clean
