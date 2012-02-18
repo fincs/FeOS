@@ -112,9 +112,6 @@ else
 ifeq ($(CONF_ARM7),)
 ifneq ($(CONF_NOCXXLIB),1)
 	export CXXLIB := -lfeoscxx
-ifneq ($(CONF_NOSTL),1)
-	CXXLIB += -lfeosstl
-endif
 endif
 endif
 endif
