@@ -52,8 +52,8 @@ SECTIONS
 		__feos_fini_array =  . ;
 		KEEP( *(SORT(.dtors.*)) )
 		KEEP( *(.dtors) )
-		KEEP( *(.fini_array) )
 		KEEP( *(SORT(.fini_array.*)) )
+		KEEP( *(.fini_array) )
 		__feos_fini_size = . ;
 		LONG((__feos_fini_size - __feos_fini_array) / 4);
 	} : loadable
