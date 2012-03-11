@@ -117,7 +117,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 		return NULL;
 	}
 
-	void* pMem = malloc(totalsize);
+	void* pMem = memalign(32, (totalsize+31) & ~31);
 	if(pMem == NULL)
 	{
 		close(fd);
