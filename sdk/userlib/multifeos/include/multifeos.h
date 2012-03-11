@@ -37,6 +37,7 @@ MULTIFEOS_API int FeOS_GetThreadRC(thread_t hThread);
 MULTIFEOS_API thread_t FeOS_CreateProcess(int argc, const char* argv[]);
 
 MULTIFEOS_API void FeOS_IRQWaitYield(word_t mask);
+MULTIFEOS_API word_t FeOS_NextIRQYield();
 MULTIFEOS_API void FeOS_IRQWaitCheck();
 
 MULTIFEOS_API void FeOS_InstallYieldIRQ();

@@ -202,6 +202,15 @@ void FeOS_IRQWaitYield(word_t mask)
 	FeOS_Yield();
 }
 
+word_t FeOS_NextIRQYield()
+{
+	threadsWaiting ++;
+	curThread->irqMask = 0;
+	curThread->flags |= THREAD_IRQWAIT;
+	FeOS_Yield();
+	return curThread->irqMask;
+}
+
 static void _swapPos(threadSt* a, threadSt* b)
 {
 	if (a == b) return;
@@ -215,7 +224,11 @@ static void _swapPos(threadSt* a, threadSt* b)
 
 void FeOS_IRQWaitCheck()
 {
-	if (!threadsWaiting) return;
+	if (!threadsWaiting)
+	{
+		FeOS_Yield();
+		return;
+	}
 
 	// Get the interrupt mask. If all other threads are waiting for IRQs, we can then
 	// perform the wait for IRQ.
@@ -227,8 +240,10 @@ void FeOS_IRQWaitCheck()
 	for (t = curThread->next; t != curThread && threadsWaiting; t = t->next)
 	{
 		if (!(t->flags & THREAD_IRQWAIT)) continue;
-		if (t->irqMask & mask)
+		bool isNextIRQ = t->irqMask == 0;
+		if ((t->irqMask & mask) || isNextIRQ)
 		{
+			if (isNextIRQ) t->irqMask = mask;
 			t->flags &= ~THREAD_IRQWAIT;
 			//if (nextT == NULL && t->flags & THREAD_HIGHPRIO)
 			//	nextT = t;
