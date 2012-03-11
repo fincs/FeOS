@@ -155,7 +155,8 @@ BEGIN_TABLE(FEOSDSSPR)
 	ADD_FUNC(oamClear),
 	ADD_FUNC(oamClearSprite),
 	ADD_FUNC(oamRotateScale),
-	ADD_FUNC(oamAffineTransformation)
+	ADD_FUNC(oamAffineTransformation),
+	ADD_FUNC(oamGfxPtrToOffset)
 END_TABLE(FEOSDSSPR)
 
 MAKE_FAKEMODULE(FEOSDSSPR)

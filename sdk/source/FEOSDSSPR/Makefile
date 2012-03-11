@@ -18,7 +18,8 @@ oamSet \
 oamClear \
 oamClearSprite \
 oamRotateScale \
-oamAffineTransformation
+oamAffineTransformation \
+oamGfxPtrToOffset
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

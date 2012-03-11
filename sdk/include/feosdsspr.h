@@ -77,3 +77,4 @@ void oamClear(OamState*, int, int);
 void oamClearSprite(OamState*, int);
 void oamRotateScale(OamState*, int, int, int, int);
 void oamAffineTransformation(OamState*, int, int, int, int, int);
+unsigned int oamGfxPtrToOffset(OamState*, const void*);
