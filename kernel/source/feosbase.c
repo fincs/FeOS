@@ -95,6 +95,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(rand),
 	ADD_FUNC(srand),
 	ADD_FUNC(malloc),
+	ADD_FUNC(memalign),
 	ADD_FUNC(calloc),
 	ADD_FUNC(free),
 	ADD_FUNC(realloc),

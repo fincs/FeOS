@@ -45,6 +45,7 @@ strtoul \
 rand \
 srand \
 malloc \
+memalign \
 calloc \
 free \
 realloc \
