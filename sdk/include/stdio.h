@@ -65,6 +65,7 @@ void clearerr(FILE*);
 
 int vfprintf(FILE*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
 int vsprintf(char*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
+int vsnprintf(char*, size_t, const char*, va_list) __attribute__ ((format (__printf__, 3, 0)));
 int vfscanf(FILE*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
 int vsscanf(const char*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
 
@@ -74,6 +75,7 @@ int vscanf(const char*, va_list) __attribute__ ((format (__scanf__, 1, 0)));;
 int printf(const char*, ...) __attribute__ ((format (__printf__, 1, 2)));
 int fprintf(FILE*, const char*, ...) __attribute__ ((format (__printf__, 2, 3)));
 int sprintf(char*, const char*, ...) __attribute__ ((format (__printf__, 2, 3)));
+int snprintf(char*, size_t, const char*, ...) __attribute__ ((format (__printf__, 3, 4)));
 
 int scanf(const char*, ...) __attribute__ ((format (__scanf__, 1, 2)));
 int fscanf(FILE*, const char*, ...) __attribute__ ((format (__scanf__, 2, 3)));

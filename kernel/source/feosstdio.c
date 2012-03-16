@@ -73,6 +73,7 @@ BEGIN_TABLE(FEOSSTDIO)
 	// Formatting
 	ADD_FUNC_ALIAS(vfiprintf, vfprintf),
 	ADD_FUNC_ALIAS(vsiprintf, vsprintf),
+	ADD_FUNC_ALIAS(vsniprintf, vsnprintf),
 	ADD_FUNC_ALIAS(vfiscanf, vfscanf),
 	ADD_FUNC_ALIAS(vsiscanf, vsscanf),
 

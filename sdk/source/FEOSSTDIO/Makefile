@@ -23,6 +23,7 @@ ferror \
 clearerr \
 vfprintf \
 vsprintf \
+vsnprintf \
 vfscanf \
 vsscanf \
 fgetc \
