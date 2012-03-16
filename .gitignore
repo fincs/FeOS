@@ -35,4 +35,7 @@ build7/
 *.elf
 *.fx2
 *.a
+*.ppg
+*.pnproj
+*.pnps
 *~

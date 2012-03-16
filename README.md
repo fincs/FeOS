@@ -11,7 +11,7 @@ Build prerequisites
 
 You need the following in order to build FeOS:
 
-- devkitARM r36 or higher
+- devkitARM r37 or higher
 - libnds 1.5.5 or higher
 - libfat 1.0.10 or higher
 - A working C compiler for the host (Windows users: use MinGW)
@@ -71,12 +71,6 @@ When an application hangs...
 When an application hangs, you can terminate said application by holding down Down on the D-pad then pressing the "Menu" key on the on-screen keyboard.
 
 **WARNING**: This feature forcefully exits the application. It could lead to system unstability, memory leaks, disk corruption and/or data loss. **Use with caution**. It also does not work with multi-threaded code.
-
-Opening the source in Programmers Notepad
------------------------------------------
-
-- Start Programmers Notepad
-- `File` -> `Open Project(s)...` -> Select `FeOS.ppg` -> Click `Open`
 
 To do
 -----
