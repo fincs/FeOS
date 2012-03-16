@@ -12,6 +12,7 @@
 #endif
 
 #include "hudicons.h"
+#include "caret.h"
 
 void __SWIHandler();
 void __ResetHandler();
@@ -30,6 +31,8 @@ bool conMode = true, bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 extern int keyBufferOffset;
 extern int keyBufferLength;
 
+int caretBlink = 0;
+
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
@@ -43,6 +46,11 @@ void irq_vblank()
 	{
 		oamSub.oamMemory[0].isHidden = !__inFAT;
 		oamSub.oamMemory[1].isHidden = !stdioRead;
+		oamMain.oamMemory[0].x = con->cursorX * 8;
+		oamMain.oamMemory[0].y = con->cursorY * 8;
+		caretBlink ++;
+		if (caretBlink >= 30) caretBlink = 0;
+		oamMain.oamMemory[0].isHidden = (caretBlink > 15);
 	}
 	if (bOAMUpd)
 	{
@@ -58,6 +66,7 @@ void irq_vblank()
 	}
 }
 
+u16* caret_gfx;
 u16* hudicon_gfx[2];
 
 void kbd_key();
@@ -86,6 +95,11 @@ void videoInit()
 	hudicon_gfx[0] = SPRITE_GFX_SUB;
 	hudicon_gfx[1] = SPRITE_GFX_SUB + (32*32)/2;
 
+	// Prepare main screen OAM
+	oamInit(&oamMain, SpriteMapping_1D_128, false);
+	dmaCopyWords(3, caretTiles, SPRITE_GFX, caretTilesLen);
+	caret_gfx = SPRITE_GFX;
+
 	oamSet(&oamSub, 0, 8, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
 		hudicon_gfx[0], -1, false, false, false, false, false);
 	oamSet(&oamSub, 1, 216, 8, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color,
@@ -93,8 +107,13 @@ void videoInit()
 	oamSub.oamMemory[0].isHidden = true;
 	oamSub.oamMemory[1].isHidden = true;
 
+	oamSet(&oamMain, 0, 0, 0, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color,
+		caret_gfx, -1, false, false, false, false, false);
+	oamMain.oamMemory[0].isHidden = true;
+
 	// Copy the HUD icon palette
 	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
+	dmaCopyHalfWords(3, caretPal, SPRITE_PALETTE, caretPalLen);
 
 	irqSet(IRQ_VBLANK, irq_vblank);
 
