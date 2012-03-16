@@ -34,7 +34,7 @@ typedef volatile long long vs64;
 #define DC_FlushAll        FeOS_DataCacheFlushAll
 #define IC_InvalidateRange FeOS_InstrCacheInvalidate
 #define IC_InvalidateAll   FeOS_InstrCacheInvalidateAll
-#define keysUpdate()       ((void)0)
+#define scanKeys           FeOS_KeysUpdate
 #define keysDown           FeOS_GetKeysDown
 #define keysHeld           FeOS_GetKeysHeld
 #define keysUp             FeOS_GetKeysUp
@@ -329,6 +329,7 @@ keys_t FeOS_GetKeysUp();
 keys_t FeOS_GetKeysDownRepeat();
 void FeOS_SetKeyRepeat(byte_t, byte_t);
 void FeOS_GetStylusPos(styluspos_t*);
+void FeOS_KeysUpdate();
 
 #define DEFAULT_IRQFUNC ((irqWaitFunc_t)0)
 #define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)

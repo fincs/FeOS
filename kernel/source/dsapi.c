@@ -86,12 +86,36 @@ u16 _TimerTick(int timer)
 	return TIMER_DATA(timer&3);
 }
 
+void FeOS_KeysUpdate()
+{
+	if (!bKeyUpd) scanKeys();
+}
+
+// A custom version must be used because of the usage of DC_FlushRange
+void _FeOS_oamUpdate(OamState* oam)
+{
+	if (bOAMUpd) return;
+
+	FeOS_swi_DataCacheFlush(oam->oamMemory, 128*sizeof(SpriteEntry));
+
+	if (oam == &oamMain)
+		dmaCopy(oam->oamMemory, OAM, 128*sizeof(SpriteEntry));
+	else
+		dmaCopy(oam->oamMemory, OAM_SUB, 128*sizeof(SpriteEntry));
+}
+
+void _FeOS_bgUpdate()
+{
+	if (!bBgUpd) bgUpdate();
+}
+
 BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
 	ADD_FUNC_ALIAS(keysHeld, FeOS_GetKeysHeld),
 	ADD_FUNC_ALIAS(keysUp, FeOS_GetKeysUp),
 	ADD_FUNC_ALIAS(keysDownRepeat, FeOS_GetKeysDownRepeat),
 	ADD_FUNC_ALIAS(keysSetRepeat, FeOS_SetKeyRepeat),
+	ADD_FUNC(FeOS_KeysUpdate),
 	ADD_FUNC(FeOS_GetStylusPos),
 	ADD_FUNC(FeOS_SetInterrupt),
 	ADD_FUNC(FeOS_CheckPendingIRQs),
@@ -144,6 +168,7 @@ BEGIN_TABLE(FEOSDSSPR)
 	ADD_FUNC(FeOS_GetSubOAM),
 	ADD_FUNC(FeOS_GetOAMMemory),
 	ADD_FUNC_ALIAS(_FeOS_oamInit, oamInit),
+	ADD_FUNC_ALIAS(_FeOS_oamUpdate, oamUpdate),
 	ADD_FUNC(oamDisable),
 	ADD_FUNC(oamEnable),
 	ADD_FUNC(oamGetGfxPtr),
@@ -169,6 +194,7 @@ BEGIN_TABLE(FEOSDSBG)
 	ADD_FUNC(bgSetScale),
 	ADD_FUNC(bgInit),
 	ADD_FUNC(bgInitSub),
+	ADD_FUNC_ALIAS(_FeOS_bgUpdate, bgUpdate),
 	ADD_FUNC(bgSetControlBits),
 	ADD_FUNC(bgClearControlBits),
 	ADD_FUNC(bgSetPriority),

@@ -65,6 +65,7 @@ OamState* FeOS_GetSubOAM();
 SpriteEntry* FeOS_GetOAMMemory(OamState*);
 
 void oamInit(OamState*, word_t, bool);
+void oamUpdate(OamState*);
 void oamDisable(OamState*);
 void oamEnable(OamState*);
 hword_t* oamGetGfxPtr(OamState*, int);

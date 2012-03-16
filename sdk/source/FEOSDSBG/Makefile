@@ -10,6 +10,7 @@ bgSetRotateScale \
 bgSetScale \
 bgInit \
 bgInitSub \
+bgUpdate \
 bgSetControlBits \
 bgClearControlBits \
 bgSetPriority \

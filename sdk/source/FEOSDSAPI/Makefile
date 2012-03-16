@@ -8,6 +8,7 @@ FeOS_GetKeysHeld \
 FeOS_GetKeysUp \
 FeOS_GetKeysDownRepeat \
 FeOS_SetKeyRepeat \
+FeOS_KeysUpdate \
 FeOS_GetStylusPos \
 FeOS_SetInterrupt \
 FeOS_CheckPendingIRQs \

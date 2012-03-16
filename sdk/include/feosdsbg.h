@@ -53,6 +53,7 @@ void bgSetRotateScale(int, int, int, int);
 void bgSetScale(int, int, int);
 int bgInit(int, word_t, word_t, int, int);
 int bgInitSub(int, word_t, word_t, int, int);
+void bgUpdate();
 volatile hword_t* bgSetControlBits(int, hword_t);
 void bgClearControlBits(int, hword_t);
 void bgSetPriority(int, word_t);

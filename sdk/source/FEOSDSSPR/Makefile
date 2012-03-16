@@ -7,6 +7,7 @@ FeOS_GetMainOAM \
 FeOS_GetSubOAM \
 FeOS_GetOAMMemory \
 oamInit \
+oamUpdate \
 oamDisable \
 oamEnable \
 oamGetGfxPtr \

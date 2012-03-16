@@ -77,6 +77,8 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_ExecStatusRelease),
 	ADD_FUNC(FeOS_SetCurExecStatus),
 	ADD_FUNC(FeOS_GetCurExecStatus),
+	ADD_FUNC(FeOS_SetAutoUpdate),
+	ADD_FUNC(FeOS_GetAutoUpdate),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),

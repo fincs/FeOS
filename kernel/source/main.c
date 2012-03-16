@@ -25,7 +25,7 @@ extern bool stdioRead;
 
 volatile touchPosition touchPos;
 
-bool conMode = true;
+bool conMode = true, bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 
 extern int keyBufferOffset;
 extern int keyBufferLength;
@@ -35,17 +35,20 @@ void irq_vblank()
 	// Done here because it's kernel mode code
 	chk_exit();
 
-	scanKeys();
+	if (bKeyUpd) scanKeys();
 	touchRead((touchPosition*)&touchPos);
 
-	bgUpdate();
+	if (bBgUpd) bgUpdate();
 	if (conMode)
 	{
 		oamSub.oamMemory[0].isHidden = !__inFAT;
 		oamSub.oamMemory[1].isHidden = !stdioRead;
 	}
-	oamUpdate(&oamMain);
-	oamUpdate(&oamSub);
+	if (bOAMUpd)
+	{
+		oamUpdate(&oamMain);
+		oamUpdate(&oamSub);
+	}
 
 	if (conMode && !stdioRead)
 	{
@@ -135,6 +138,7 @@ void InitConMode()
 	InstallConThunks();
 	BlockIORegion();
 	conMode = true;
+	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
 }
 
@@ -145,12 +149,37 @@ void InitFreeMode()
 	InstallConDummy();
 	UnblockIORegion();
 	conMode = false;
+	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
 }
 
 int GetCurMode()
 {
 	return (int)conMode;
+}
+
+void FeOS_SetAutoUpdate(int which, bool enable)
+{
+	if (conMode) return; // can't tweak
+	switch (which)
+	{
+		case AUTOUPD_OAM:  bOAMUpd = enable; break;
+		case AUTOUPD_BG:   bBgUpd  = enable; break;
+		case AUTOUPD_KEYS: bKeyUpd = enable; break;
+		default:                             break;
+	}
+}
+
+bool FeOS_GetAutoUpdate(int which)
+{
+	if (conMode) return true;
+	switch (which)
+	{
+		case AUTOUPD_OAM:  return bOAMUpd;
+		case AUTOUPD_BG:   return bBgUpd;
+		case AUTOUPD_KEYS: return bKeyUpd;
+		default:           return false;
+	}
 }
 
 void ForcefulExit()

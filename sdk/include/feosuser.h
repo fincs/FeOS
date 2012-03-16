@@ -76,3 +76,7 @@ int FeOS_SuspendIRQ_t();
 void FeOS_RestoreIRQ_t(int);
 void FeOS_DrainWriteBuffer();
 void FeOS_WaitForMemAddr(volatile byte_t*, byte_t);
+
+enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
+void FeOS_SetAutoUpdate(int which, bool enable);
+bool FeOS_GetAutoUpdate(int which);

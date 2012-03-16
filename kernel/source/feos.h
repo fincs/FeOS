@@ -83,6 +83,12 @@ irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
 int __getMode();
 #define isUserMode() (__getMode() == 0x10)
 
+extern bool bOAMUpd, bBgUpd, bKeyUpd;
+
+enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
+void FeOS_SetAutoUpdate(int which, bool enable);
+bool FeOS_GetAutoUpdate(int which);
+
 void FeOS_swi_DataCacheFlush(const void* mem, size_t size);
 void FeOS_swi_DataCacheFlushAll();
 void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
