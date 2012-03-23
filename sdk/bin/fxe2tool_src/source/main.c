@@ -447,7 +447,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 
 		fprintf(tempfile, ".section .imp.%s, \"ax\", %%progbits\n.global __imp_%s\n.hidden __imp_%s\n", argv_name, symname, symname);
 		if (ELF32_ST_TYPE(sym->st_info) == STT_FUNC)
-			fprintf(tempfile, ".global %s\n.hidden %s\n", symname, symname),
+			fprintf(tempfile, ".global %s\n.hidden %s\n.type %s STT_FUNC\n", symname, symname, symname),
 			fprintf(tempfile, "%s:\n\tldr pc, [pc, #-4]\n", symname);
 		else
 			fprintf(tempfile, ".global %s\n.hidden %s\n%s:", symname, symname, symname);

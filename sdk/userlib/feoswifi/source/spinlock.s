@@ -5,8 +5,10 @@
 
 
 .GLOBAL SLasm_Acquire, SLasm_Release
-.HIDDEN SLasm_Acquire, SLasm_Release 
-.ARM 
+.HIDDEN SLasm_Acquire, SLasm_Release
+.TYPE SLasm_Acquire STT_FUNC
+.TYPE SLasm_Release STT_FUNC
+.ARM
 SLasm_Acquire:					
    ldr r2,[r0]					
    cmp r2,#0					

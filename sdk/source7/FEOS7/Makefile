@@ -57,6 +57,7 @@ all: $(SFILES)
 	@printf ".hidden __imp_%b\n" $(@:.s=) >> $@
 	@printf ".global %b\n" $(@:.s=) >> $@
 	@printf ".hidden %b\n" $(@:.s=) >> $@
+	@printf ".type %b STT_FUNC\n" $(@:.s=) >> $@
 	@printf "%b:\n" $(@:.s=) >> $@
 	@printf "\tldr r12, [pc]\n" >> $@
 	@printf "\tbx  r12\n" >> $@

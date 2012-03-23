@@ -5,6 +5,8 @@
 
 .macro makehook name, swinum, isfat=1
 .global _\name\()hook, _\name\()hook_knl, _\name\()hook_addr
+.type _\name\()hook STT_FUNC
+.type _\name\()hook_knl STT_FUNC
 
 _\name\()hook:
 	mrs r12, cpsr

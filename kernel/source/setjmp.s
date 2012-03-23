@@ -4,6 +4,8 @@
 .align 2
 .global setjmp, longjmp
 .hidden setjmp, longjmp
+.type setjmp STT_FUNC
+.type longjmp STT_FUNC
 
 setjmp: @ r0 - buffer
 	@ Write the registers to the jump buffer
