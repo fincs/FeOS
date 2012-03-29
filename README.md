@@ -60,10 +60,21 @@ This repo contains some demo applications:
 - `/sdk/examples/arm7let`: shows how to build a simple ARM7 extension module.
 - `/sdk/examples/load_arm7`: shows how to load the before-mentioned ARM7 module.
 
-Default commands
-----------------
+The command prompt
+------------------
 
-FeOS comes with several Unix-like commands, courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
+FeOS comes a command prompt utility that is run on startup. It also ships with several Unix-like commands, courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
+
+The command prompt provides these pseudo-commands:
+
+- `exit <code>`: it exits from the current cmd session with the specified error code. If omitted, it defaults to 0.
+- `echo <string>`: it outputs the specified string plus a newline. If omitted, it defaults to an empty string. **NOTE**: if your string contains spaces, you have to wrap it in quotes, `"like this"`.
+
+You can create .cmd files, which contain a list of commands to run. In order to execute them, type this:
+
+    cmd <filename>
+
+FeOS runs `/data/FeOS/autoexec.cmd` on startup, in a similar fashion to MS-DOS' `autoexec.bat`.
 
 When an application hangs...
 ----------------------------

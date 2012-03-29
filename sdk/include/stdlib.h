@@ -38,6 +38,7 @@ void* realloc(void*, size_t);
 void abort() __attribute__((noreturn));
 //int atexit(void (*)());
 void exit(int) __attribute__((noreturn));
+int system(const char* command);
 
 // Searching and ordering
 typedef int (* c_comparator)(const void*, const void*);
@@ -55,7 +56,7 @@ div_t div(int, int);
 static inline ldiv_t ldiv(int a, int b) { return div(a, b); }
 
 // These functions will never be implemented:
-// atof, strtod, getenv, system, mblen, mbtowc, wctomb, mbstowcs, wcstombs
+// atof, strtod, getenv, mblen, mbtowc, wctomb, mbstowcs, wcstombs
 
 #ifdef __cplusplus
 }

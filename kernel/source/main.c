@@ -328,11 +328,11 @@ int main()
 	DoTheUserMode();
 	iprintf("User mode OK\n\n");
 
-	iprintf("Loading command prompt...\n");
+	iprintf("Loading command prompt...\n\n");
 
-	const char* argv[] = { "cmd" };
+	const char* argv[] = { "cmd", ":startup", NULL };
 
-	_rc = FeOS_Execute(1, argv);
+	_rc = FeOS_Execute(2, argv);
 	_hasExited = true;
 
 	for(;;) FeOS_WaitForVBlank();

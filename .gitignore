@@ -2,6 +2,7 @@ build/
 build7/
 /apps/*
 !/apps/unixtools/
+!/apps/cmdprompt/
 /FeOS/
 /testbin/
 /sdk/lib/

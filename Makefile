@@ -5,6 +5,8 @@ ifeq ($(FEOSDEST),)
 export FEOSDEST = $(FEOSSDK)/../FeOS
 endif
 
+AUTOEXEC := $(FEOSDEST)/data/FeOS/autoexec.cmd
+
 ifeq ($(FEOSBUILD_ALL),)
 ALL := sdk lib apps
 else
@@ -38,7 +40,6 @@ sdk:
 	@$(MAKE) --no-print-directory -C sdk || exit 1
 	@$(MAKE) --no-print-directory -C arm7 || exit 1
 	@$(MAKE) --no-print-directory -C kernel || exit 1
-	@$(MAKE) --no-print-directory -C cmdprompt || exit 1
 
 lib:
 	@$(MAKE) --no-print-directory -C sdk/userlib || exit 1
@@ -53,7 +54,6 @@ sdkclean:
 	@$(MAKE) --no-print-directory -C sdk clean
 	@$(MAKE) --no-print-directory -C arm7 clean
 	@$(MAKE) --no-print-directory -C kernel clean
-	@$(MAKE) --no-print-directory -C cmdprompt clean
 
 libclean:
 	@$(MAKE) --no-print-directory -C sdk/userlib clean || exit 1
@@ -67,7 +67,7 @@ appsclean:
 sdkinstall: sdk
 	@cp kernel/FeOS.nds $(FEOSDEST)/FeOS.nds || exit 1
 	@cp sdk/feoscxx.fx2 $(FEOSDEST)/data/FeOS/lib/feoscxx.fx2 || exit 1
-	@cp cmdprompt/cmd.fx2 $(FEOSDEST)/data/FeOS/bin/cmd.fx2 || exit 1
+	@[ -e $(AUTOEXEC) ] || touch $(AUTOEXEC)
 
 libinstall: lib
 	@mkdir -p $(FEOSDEST)/data/FeOS/bin  || exit 1
@@ -77,4 +77,3 @@ libinstall: lib
 
 appsinstall: apps
 	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i install; done
-

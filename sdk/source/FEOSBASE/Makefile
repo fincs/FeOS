@@ -56,6 +56,7 @@ bsearch \
 qsort \
 abs \
 div \
+system \
 strlen \
 strcpy \
 strcat \

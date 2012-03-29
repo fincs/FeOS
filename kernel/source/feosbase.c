@@ -47,6 +47,16 @@ void FeOS_ExecStatusRelease(execstat_t hSt);
 void FeOS_SetCurExecStatus(execstat_t hSt);
 execstat_t FeOS_GetCurExecStatus();
 
+typedef int (* systemfunc_t)(const char* command);
+
+systemfunc_t __system;
+
+int system(const char* command)
+{
+	if (command == NULL) return !!__system;
+	return __system(command);
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -105,6 +115,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(qsort),
 	ADD_FUNC(abs),
 	ADD_FUNC(div), // to be replaced with native div hardware
+	ADD_FUNC(system),
 
 	// string.h
 	ADD_FUNC(strlen),
@@ -226,6 +237,9 @@ int FeOS_Execute(int argc, const char* argv[])
 	if (argc == 0) return E_INVALIDARG;
 	instance_t hInst = LoadModule(argv[0]);
 	if (!hInst) return E_FILENOTFOUND;
+
+	if (!__system)
+		__system = (systemfunc_t) FeOS_FindSymbol(hInst, "__system");
 
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
