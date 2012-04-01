@@ -74,7 +74,7 @@ int GetElfInfo(elf2fx2_cnvstruct_t* cs)
 					{
 						printf("{DEBUG0} %s\n", sname);
 						printf("{DEBUG1} %08X -- %08X\n", lastOff, eswap_word(shdr->sh_addr));
-						printf("{DEBUG2} %08X -- %08X\n", (unsigned int)(cs->loaddata + lastOff), (unsigned int)sdata);
+						printf("{DEBUG2} %p -- %p\n", cs->loaddata + lastOff, sdata);
 						die("Loadable sections are not contiguous!");
 					}
 
