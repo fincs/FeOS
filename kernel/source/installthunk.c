@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/iosupport.h>
+#include <nds.h>
 
 #define DECLAREHOOK(ret, name, prm) \
 	extern ret (*_##name##hook_addr) prm; \
@@ -40,14 +41,13 @@ ssize_t FeOS_KeybdRead(struct _reent*, int, char*, size_t);
 
 static ssize_t DummyRead(struct _reent* r, int fd, char* buf, size_t count)
 {
-	int i;
-	for (i = 0; i < count; i ++)
-		*buf++ = 0;
+	memset(buf, 0, count);
 	return count;
 }
 
 static ssize_t DummyWrite(struct _reent* r, int fd, const char* buf, size_t count)
 {
+	nocashWrite(buf, count);
 	return count;
 }
 
