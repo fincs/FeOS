@@ -71,3 +71,13 @@ void* FeOS_ModuleFromAddress(void* addr)
 
 	return NULL;
 }
+
+void FeOS_EnumModules(moduleEnumCb cb, void* user_data)
+{
+	fxe_runtime_header* item;
+	for (item = mListHead; item != NULL; item = item->next)
+	{
+		if (!cb(item->hThis, item->name, item->size, user_data))
+			break;
+	}
+}

@@ -146,6 +146,10 @@ static inline fxe_runtime_header* GetRuntimeData(instance_t hinst)
 
 instance_t LoadModule(const char* aFilename);
 void FreeModule(instance_t hInst);
+instance_t FeOS_GetModule(const char* name);
+const char* FeOS_GetModuleName(instance_t hInst);
+
+void* FeOS_FindSymbol(instance_t hinst, const char* sym);
 
 void ModuleLock(instance_t hInst);
 void ModuleUnlock(instance_t hInst);
@@ -161,6 +165,10 @@ void FeOS_ModuleListAdd(fxe_runtime_header* pModule);
 void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
 int FeOS_ModuleListCount();
 fxe_runtime_header* FeOS_ModuleListFind(const char* name);
+
+typedef int (* moduleEnumCb)(instance_t hInst, const char* name, size_t size, void* user_data);
+
+void FeOS_EnumModules(moduleEnumCb cb, void* user_data);
 
 //int FeOS_PushExitFunc(FeOSExitFunc func);
 void FeOS_ModuleExit(int);

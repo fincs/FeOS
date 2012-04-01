@@ -8,6 +8,9 @@ FeOS_FindSymbol \
 FeOS_FreeModule \
 FeOS_LockModule \
 FeOS_UnlockModule \
+FeOS_EnumModules \
+FeOS_GetModule \
+FeOS_GetModuleName \
 FeOS_LoadARM7 \
 FeOS_FreeARM7 \
 FeOS_Execute \

@@ -27,6 +27,13 @@ void FeOS_FreeModule(instance_t);
 void FeOS_LockModule(instance_t);
 void FeOS_UnlockModule(instance_t);
 
+enum { ENUM_BREAK = 0, ENUM_CONTINUE = 1 };
+typedef int (* ModuleEnumCallback)(instance_t, const char*, word_t, void*);
+
+instance_t FeOS_GetModule(const char*);
+const char* FeOS_GetModuleName(instance_t);
+void FeOS_EnumModules(ModuleEnumCallback, void*);
+
 #define FeOS_StayResident() FeOS_LockModule(FeOS_hInstance)
 #define FeOS_EndStayResident() FeOS_UnlockModule(FeOS_hInstance)
 
@@ -56,7 +63,7 @@ static inline int FeOS_PushExitFunc(FeOSExitFunc func) { return 1; }
 static inline void FeOS_PopExitFunc() { }
 
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
-void* FeOS_ModuleFromAddress(void*);
+instance_t FeOS_ModuleFromAddress(void*);
 
 bool FeOS_FifoSendAddress(int, void*);
 bool FeOS_FifoSendValue32(int, word_t);

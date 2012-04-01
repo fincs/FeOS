@@ -57,12 +57,26 @@ int system(const char* command)
 	return __system(command);
 }
 
+const char* FeOS_GetModuleName(instance_t hInst)
+{
+	return GetRuntimeData(hInst)->name;
+}
+
+instance_t FeOS_GetModule(const char* name)
+{
+	fxe_runtime_header* rh = FeOS_ModuleListFind(name);
+	return rh ? rh->hThis : NULL;
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
 	ADD_FUNC_ALIAS(FreeModule, FeOS_FreeModule),
 	ADD_FUNC_ALIAS(ModuleLock, FeOS_LockModule),
 	ADD_FUNC_ALIAS(ModuleUnlock, FeOS_UnlockModule),
+	ADD_FUNC(FeOS_EnumModules),
+	ADD_FUNC(FeOS_GetModule),
+	ADD_FUNC(FeOS_GetModuleName),
 	ADD_FUNC_ALIAS(FeOS_swi_LoadModule_ARM7, FeOS_LoadARM7),
 	ADD_FUNC_ALIAS(FeOS_swi_FreeModule_ARM7, FeOS_FreeARM7),
 	ADD_FUNC(FeOS_Execute),
