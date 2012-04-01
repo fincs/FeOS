@@ -291,6 +291,16 @@ void FeOS_ModuleExit(int rc)
 
 void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
 {
+	if (hInst == (instance_t)(~0))
+	{
+		// get exidx for kernel itself
+		typedef struct { word_t offset, size; } exidx_entry_t;
+		extern exidx_entry_t __exidx_start;
+		extern exidx_entry_t __exidx_end;
+		*count = &__exidx_end - &__exidx_start;
+		return &__exidx_start;
+	}
+
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
 	if (!rh->exidx.nentries) return NULL;

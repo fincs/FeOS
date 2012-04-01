@@ -53,9 +53,15 @@ fxe_runtime_header* FeOS_ModuleListFind(const char* name)
 	return NULL;
 }
 
+extern const byte_t __text_start[];
+extern const byte_t __end__[];
+
 void* FeOS_ModuleFromAddress(void* addr)
 {
 	word_t addrw = (word_t) addr;
+
+	if (addrw >= (word_t)__text_start && addrw < (word_t)__end__)
+		return (void*)(~0);
 
 	fxe_runtime_header* item;
 	for (item = mListHead; item != NULL; item = item->next)
