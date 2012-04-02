@@ -960,8 +960,13 @@ __gnu_Unwind_Backtrace(_Unwind_Trace_Fn trace, void * trace_argument,
   _Unwind_Control_Block ucb;
   _Unwind_Control_Block *ucbp = &ucb;
 
-  /* Set the pc to the call site.  */
-  entry_vrs->core.r[R_PC] = entry_vrs->core.r[R_LR];
+  // fincs-HACK: avoid toasting the topmost function call
+  // if it's a crash dump what we're backtracing
+  if (entry_vrs->demand_save_flags != 0xDEAD)
+    /* Set the pc to the call site.  */
+    entry_vrs->core.r[R_PC] = entry_vrs->core.r[R_LR];
+  else
+    entry_vrs->demand_save_flags = 0;
 
   /* Save the core registers.  */
   saved_vrs.core = entry_vrs->core;
