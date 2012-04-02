@@ -23,9 +23,18 @@ FEOSMK = $(FEOSSDK)/mk
 # DATA is a list of directories containing data files
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
+ifeq ($(DEBUGVER),)
 TARGET        := feos
 BUILD         := build
-SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSMATH source/FEOSDSAPI source/FEOSDSSPR source/FEOSDSBG source/FEOSARM7 source/stdio
+else
+TARGET        := feosd
+BUILD         := build_dbg
+CONF_DEBUG    := 1
+EXTRASRC      := source/debug
+endif
+SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSMATH \
+                 source/FEOSDSAPI source/FEOSDSSPR source/FEOSDSBG source/FEOSARM7 source/stdio \
+                 $(EXTRASRC)
 DATA          := data
 INCLUDES      := include
 

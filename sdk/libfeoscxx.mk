@@ -24,7 +24,7 @@ FEOSMK = $(FEOSSDK)/mk
 # INCLUDES is a list of directories containing header files
 #---------------------------------------------------------------------------------
 TARGET        := feoscxx
-BUILD         := build
+BUILD         := build_cxx
 SOURCES       := source/cxx
 DATA          := data
 INCLUDES      := source/cxx

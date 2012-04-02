@@ -14,6 +14,7 @@ all:
 	@make -C source/FEOSARM7
 	@make -C source7/FEOS7
 	@make -f libfeos.mk
+	@make -f libfeos.mk DEBUGVER=1
 	@make -f libfeos7.mk
 	@make -f libfeoscxx.mk
 
@@ -29,5 +30,6 @@ clean:
 	@make -C source/FEOSARM7 clean
 	@make -C source7/FEOS7 clean
 	@make -f libfeos.mk clean
+	@make -f libfeos.mk DEBUGVER=1 clean
 	@make -f libfeos7.mk clean
 	@make -f libfeoscxx.mk clean

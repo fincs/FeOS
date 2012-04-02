@@ -1,5 +1,7 @@
 build/
-build7/
+/sdk/build7/
+/sdk/build_dbg/
+/sdk/build_cxx/
 /apps/*
 !/apps/unixtools/
 !/apps/cmdprompt/
