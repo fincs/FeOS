@@ -293,12 +293,14 @@ void chk_exit()
 
 void FeOS_InitStreams();
 
+void ExcptHandler_C();
+
 int main()
 {
 	videoInit();
 	consoleDebugInit(DebugDevice_CONSOLE);
 	
-	defaultExceptionHandler();
+	setExceptionHandler(ExcptHandler_C);
 	SystemVectors.reset = (u32) __ResetHandler;
 	SystemVectors.swi = (u32) __SWIHandler;
 	setVectorBase(0);
