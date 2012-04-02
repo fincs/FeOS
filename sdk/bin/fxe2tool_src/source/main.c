@@ -465,10 +465,14 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		sprintf(cmd, "rm -f %s", imp_name);
 		if (system(cmd) != 0)
 			die("rm returned error");
-		sprintf(cmd, "arm-eabi-ar -rc %s *.imp.o", imp_name);
-		if (system(cmd) != 0)
+		FILE* tempfile = fopen("__mkimp.mk", "w");
+		fprintf(tempfile, "all:\n\t@arm-eabi-ar -rc %s $(wildcard *.imp.o)\n", imp_name);
+		fclose(tempfile);
+		//sprintf(cmd, "arm-eabi-ar -rc %s *.imp.o", imp_name);
+		//if (system(cmd) != 0)
+		if (system("make -f __mkimp.mk"))
 			die("arm-eabi-ar returned error");
-		sprintf(cmd, "rm -f *.imp.o *.imp.s");
+		sprintf(cmd, "rm -f *.imp.o *.imp.s __mkimp.mk");
 		if (system(cmd) != 0)
 			die("rm returned error");
 
