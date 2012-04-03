@@ -63,7 +63,7 @@ This repo contains some demo applications:
 The command prompt
 ------------------
 
-FeOS comes a command prompt utility that is run on startup. It also ships with several Unix-like commands, courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
+FeOS comes with a command prompt utility that is run on startup. It also ships with several Unix-like commands, courtesy of mtheall. Refer to the source code of each of them at `/apps/unixtools` for more information.
 
 The command prompt provides these pseudo-commands:
 
