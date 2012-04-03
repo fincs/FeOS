@@ -332,6 +332,16 @@ int main()
 	DoTheUserMode();
 	iprintf("User mode OK\n\n");
 
+#ifdef DEBUG
+	iprintf("Loading debugging library...\n");
+	instance_t hCxxLib = LoadModule("feoscxx");
+	if (!hCxxLib)
+	{
+		iprintf("Error loading library!\n");
+		for (;;) swiWaitForVBlank();
+	}
+#endif
+
 	iprintf("Loading command prompt...\n\n");
 
 	const char* argv[] = { "cmd", ":startup", NULL };
