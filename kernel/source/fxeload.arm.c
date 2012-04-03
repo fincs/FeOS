@@ -72,11 +72,11 @@ instance_t LoadModule(const char* aFilename)
 			struct stat st;
 
 			// First look at the lib folder
-			snprintf(buf, PATH_MAX+1, "/data/FeOS/lib/%s.fx2", aFilename);
+			sniprintf(buf, PATH_MAX+1, "/data/FeOS/lib/%s.fx2", aFilename);
 			if (stat(buf, &st) == 0) goto __LM_win;
 
 			// Then at the bin folder
-			snprintf(buf, PATH_MAX+1, "/data/FeOS/bin/%s.fx2", aFilename);
+			sniprintf(buf, PATH_MAX+1, "/data/FeOS/bin/%s.fx2", aFilename);
 			if (stat(buf, &st) == 0) goto __LM_win;
 
 			// Fail; we can't find the module
