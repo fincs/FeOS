@@ -16,8 +16,13 @@ include $(DEVKITARM)/ds_rules
 # DATA is a list of directories containing binary files embedded using bin2o
 # GRAPHICS is a list of directories containing image files to be converted with grit
 #---------------------------------------------------------------------------------
+ifeq ($(DEBUGVER),)
 TARGET		:=	FeOS
 BUILD		:=	build
+else
+TARGET      :=	FeOSd
+BUILD		:=	build_dbg
+endif
 SOURCES		:=	source
 INCLUDES	:=	include
 DATA		:=	data  
@@ -28,12 +33,22 @@ GRAPHICS	:=	gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s
 
-CFLAGS	:=	-g -Wall -O2 -funwind-tables -save-temps\
+ifeq ($(DEBUGVER),)
+COPTFLAG	:=	-O2
+LIBNDSLIB	:=	-lnds9
+DEFINES		:=	-DNDEBUG
+else
+COPTFLAG	:=	-O0
+LIBNDSLIB	:=	-lnds9d
+DEFINES		:=	-DDEBUG
+endif
+
+CFLAGS	:=	-g -Wall $(COPTFLAG) -funwind-tables -save-temps\
  		-fomit-frame-pointer\
 		-ffast-math \
 		$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9
+CFLAGS	+=	$(INCLUDE) -DARM9 $(DEFINES)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS	:=	-g $(ARCH)
@@ -42,7 +57,7 @@ LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS	:= 	-lfat -lnds9
+LIBS	:= 	-lfat $(LIBNDSLIB)
  
  
 #---------------------------------------------------------------------------------

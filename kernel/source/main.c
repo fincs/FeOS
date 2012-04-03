@@ -308,9 +308,14 @@ int main()
 	FeOS_InitStreams();
 
 	iprintf(
+#ifndef DEBUG
 		"FeOS kernel\n"
-		"===========\n\n"
-		"Copyright (c) 2010-11, fincs\n\n");
+		"-----------\n\n"
+#else
+		"FeOS kernel - DEBUG BUILD\n"
+		"-------------------------\n\n"
+#endif
+		"Copyright (c) 2010-12, fincs\n\n");
 
 	iprintf("Initializing filesystem...\n");
 #ifndef USE_LIBFILESYSTEM
