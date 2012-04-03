@@ -1,5 +1,3 @@
-//#define USE_LIBFILESYSTEM
-
 #include "feos.h"
 #include <fat.h>
 #include <stdio.h>
@@ -308,15 +306,14 @@ int main()
 	FeOS_InitStreams();
 
 	iprintf(
-#ifndef DEBUG
 		"FeOS kernel\n"
 		"-----------\n\n"
-#else
-		"FeOS kernel - DEBUG BUILD\n"
-		"-------------------------\n\n"
-#endif
 		"Copyright (c) 2010-12, fincs\n\n");
 
+#ifdef DEBUG
+	iprintf("**DEBUG BUILD**\n");
+	iprintf("Built on " __DATE__ ", " __TIME__ "\n\n");
+#endif
 	iprintf("Initializing filesystem...\n");
 #ifndef USE_LIBFILESYSTEM
 	if(!fatInitDefault())
