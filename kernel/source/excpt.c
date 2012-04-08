@@ -23,7 +23,7 @@ static inline bool between(word_t v, word_t lo, word_t hi)
 	return (v >= lo) && (v < hi);
 }
 
-static PrintConsole oConSub;
+PrintConsole oConSub;
 
 typedef struct
 {
