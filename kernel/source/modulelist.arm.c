@@ -80,6 +80,8 @@ void* FeOS_ModuleFromAddress(void* addr)
 
 void FeOS_EnumModules(moduleEnumCb cb, void* user_data)
 {
+	sassert(cb, ERRSTR_INVALIDPARAM);
+
 	fxe_runtime_header* item;
 	for (item = mListHead; item != NULL; item = item->next)
 	{

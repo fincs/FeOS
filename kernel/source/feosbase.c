@@ -14,8 +14,7 @@ void FeOS_swi_FreeModule_ARM7(instance_t, int);
 
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 {
-	if (!AddressCheckMainRAM((void*) hinst))
-		return NULL;
+	CHK_HINST(hinst);
 	return FindInTbl(&GetRuntimeData(hinst)->exp, sym);
 }
 
@@ -59,11 +58,13 @@ int system(const char* command)
 
 const char* FeOS_GetModuleName(instance_t hInst)
 {
+	CHK_HINST(hInst);
 	return GetRuntimeData(hInst)->name;
 }
 
 instance_t FeOS_GetModule(const char* name)
 {
+	sassert(name, ERRSTR_INVALIDPARAM);
 	fxe_runtime_header* rh = FeOS_ModuleListFind(name);
 	return rh ? rh->hThis : NULL;
 }
@@ -301,6 +302,7 @@ void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
 		return &__exidx_start;
 	}
 
+	CHK_HINST(hInst);
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
 	if (!rh->exidx.nentries) return NULL;

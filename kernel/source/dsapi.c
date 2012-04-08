@@ -27,6 +27,7 @@ static OamState* FeOS_GetSubOAM()
 
 static SpriteEntry* FeOS_GetOAMMemory(OamState* oam)
 {
+	sassert(oam == &oamMain || oam == &oamSub, "Invalid parameter");
 	return oam->oamMemory;
 }
 
@@ -35,6 +36,8 @@ static void _FeOS_oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
 {
 	int i;
 	int extPaletteFlag = extPalette ? DISPLAY_SPR_EXT_PALETTE : 0;
+
+	sassert(oam == &oamMain || oam == &oamSub, "Invalid parameter");
 
 	oam->gfxOffsetStep = (mapping & 3) + 5;
 
@@ -94,6 +97,8 @@ void FeOS_KeysUpdate()
 // A custom version must be used because of the usage of DC_FlushRange
 void _FeOS_oamUpdate(OamState* oam)
 {
+	sassert(oam == &oamMain || oam == &oamSub, "Invalid parameter");
+
 	if (bOAMUpd) return;
 
 	FeOS_swi_DataCacheFlush(oam->oamMemory, 128*sizeof(SpriteEntry));

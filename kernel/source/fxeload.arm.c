@@ -10,6 +10,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 
 instance_t LoadModule(const char* aFilename)
 {
+	sassert(aFilename, ERRSTR_INVALIDPARAM);
 	if (*aFilename == '/')
 	{
 		// Path was specified, we have to extract the module name.
@@ -323,6 +324,9 @@ static FeOSLoadStruct __ldSt;
 
 instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
 {
+	sassert(aFilename, ERRSTR_INVALIDPARAM);
+	sassert(pFifoCh, ERRSTR_INVALIDPARAM);
+
 	FeOSLoadStruct* ldSt = GET_LOADST();
 	FeOSFifoMsg msg;
 	msg.type = FEOS_ARM7_LOAD_MODULE;
@@ -394,6 +398,8 @@ _fullerr:
 
 void FreeModule_ARM7(instance_t hModule, int fifoCh)
 {
+	sassert(hModule, ERRSTR_INVALIDPARAM);
+
 	FeOSFifoMsg msg;
 	msg.type = FEOS_ARM7_UNLOAD_MODULE;
 	msg.hModule = hModule;
@@ -405,6 +411,8 @@ void FreeModule_ARM7(instance_t hModule, int fifoCh)
 
 void FreeModule(instance_t hInst)
 {
+	CHK_HINST(hInst);
+
 	fxe_runtime_header* rh = GetRuntimeData(hInst);
 
 	rh->refcount --;
@@ -436,11 +444,13 @@ void FreeModule(instance_t hInst)
 
 void ModuleLock(instance_t hInst)
 {
+	CHK_HINST(hInst);
 	GetRuntimeData(hInst)->refcount ++;
 }
 
 void ModuleUnlock(instance_t hInst)
 {
+	CHK_HINST(hInst);
 	GetRuntimeData(hInst)->refcount --;
 }
 

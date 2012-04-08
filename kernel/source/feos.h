@@ -83,6 +83,9 @@ irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
 int __getMode();
 #define isUserMode() (__getMode() == 0x10)
 
+#define ERRSTR_INVALIDPARAM "Invalid parameter"
+#define CHK_HINST(hInst) sassert(AddressCheckMainRAM(hInst), ERRSTR_INVALIDPARAM);
+
 extern bool bOAMUpd, bBgUpd, bKeyUpd;
 
 enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
