@@ -57,6 +57,7 @@ asm("\
 .text\n\
 	.align 3\n\
 	.global __clearFifoMsgQueue\n\
+	.type __clearFifoMsgQueue STT_FUNC\n\
 __clearFifoMsgQueue:\n\
 	mov r0, #0\n\
 	mov r1, #0\n\
