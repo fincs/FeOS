@@ -11,7 +11,7 @@ Build prerequisites
 
 You need the following in order to build FeOS:
 
-- devkitARM r37 or higher
+- devkitARM r38 or higher
 - libnds 1.5.5 or higher
 - libfat 1.0.10 or higher
 - A working C compiler for the host (Windows users: use MinGW)
