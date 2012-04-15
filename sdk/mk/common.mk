@@ -34,6 +34,7 @@ else
 ARCH      := -mcpu=arm7tdmi -mtune=arm7tdmi
 DEFINES   += -DARM7
 LIBFEOSSUF := 7
+LDEXTRA    := --pic-veneer,
 endif
 
 ifeq ($(CONF_GCSECTIONS),1)
