@@ -589,8 +589,8 @@ GL_STATIC_INL
 \param y the y component for the vertex
 \param z the z component for the vertex */
  void glVertex3v16(v16 x, v16 y, v16 z) {
-	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
-	GFX_VERTEX16 = z;
+	barrierAccess(GFX_VERTEX16 = (y << 16) | (x & 0xFFFF));
+	barrierAccess(GFX_VERTEX16 = z);
 }
 
 GL_STATIC_INL
@@ -634,9 +634,9 @@ GL_STATIC_INL
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glScalev(const GLvector* v) {
-	MATRIX_SCALE = v->x;
-	MATRIX_SCALE = v->y;
-	MATRIX_SCALE = v->z;
+	barrierAccess(MATRIX_SCALE = v->x);
+	barrierAccess(MATRIX_SCALE = v->y);
+	barrierAccess(MATRIX_SCALE = v->z);
 }
 
 GL_STATIC_INL
@@ -645,9 +645,9 @@ GL_STATIC_INL
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glTranslatev(const GLvector* v) {
-	MATRIX_TRANSLATE = v->x;
-	MATRIX_TRANSLATE = v->y;
-	MATRIX_TRANSLATE = v->z;
+	barrierAccess(MATRIX_TRANSLATE = v->x);
+	barrierAccess(MATRIX_TRANSLATE = v->y);
+	barrierAccess(MATRIX_TRANSLATE = v->z);
 }
 
 // map old name to new name
@@ -661,9 +661,9 @@ GL_STATIC_INL
 \param y translation on the y axis
 \param z translation on the z axis */
  void glTranslatef32(int x, int y, int z) {
-	MATRIX_TRANSLATE = x;
-	MATRIX_TRANSLATE = y;
-	MATRIX_TRANSLATE = z;
+	barrierAccess(MATRIX_TRANSLATE = x);
+	barrierAccess(MATRIX_TRANSLATE = y);
+	barrierAccess(MATRIX_TRANSLATE = z);
 }
 
 GL_STATIC_INL
@@ -674,9 +674,9 @@ GL_STATIC_INL
 \param y scaling on the y axis
 \param z scaling on the z axis */
  void glScalef32(int x, int y, int z) {
-	MATRIX_SCALE = x;
-	MATRIX_SCALE = y;
-	MATRIX_SCALE = z;
+	barrierAccess(MATRIX_SCALE = x);
+	barrierAccess(MATRIX_SCALE = y);
+	barrierAccess(MATRIX_SCALE = z);
 }
 
 GL_STATIC_INL
@@ -843,25 +843,25 @@ GL_STATIC_INL
 \brief Loads a 4x4 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
 void glLoadMatrix4x4(const m4x4 *m) {
-	MATRIX_LOAD4x4 = m->m[0];
-	MATRIX_LOAD4x4 = m->m[1];
-	MATRIX_LOAD4x4 = m->m[2];
-	MATRIX_LOAD4x4 = m->m[3];
+	barrierAccess(MATRIX_LOAD4x4 = m->m[0]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[1]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[2]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[3]);
 
-	MATRIX_LOAD4x4 = m->m[4];
-	MATRIX_LOAD4x4 = m->m[5];
-	MATRIX_LOAD4x4 = m->m[6];
-	MATRIX_LOAD4x4 = m->m[7];
+	barrierAccess(MATRIX_LOAD4x4 = m->m[4]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[5]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[6]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[7]);
 
-	MATRIX_LOAD4x4 = m->m[8];
-	MATRIX_LOAD4x4 = m->m[9];
-	MATRIX_LOAD4x4 = m->m[10];
-	MATRIX_LOAD4x4 = m->m[11];
+	barrierAccess(MATRIX_LOAD4x4 = m->m[8]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[9]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[10]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[11]);
 
-	MATRIX_LOAD4x4 = m->m[12];
-	MATRIX_LOAD4x4 = m->m[13];
-	MATRIX_LOAD4x4 = m->m[14];
-	MATRIX_LOAD4x4 = m->m[15];
+	barrierAccess(MATRIX_LOAD4x4 = m->m[12]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[13]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[14]);
+	barrierAccess(MATRIX_LOAD4x4 = m->m[15]);
 }
 
 GL_STATIC_INL
@@ -869,20 +869,20 @@ GL_STATIC_INL
 \brief Loads a 4x3 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
 void glLoadMatrix4x3(const m4x3 * m) {
-	MATRIX_LOAD4x3 = m->m[0];
-	MATRIX_LOAD4x3 = m->m[1];
-	MATRIX_LOAD4x3 = m->m[2];
-	MATRIX_LOAD4x3 = m->m[3];
+	barrierAccess(MATRIX_LOAD4x3 = m->m[0]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[1]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[2]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[3]);
 
-	MATRIX_LOAD4x3 = m->m[4];
-	MATRIX_LOAD4x3 = m->m[5];
-	MATRIX_LOAD4x3 = m->m[6];
-	MATRIX_LOAD4x3 = m->m[7];
+	barrierAccess(MATRIX_LOAD4x3 = m->m[4]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[5]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[6]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[7]);
 
-	MATRIX_LOAD4x3 = m->m[8];
-	MATRIX_LOAD4x3 = m->m[9];
-	MATRIX_LOAD4x3 = m->m[10];
-	MATRIX_LOAD4x3 = m->m[11];
+	barrierAccess(MATRIX_LOAD4x3 = m->m[8]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[9]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[10]);
+	barrierAccess(MATRIX_LOAD4x3 = m->m[11]);
 }
 
 GL_STATIC_INL
@@ -890,25 +890,25 @@ GL_STATIC_INL
 \brief Multiplies the current matrix by m
 \param m pointer to a 4x4 matrix */
 void glMultMatrix4x4(const m4x4 * m) {
-	MATRIX_MULT4x4 = m->m[0];
-	MATRIX_MULT4x4 = m->m[1];
-	MATRIX_MULT4x4 = m->m[2];
-	MATRIX_MULT4x4 = m->m[3];
+	barrierAccess(MATRIX_MULT4x4 = m->m[0]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[1]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[2]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[3]);
 
-	MATRIX_MULT4x4 = m->m[4];
-	MATRIX_MULT4x4 = m->m[5];
-	MATRIX_MULT4x4 = m->m[6];
-	MATRIX_MULT4x4 = m->m[7];
+	barrierAccess(MATRIX_MULT4x4 = m->m[4]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[5]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[6]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[7]);
 
-	MATRIX_MULT4x4 = m->m[8];
-	MATRIX_MULT4x4 = m->m[9];
-	MATRIX_MULT4x4 = m->m[10];
-	MATRIX_MULT4x4 = m->m[11];
+	barrierAccess(MATRIX_MULT4x4 = m->m[8]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[9]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[10]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[11]);
 
-	MATRIX_MULT4x4 = m->m[12];
-	MATRIX_MULT4x4 = m->m[13];
-	MATRIX_MULT4x4 = m->m[14];
-	MATRIX_MULT4x4 = m->m[15];
+	barrierAccess(MATRIX_MULT4x4 = m->m[12]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[13]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[14]);
+	barrierAccess(MATRIX_MULT4x4 = m->m[15]);
 }
 
 GL_STATIC_INL
@@ -916,20 +916,20 @@ GL_STATIC_INL
 \brief multiplies the current matrix by
 \param m pointer to a 4x3 matrix */
 void glMultMatrix4x3(const m4x3 * m) {
-	MATRIX_MULT4x3 = m->m[0];
-	MATRIX_MULT4x3 = m->m[1];
-	MATRIX_MULT4x3 = m->m[2];
-	MATRIX_MULT4x3 = m->m[3];
+	barrierAccess(MATRIX_MULT4x3 = m->m[0]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[1]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[2]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[3]);
 
-	MATRIX_MULT4x3 = m->m[4];
-	MATRIX_MULT4x3 = m->m[5];
-	MATRIX_MULT4x3 = m->m[6];
-	MATRIX_MULT4x3 = m->m[7];
+	barrierAccess(MATRIX_MULT4x3 = m->m[4]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[5]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[6]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[7]);
 
-	MATRIX_MULT4x3 = m->m[8];
-	MATRIX_MULT4x3 = m->m[9];
-	MATRIX_MULT4x3 = m->m[10];
-	MATRIX_MULT4x3 = m->m[11];
+	barrierAccess(MATRIX_MULT4x3 = m->m[8]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[9]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[10]);
+	barrierAccess(MATRIX_MULT4x3 = m->m[11]);
 
 }
 
@@ -938,17 +938,17 @@ GL_STATIC_INL
 \brief multiplies the current matrix by m
 \param m pointer to a 3x3 matrix */
 void glMultMatrix3x3(const m3x3 * m) {
-	MATRIX_MULT3x3 = m->m[0];
-	MATRIX_MULT3x3 = m->m[1];
-	MATRIX_MULT3x3 = m->m[2];
+	barrierAccess(MATRIX_MULT3x3 = m->m[0]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[1]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[2]);
 
-	MATRIX_MULT3x3 = m->m[3];
-	MATRIX_MULT3x3 = m->m[4];
-	MATRIX_MULT3x3 = m->m[5];
+	barrierAccess(MATRIX_MULT3x3 = m->m[3]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[4]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[5]);
 
-	MATRIX_MULT3x3 = m->m[6];
-	MATRIX_MULT3x3 = m->m[7];
-	MATRIX_MULT3x3 = m->m[8];
+	barrierAccess(MATRIX_MULT3x3 = m->m[6]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[7]);
+	barrierAccess(MATRIX_MULT3x3 = m->m[8]);
 }
 
 GL_STATIC_INL
@@ -959,17 +959,17 @@ void glRotateXi(int angle) {
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
-	MATRIX_MULT3x3 = inttof32(1);
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = 0;
+	barrierAccess(MATRIX_MULT3x3 = inttof32(1));
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = 0);
 
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = sine;
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = cosine);
+	barrierAccess(MATRIX_MULT3x3 = sine);
 
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = -sine;
-	MATRIX_MULT3x3 = cosine;
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = -sine);
+	barrierAccess(MATRIX_MULT3x3 = cosine);
 }
 
 GL_STATIC_INL
@@ -980,17 +980,17 @@ GL_STATIC_INL
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = -sine;
+	barrierAccess(MATRIX_MULT3x3 = cosine);
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = -sine);
 
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = inttof32(1);
-	MATRIX_MULT3x3 = 0;
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = inttof32(1));
+	barrierAccess(MATRIX_MULT3x3 = 0);
 
-	MATRIX_MULT3x3 = sine;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = cosine;
+	barrierAccess(MATRIX_MULT3x3 = sine);
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = cosine);
 }
 
 GL_STATIC_INL
@@ -1001,17 +1001,17 @@ void glRotateZi(int angle) {
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = sine;
-	MATRIX_MULT3x3 = 0;
+	barrierAccess(MATRIX_MULT3x3 = cosine);
+	barrierAccess(MATRIX_MULT3x3 = sine);
+	barrierAccess(MATRIX_MULT3x3 = 0);
 
-	MATRIX_MULT3x3 = - sine;
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = 0;
+	barrierAccess(MATRIX_MULT3x3 = - sine);
+	barrierAccess(MATRIX_MULT3x3 = cosine);
+	barrierAccess(MATRIX_MULT3x3 = 0);
 
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = inttof32(1);
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = 0);
+	barrierAccess(MATRIX_MULT3x3 = inttof32(1));
 }
 
 GL_STATIC_INL
@@ -1024,25 +1024,25 @@ GL_STATIC_INL
 \param zNear near clipping plane
 \param zFar far clipping plane */
 void glOrthof32(int left, int right, int bottom, int top, int zNear, int zFar) {
-	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = divf32(inttof32(2), right - left));
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
 
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = divf32(inttof32(2), top - bottom);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = divf32(inttof32(2), top - bottom));
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
 
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = divf32(inttof32(-2), zFar - zNear);
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = divf32(inttof32(-2), zFar - zNear));
+	barrierAccess(MATRIX_MULT4x4 = 0);
 
-	MATRIX_MULT4x4 = -divf32(right + left, right - left);//0;
-	MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom); //0;
-	MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear);//0;
-	MATRIX_MULT4x4 = floattof32(1.0F);
+	barrierAccess(MATRIX_MULT4x4 = -divf32(right + left, right - left));//0;
+	barrierAccess(MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom)); //0;
+	barrierAccess(MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear));//0;
+	barrierAccess(MATRIX_MULT4x4 = floattof32(1.0F));
 }
 GL_STATIC_INL
 /*!  \fn void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lookAtz, int upx, int upy, int upz)
@@ -1083,21 +1083,21 @@ void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lo
 
 
 	// should we use MATRIX_MULT4x3?
-	MATRIX_MULT4x3 = side[0];
-	MATRIX_MULT4x3 = up[0];
-	MATRIX_MULT4x3 = forward[0];
+	barrierAccess(MATRIX_MULT4x3 = side[0]);
+	barrierAccess(MATRIX_MULT4x3 = up[0]);
+	barrierAccess(MATRIX_MULT4x3 = forward[0]);
 
-	MATRIX_MULT4x3 = side[1];
-	MATRIX_MULT4x3 = up[1];
-	MATRIX_MULT4x3 = forward[1];
+	barrierAccess(MATRIX_MULT4x3 = side[1]);
+	barrierAccess(MATRIX_MULT4x3 = up[1]);
+	barrierAccess(MATRIX_MULT4x3 = forward[1]);
 
-	MATRIX_MULT4x3 = side[2];
-	MATRIX_MULT4x3 = up[2];
-	MATRIX_MULT4x3 = forward[2];
+	barrierAccess(MATRIX_MULT4x3 = side[2]);
+	barrierAccess(MATRIX_MULT4x3 = up[2]);
+	barrierAccess(MATRIX_MULT4x3 = forward[2]);
 
-	MATRIX_MULT4x3 = -dotf32(eye,side);
-	MATRIX_MULT4x3 = -dotf32(eye,up);
-	MATRIX_MULT4x3 = -dotf32(eye,forward);
+	barrierAccess(MATRIX_MULT4x3 = -dotf32(eye,side));
+	barrierAccess(MATRIX_MULT4x3 = -dotf32(eye,up));
+	barrierAccess(MATRIX_MULT4x3 = -dotf32(eye,forward));
 
 }
 
@@ -1112,25 +1112,25 @@ GL_STATIC_INL
 \param far Location of a the far clipping plane (parallel to viewing window) */
 void glFrustumf32(int left, int right, int bottom, int top, int near, int far) {
 
-	MATRIX_MULT4x4 = divf32(2*near, right - left);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = divf32(2*near, right - left));
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
 
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = divf32(2*near, top - bottom);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = divf32(2*near, top - bottom));
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
 
-	MATRIX_MULT4x4 = divf32(right + left, right - left);
-	MATRIX_MULT4x4 = divf32(top + bottom, top - bottom);
-	MATRIX_MULT4x4 = -divf32(far + near, far - near);
-	MATRIX_MULT4x4 = floattof32(-1.0F);
+	barrierAccess(MATRIX_MULT4x4 = divf32(right + left, right - left));
+	barrierAccess(MATRIX_MULT4x4 = divf32(top + bottom, top - bottom));
+	barrierAccess(MATRIX_MULT4x4 = -divf32(far + near, far - near));
+	barrierAccess(MATRIX_MULT4x4 = floattof32(-1.0F));
 
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
-	MATRIX_MULT4x4 = 0;
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near));
+	barrierAccess(MATRIX_MULT4x4 = 0);
 }
 
 GL_STATIC_INL
@@ -1161,22 +1161,22 @@ GL_STATIC_INL
 \param height height in pixels of the window (3 or 4 is a good number)
 \param viewport the current viewport (normally {0, 0, 255, 191}) */
 void gluPickMatrix(int x, int y, int width, int height, const int viewport[4]) {
-	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(viewport[3]) / height;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(1);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(viewport[2] + ((viewport[0] - x)<<1)) / width;
-	MATRIX_MULT4x4 = inttof32(viewport[3] + ((viewport[1] - y)<<1)) / height;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(1);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(viewport[2]) / width);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(viewport[3]) / height);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(1));
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(viewport[2] + ((viewport[0] - x)<<1)) / width);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(viewport[3] + ((viewport[1] - y)<<1)) / height);
+	barrierAccess(MATRIX_MULT4x4 = 0);
+	barrierAccess(MATRIX_MULT4x4 = inttof32(1));
 }
 
 GL_STATIC_INL
@@ -1403,9 +1403,9 @@ GL_STATIC_INL
 \param y scaling on the y axis
 \param z scaling on the z axis */
 void glScalef(float x, float y, float z) {
-	MATRIX_SCALE = floattof32(x);
-	MATRIX_SCALE = floattof32(y);
-	MATRIX_SCALE = floattof32(z);
+	barrierAccess(MATRIX_SCALE = floattof32(x));
+	barrierAccess(MATRIX_SCALE = floattof32(y));
+	barrierAccess(MATRIX_SCALE = floattof32(z));
 }
 
 GL_STATIC_INL
@@ -1417,9 +1417,9 @@ GL_STATIC_INL
 \param y translation on the y axis
 \param z translation on the z axis */
 void glTranslatef(float x, float y, float z) {
-	MATRIX_TRANSLATE = floattof32(x);
-	MATRIX_TRANSLATE = floattof32(y);
-	MATRIX_TRANSLATE = floattof32(z);
+	barrierAccess(MATRIX_TRANSLATE = floattof32(x));
+	barrierAccess(MATRIX_TRANSLATE = floattof32(y));
+	barrierAccess(MATRIX_TRANSLATE = floattof32(z));
 }
 
 GL_STATIC_INL
