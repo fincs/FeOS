@@ -29,6 +29,7 @@ ifeq ($(CONF_ARM7),)
 ARCH       := -mcpu=arm946e-s -mtune=arm946e-s
 DEFINES    += -DARM9
 INCLUDECXX := -I$(FEOSSDK)/include/cxx
+LDEXTRA    := --use-blx,
 else
 ARCH      := -mcpu=arm7tdmi -mtune=arm7tdmi
 DEFINES   += -DARM7
@@ -94,7 +95,7 @@ CXXFLAGS += -fno-exceptions
 endif
 
 ASFLAGS  := $(DEBUGFLAG) $(ARCH) $(DEFINES) $(INCLUDE)
-LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld $(ARCH) -Wl,-d,-q,$(GCSECTIONS)--pic-veneer,-Map,$(TARGET).map
+LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld $(ARCH) -Wl,-d,-q,$(GCSECTIONS)$(LDEXTRA)-Map,$(TARGET).map
 
 ifeq ($(CONF_NOSTDLIB),)
 LIBS     := -lfeos$(LIBFEOSSUF) $(CXXLIB)
