@@ -53,9 +53,9 @@
 #define GFX_VEC_TEST          (*(vu32*) 0x040005C8)
 #define GFX_VEC_RESULT        ((vs16*)  0x04000630)
 #define GFX_BUSY              (GFX_STATUS & BIT(27))
-#define GFX_VERTEX_RAM_USAGE  (*(u16*)  0x04000606)
-#define GFX_POLYGON_RAM_USAGE (*(u16*)  0x04000604)
-#define GFX_CUTOFF_DEPTH      (*(u16*)  0x04000610)
+#define GFX_VERTEX_RAM_USAGE  (*(vu16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE (*(vu16*)  0x04000604)
+#define GFX_CUTOFF_DEPTH      (*(vu16*)  0x04000610)
 
 #define MATRIX_CONTROL        (*(vu32*) 0x04000440)
 #define MATRIX_PUSH           (*(vu32*) 0x04000444)
