@@ -1,0 +1,24 @@
+#!/bin/sh
+
+usage()
+{
+	echo "Usage:" 1>&2
+	echo "   $0 [filename] [symname]" 1>&2
+	exit 1
+}
+
+if [ "$1" = "" ]; then
+	usage
+else if [ "$2" = "" ]; then
+	usage
+fi; fi
+
+echo ".section .rodata"
+echo ".align 2"
+echo ".global $2"
+echo ".hidden $2"
+echo "$2:"
+echo -e "\t.incbin \"$1\""
+echo ".global $2_end"
+echo ".global $2_end"
+echo "$2_end:"

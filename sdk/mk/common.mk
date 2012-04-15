@@ -281,11 +281,16 @@ endif
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
 define bin2o
-	bin2s $< | $(AS) -o $(@)
-	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
-	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
-	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(<F) | tr . _)`.h
+	feosbin2s ../$(DATA)/$(shell basename $<) `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)` | $(AS) -o $(@)
+	echo "extern const unsigned char" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" > `(echo $(<F) | tr . _)`.h
+	echo "extern const unsigned char" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" >> `(echo $(<F) | tr . _)`.h
+	echo "#define" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_size" `wc -c $< | awk '{print $$1}'` >> `(echo $(<F) | tr . _)`.h
 endef
+
+#---------------------------------------------------------------------------------
+%.bin.o: %.bin
+	@echo $(notdir $<)
+	@$(bin2o)
 
 -include $(DEPENDS)
 
