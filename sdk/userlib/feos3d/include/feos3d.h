@@ -690,8 +690,8 @@ GL_STATIC_INL
 \param z the z component of the lights directional vector. Direction must be normalized */
  void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
 	id = (id & 3) << 30;
-	GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF);
-	GFX_LIGHT_COLOR = id | color;
+	barrierAccess(GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF));
+	barrierAccess(GFX_LIGHT_COLOR = id | color);
 }
 
 GL_STATIC_INL
@@ -729,7 +729,7 @@ GL_STATIC_INL
 \brief Waits for a Vblank and swaps the buffers(like swiWaitForVBlank), but lets you specify some 3D options<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param mode flags from GLFLUSH_ENUM for enabling Y-sorting of translucent polygons and W-Buffering of all vertices*/
-void glFlush(u32 mode) { GFX_FLUSH = mode; }
+void glFlush(u32 mode) { barrierAccess(GFX_FLUSH = mode); }
 
 GL_STATIC_INL
 /*! \fn  void glMaterialShinyness(void)
@@ -779,19 +779,19 @@ GL_STATIC_INL
 \brief Set the parameters for polygons rendered on the current frame<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A>
 \param params the paramters to set for the polygons for the current frame. valid paramters are enumerated in GL_POLY_FORMAT_ENUM and in the functions POLY_ALPHA() and POLY_ID() */
-void glPolyFmt(u32 params) { GFX_POLY_FORMAT = params; }
+void glPolyFmt(u32 params) { barrierAccess(GFX_POLY_FORMAT = params); }
 
 GL_STATIC_INL
 /*! \fn  void glEnable(int bits)
 \brief Enables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
-void glEnable(int bits) { GFX_CONTROL |= bits; }
+void glEnable(int bits) { barrierAccess(GFX_CONTROL |= bits); }
 
 GL_STATIC_INL
 /*! \fn   void glDisable(int bits)
 \brief Disables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
-void glDisable(int bits) { GFX_CONTROL &= ~bits; }
+void glDisable(int bits) { barrierAccess(GFX_CONTROL &= ~bits); }
 
 GL_STATIC_INL
 /*! \fn   void glFogShift(int shift)
@@ -799,7 +799,7 @@ GL_STATIC_INL
 \param shift FOG_SHIFT value; each entry of the fog table covers 0x400 >> FOG_SHIFT depth values */
 void glFogShift(int shift) { 
 	sassert(shift>=0 && shift<16,"glFogShift is out of range");
-	GFX_CONTROL = (GFX_CONTROL & 0xF0FF) | (shift<<8);
+	barrierAccess(GFX_CONTROL = (GFX_CONTROL & 0xF0FF) | (shift<<8));
 }
 
 GL_STATIC_INL
@@ -808,7 +808,7 @@ GL_STATIC_INL
 \param shift FOG_OFFSET value; fogging begins at this depth with a density of FOG_TABLE[0]*/
 void glFogOffset(int offset) { 
 	sassert(offset>=0 && offset<0x8000,"glFogOffset is out of range");
-	GFX_FOG_OFFSET = offset;
+	barrierAccess(GFX_FOG_OFFSET = offset);
 }
 
 GL_STATIC_INL
@@ -823,7 +823,7 @@ void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
 	sassert(green<32,"glFogColor green is out of range");
 	sassert(blue<32,"glFogColor blue is out of range");
 	sassert(alpha<32,"glFogColor alpha is out of range");
-	GFX_FOG_COLOR = RGB15(red,green,blue) | (alpha << 16);
+	barrierAccess(GFX_FOG_COLOR = RGB15(red,green,blue) | (alpha << 16));
 }
 
 GL_STATIC_INL
@@ -834,7 +834,7 @@ GL_STATIC_INL
 void glFogDensity(int index, int density) {
 	sassert(index>= 0 && index<32,"glFogDensity index is out of range");
 	sassert(index>= 0 && density<128,"glFogDensity density is out of range");
-	GFX_FOG_TABLE[index] = density;
+	barrierAccess(GFX_FOG_TABLE[index] = density);
 }
 
 
@@ -1211,7 +1211,7 @@ GL_STATIC_INL
 \brief Specifies an edge color for polygons
 \param id which outline color to set (0-7)
 \param color the 15bit color to set */
-void glSetOutlineColor(int id, rgb color) { GFX_EDGE_TABLE[id] = color; }
+void glSetOutlineColor(int id, rgb color) { barrierAccess(GFX_EDGE_TABLE[id] = color); }
 
 GL_STATIC_INL
 /*! \fn void glSetToonTable(const uint16 *table)
@@ -1279,14 +1279,14 @@ GL_STATIC_INL
 \brief set the minimum alpha value that will be used<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param alphaThreshold minimum alpha value that will be used (0-15) */
-void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThreshold; }
+void glAlphaFunc(int alphaThreshold) { barrierAccess(GFX_ALPHA_TEST = alphaThreshold); }
 
 GL_STATIC_INL
 /*!  \fn  void glCutoffDepth(fixed12d3 wVal)
 \brief Stop the drawing of polygons that are a certain distance from the camera.<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param wVal polygons that are beyond this W-value(distance from camera) will not be drawn; 15bit value. */
-void glCutoffDepth(fixed12d3 wVal) { GFX_CUTOFF_DEPTH = wVal; }
+void glCutoffDepth(fixed12d3 wVal) { barrierAccess(GFX_CUTOFF_DEPTH = wVal); }
 
 GL_STATIC_INL
 /*! \fn void glInit()
@@ -1303,7 +1303,7 @@ GL_STATIC_INL
 \param blue component (0-31)
 \param alpha from 0(clear) to 31(opaque)*/
 void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
-	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
+	barrierAccess(GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16));
 }
 
 GL_STATIC_INL
@@ -1311,7 +1311,7 @@ GL_STATIC_INL
 \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
 \param ID the polygon ID to give the rear-plane */
 void glClearPolyID(uint8 ID) {
-	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
+	barrierAccess(GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 ));
 }
 
 GL_STATIC_INL
