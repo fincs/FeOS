@@ -23,7 +23,7 @@ clean:
 	@make -C source/FEOSBASE clean
 	@make -C source/FEOSSTDIO clean
 	@make -C source/FEOSPOSIXEMU clean
-	@make -C source/FEOSMATH
+	@make -C source/FEOSMATH clean
 	@make -C source/FEOSDSAPI clean
 	@make -C source/FEOSDSSPR clean
 	@make -C source/FEOSDSBG clean
