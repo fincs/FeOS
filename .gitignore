@@ -6,6 +6,7 @@ build/
 /apps/*
 !/apps/unixtools/
 !/apps/cmdprompt/
+!/apps/stats/
 /FeOS/
 /testbin/
 /sdk/lib/
