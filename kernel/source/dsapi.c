@@ -114,6 +114,38 @@ void _FeOS_bgUpdate()
 	if (!bBgUpd) bgUpdate();
 }
 
+typedef struct
+{
+	void (* directMode)();
+	void (* consoleMode)();
+	int (* getMode)();
+} modeshim_t;
+
+static modeshim_t* pModeShim = NULL;
+
+static void directModeShim()
+{
+	pModeShim ? pModeShim->directMode() : FeOS_swi_DirectMode();
+}
+
+static void consoleModeShim()
+{
+	pModeShim ? pModeShim->consoleMode() : FeOS_swi_ConsoleMode();
+}
+
+static int getModeShim()
+{
+	return pModeShim ? pModeShim->getMode() : GetCurMode();
+}
+
+static modeshim_t* installModeShim(modeshim_t* pNewShim)
+{
+	modeshim_t* pOldShim = pModeShim;
+	if (pNewShim != (modeshim_t*)~0)
+		pModeShim = pNewShim;
+	return pOldShim;
+}
+
 BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
 	ADD_FUNC_ALIAS(keysHeld, FeOS_GetKeysHeld),
@@ -129,11 +161,12 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC(FeOS_NextIRQ),
 	ADD_FUNC_ALIAS(FeOS_swi_IrqDisable, FeOS_IrqDisable),
 	ADD_FUNC_ALIAS(FeOS_swi_IrqEnable, FeOS_IrqEnable),
-	ADD_FUNC_ALIAS(FeOS_swi_ConsoleMode, FeOS_ConsoleMode),
-	ADD_FUNC_ALIAS(FeOS_swi_DirectMode, FeOS_DirectMode),
+	ADD_FUNC_ALIAS(consoleModeShim, FeOS_ConsoleMode),
+	ADD_FUNC_ALIAS(directModeShim, FeOS_DirectMode),
 	ADD_FUNC_ALIAS(FeOS_swi_TimerWrite, FeOS_TimerWrite),
 	ADD_FUNC_ALIAS(FeOS_swi_TimerTick, FeOS_TimerTick),
-	ADD_FUNC_ALIAS(GetCurMode, FeOS_GetMode),
+	ADD_FUNC_ALIAS(getModeShim, FeOS_GetMode),
+	ADD_FUNC_ALIAS(installModeShim, FeOS_ModeShim),
 	ADD_FUNC(dmaCopyWords),
 	ADD_FUNC(dmaCopyHalfWords),
 	ADD_FUNC(dmaFillWords),

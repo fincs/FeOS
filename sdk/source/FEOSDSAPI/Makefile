@@ -22,6 +22,7 @@ FeOS_DirectMode \
 FeOS_TimerWrite \
 FeOS_TimerTick \
 FeOS_GetMode \
+FeOS_ModeShim \
 dmaCopyWords \
 dmaCopyHalfWords \
 dmaFillWords \
