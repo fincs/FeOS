@@ -40,6 +40,8 @@
 
 #ifdef BUILD_FEOSCXX
 #include <bits/c++config.h>
+#else
+#include <cstddef>
 #endif
 #include <exception>
 
