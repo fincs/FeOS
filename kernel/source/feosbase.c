@@ -7,6 +7,9 @@
 #include <time.h>
 #include <errno.h>
 
+#include <malloc.h>
+#include <sys/statvfs.h>
+
 void FeOS_swi_DebugPrint(const char*);
 
 instance_t FeOS_swi_LoadModule_ARM7(const char*, int*);
@@ -69,6 +72,37 @@ instance_t FeOS_GetModule(const char* name)
 	return rh ? rh->hThis : NULL;
 }
 
+// Memory/disk usage functions
+
+typedef struct
+{
+	word_t total, free, used;
+} usagestats_t;
+
+bool FeOS_GetDiskStats(usagestats_t* pStats)
+{
+	struct statvfs fiData;
+	if (pStats && statvfs("/", &fiData) >= 0)
+	{
+		pStats->total = fiData.f_frsize * fiData.f_blocks;
+		pStats->free = fiData.f_bsize * fiData.f_bfree;
+		pStats->used = pStats->total - pStats->free;
+		return true;
+	}
+	return false;
+}
+
+void FeOS_GetMemStats(usagestats_t* pStats)
+{
+	if (!pStats) return;
+
+	u8 *heapLimit = getHeapLimit(), *heapStart = getHeapStart(), *heapEnd = getHeapEnd();
+	struct mallinfo mi = mallinfo();
+	pStats->used = mi.uordblks;
+	pStats->free = mi.fordblks + (heapLimit - heapEnd);
+	pStats->total = heapLimit - heapStart;
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -104,6 +138,8 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_GetCurExecStatus),
 	ADD_FUNC(FeOS_SetAutoUpdate),
 	ADD_FUNC(FeOS_GetAutoUpdate),
+	ADD_FUNC(FeOS_GetDiskStats),
+	ADD_FUNC(FeOS_GetMemStats),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),

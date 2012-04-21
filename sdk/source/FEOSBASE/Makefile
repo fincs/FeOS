@@ -36,6 +36,8 @@ FeOS_SetCurExecStatus \
 FeOS_GetCurExecStatus \
 FeOS_SetAutoUpdate \
 FeOS_GetAutoUpdate \
+FeOS_GetDiskStats \
+FeOS_GetMemStats \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \

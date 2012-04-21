@@ -88,5 +88,13 @@ enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
 void FeOS_SetAutoUpdate(int which, bool enable);
 bool FeOS_GetAutoUpdate(int which);
 
+typedef struct
+{
+	word_t total, free, used;
+} usagestats_t;
+
+bool FeOS_GetDiskStats(usagestats_t*);
+void FeOS_GetMemStats(usagestats_t*);
+
 #define memBarrier() asm volatile("":::"memory")
 #define barrierAccess(x) do { memBarrier(); (x); memBarrier(); } while(0)
