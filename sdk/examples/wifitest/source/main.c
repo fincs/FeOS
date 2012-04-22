@@ -12,10 +12,9 @@ void pageGet();
 int main()
 {
 	printf("Wifi Test\n");
-	if(!Wifi_InitDefault(WFC_CONNECT))
+	if(!Wifi_Startup())
 	{
 		printf("Wifi FAIL\n");
-		Wifi_Deinit();
 		return 1;
 	}
 
@@ -23,7 +22,7 @@ int main()
 	pageGet();
 
 	printf("End of Wifi test\n");
-	Wifi_Deinit();
+	Wifi_Cleanup();
 	return 0;
 }
 

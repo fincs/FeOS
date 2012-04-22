@@ -1102,3 +1102,24 @@ FEOS_EXPORT void Wifi_Deinit()
 	}
 }
 
+int mRefCount = 0;
+
+FEOS_EXPORT bool Wifi_Startup()
+{
+	if (!mRefCount++)
+	{
+		bool rc = Wifi_InitDefault(true);
+		if (!rc)
+		{
+			Wifi_Deinit();
+			mRefCount --;
+		}
+		return rc;
+	}
+	return true;
+}
+
+FEOS_EXPORT void Wifi_Cleanup()
+{
+	if (!--mRefCount) return Wifi_Deinit();
+}

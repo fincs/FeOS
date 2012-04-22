@@ -181,6 +181,12 @@ typedef void (*WifiPacketHandler)(int, int);
 // If this callback is used (see Wifi_SetSyncHandler()), it should send a message via the fifo to the arm7, which will call Wifi_Sync() on arm7.
 typedef void (*WifiSyncHandler)();
 
+#ifndef BUILD_FEOSWIFI
+#define WIFI_DEPRECATED(m) __attribute__((deprecated(m)))
+#else
+#define WIFI_DEPRECATED(m)
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -192,10 +198,10 @@ extern "C" {
 // Wifi_Init: Initializes the wifi library (arm9 side) and the sgIP library.
 //  int initflags: set up some optional things, like controlling the LED blinking.
 //  Returns: a 32bit value that *must* be passed to arm7.
-extern unsigned long Wifi_Init(int initflags);
+extern unsigned long Wifi_Init(int initflags) WIFI_DEPRECATED("Use Wifi_Startup() instead");
 
 // Wifi_Deinit: Deinitializes the wifi library (arm9 side).
-extern void Wifi_Deinit();
+extern void Wifi_Deinit() WIFI_DEPRECATED("Use Wifi_Cleanup() instead");
 
 // Wifi_CheckInit: Verifies when the ARM7 has been successfully initialized
 //  Returns: 1 if the arm7 is ready for wifi, 0 otherwise
@@ -339,7 +345,11 @@ extern void Wifi_SetSyncHandler(WifiSyncHandler sh);
 #define INIT_ONLY	false
 
 
-extern bool Wifi_InitDefault(bool useFirmwareSettings);
+extern bool Wifi_InitDefault(bool useFirmwareSettings) WIFI_DEPRECATED("Use Wifi_Startup() instead");
+
+// Cross-application-safe Wifi initialization functions (uses reference counting)
+extern bool Wifi_Startup();
+extern void Wifi_Cleanup();
 
 #ifdef __cplusplus
 };
