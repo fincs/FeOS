@@ -314,7 +314,60 @@ _impcopy_err:
 		rh->exidx.nentries = 0;
 	}
 
+	// Get the start and size of the extra data section
+	rh->extrapos = tell(fd);
+	lseek(fd, 0, SEEK_END);
+	rh->extrasize = tell(fd) - rh->extrapos;
+	lseek(fd, rh->extrapos, SEEK_SET);
+
 	return pMem;
+}
+
+int ModuleExtraGetSize(instance_t hInst)
+{
+	CHK_HINST(hInst);
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	return rh->extrasize;
+}
+
+int ModuleExtraRead(instance_t hInst, void* buf, size_t size)
+{
+	CHK_HINST(hInst);
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	return read(rh->file, buf, size);
+}
+
+int ModuleExtraSeek(instance_t hInst, int pos, int mode)
+{
+	CHK_HINST(hInst);
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	int fd = rh->file;
+	int base = rh->extrapos;
+	switch (mode)
+	{
+		case SEEK_SET:
+			return lseek(fd, base+pos, SEEK_SET);
+		case SEEK_CUR:
+		{
+			int target = tell(fd) + pos;
+			if (target < base) target = base;
+			return lseek(fd, target, SEEK_SET);
+		}
+		case SEEK_END:
+		{
+			int target = base + rh->extrasize + pos;
+			if (target < base) target = base;
+			return lseek(fd, target, SEEK_SET);
+		}
+	}
+	return -1;
+}
+
+int ModuleExtraTell(instance_t hInst)
+{
+	CHK_HINST(hInst);
+	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	return tell(rh->file) - rh->extrapos;
 }
 
 static FeOSLoadStruct __ldSt;

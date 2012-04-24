@@ -8,6 +8,10 @@ FeOS_FindSymbol \
 FeOS_FreeModule \
 FeOS_LockModule \
 FeOS_UnlockModule \
+FeOS_ModuleGetExtraSize \
+FeOS_ModuleExtraRead \
+FeOS_ModuleExtraSeek \
+FeOS_ModuleExtraTell \
 FeOS_EnumModules \
 FeOS_GetModule \
 FeOS_GetModuleName \

@@ -131,6 +131,7 @@ typedef struct tag_fxe_runtime_header
 	int refcount;
 	int file;
 	size_t size;
+	int extrapos, extrasize;
 	FeOSMain entrypoint;
 	fxe_inmem_exports exp;
 	fxe_inmem_imports imp;
@@ -153,6 +154,11 @@ void* FeOS_FindSymbol(instance_t hinst, const char* sym);
 
 void ModuleLock(instance_t hInst);
 void ModuleUnlock(instance_t hInst);
+
+int ModuleExtraGetSize(instance_t hInst);
+int ModuleExtraRead(instance_t hInst, void* buf, size_t size);
+int ModuleExtraSeek(instance_t hInst, int pos, int mode);
+int ModuleExtraTell(instance_t hInst);
 
 int FeOS_Execute(int, const char*[]);
 

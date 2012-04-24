@@ -27,6 +27,11 @@ void FeOS_FreeModule(instance_t);
 void FeOS_LockModule(instance_t);
 void FeOS_UnlockModule(instance_t);
 
+int FeOS_ModuleGetExtraSize(instance_t);
+int FeOS_ModuleExtraRead(instance_t, void*, word_t);
+int FeOS_ModuleExtraSeek(instance_t, int, int);
+int FeOS_ModuleExtraTell(instance_t);
+
 enum { ENUM_BREAK = 0, ENUM_CONTINUE = 1 };
 typedef int (* ModuleEnumCallback)(instance_t, const char*, word_t, void*);
 

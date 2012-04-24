@@ -24,6 +24,8 @@
 		1, /* refcount */ \
 		-1, /* file */ \
 		0, /* size */ \
+		0, /* extrapos */ \
+		0, /* extrasize */ \
 		NULL, /* entrypoint */ \
 		MAKE_EXPORTSTRUCT(_NAME_), /* exp */ \
 		{ 0, NULL }, /* imp */ \
@@ -85,6 +87,8 @@ int __getMode();
 
 #define ERRSTR_INVALIDPARAM "Invalid parameter"
 #define CHK_HINST(hInst) sassert(AddressCheckMainRAM(hInst), ERRSTR_INVALIDPARAM);
+
+#define tell(fd) lseek(fd, 0, SEEK_CUR)
 
 extern bool bOAMUpd, bBgUpd, bKeyUpd;
 
