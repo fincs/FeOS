@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef WIN32
+#include <fcntl.h>
+#endif
 
 #include "types.h"
 #include "elf.h"
@@ -605,9 +608,9 @@ int main(int argc, char* argv[])
 {
 	int i;
 
-	if(argc != 2)
+	if(argc != 2 && (argc != 3 || strcmp(argv[2], "-extra") != 0))
 	{
-		printf("Usage:\n%s filePrefix\n", argv[0]);
+		printf("Usage:\n%s filePrefix (-extra)\n", argv[0]);
 		return 0;
 	}
 	
@@ -668,6 +671,22 @@ int main(int argc, char* argv[])
 
 	fclose(elf_file);
 	int rc = ReadAndConvertElf(fx2_file, img);
+
+	if (argc == 3)
+	{
+		// Copy extra data from stdin
+		int x;
+#ifdef WIN32
+		setmode(fileno(stdin), O_BINARY);
+#endif
+		fseek(fx2_file, 0, SEEK_END);
+		byte_t buf[1024];
+		do
+		{
+			x = fread(buf, 1, sizeof(buf), stdin);
+			fwrite(buf, 1, x, fx2_file);
+		} while(x);
+	}
 
 	free(img);
 	fclose(fx2_file);
