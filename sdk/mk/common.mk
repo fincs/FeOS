@@ -141,6 +141,10 @@ CPPFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES   := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
+ifneq ($(CONF_FSDIR),)
+export FSDIR := $(CURDIR)/$(CONF_FSDIR)
+endif
+
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
 #---------------------------------------------------------------------------------
@@ -216,7 +220,11 @@ $(OUTPUT).elf: $(OFILES)
 
 #---------------------------------------------------------------------------------
 %.fx2:
+ifeq ($(FSDIR),)
 	@fxe2tool $(OUTPUT)
+else
+	@fartool $(FSDIR) ?stdout | fxe2tool $(OUTPUT) -extra
+endif
 	@echo Built: $(notdir $@)
 
 #---------------------------------------------------------------------------------
