@@ -35,6 +35,7 @@ build/
 !/sdk/userlib/feoswifi/
 !/sdk/userlib/feos3d/
 !/sdk/userlib/multifeos/
+!/sdk/userlib/libfar/
 *.exe
 *.nds
 *.elf
