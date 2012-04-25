@@ -4,6 +4,7 @@
 
 all:
 	@make -C bin/fxe2tool_src
+	@make -C bin/fartool_src
 	@make -C source/FEOSBASE
 	@make -C source/FEOSSTDIO
 	@make -C source/FEOSPOSIXEMU
@@ -20,6 +21,7 @@ all:
 
 clean:
 	@make -C bin/fxe2tool_src clean
+	@make -C bin/fartool_src clean
 	@make -C source/FEOSBASE clean
 	@make -C source/FEOSSTDIO clean
 	@make -C source/FEOSPOSIXEMU clean
