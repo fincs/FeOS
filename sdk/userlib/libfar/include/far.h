@@ -17,7 +17,7 @@ extern "C" {
 typedef void* far_t;
 typedef void* farfile_t;
 
-LIBFAR_API far_t FAR_OpenFile(const char* path);
+LIBFAR_API far_t FAR_OpenArchive(const char* path);
 LIBFAR_API far_t FAR_OpenModule(instance_t hInst);
 LIBFAR_API void FAR_Close(far_t hArc);
 #define FAR_OpenSelf() FAR_OpenModule(FeOS_GetInstance())
@@ -30,7 +30,7 @@ LIBFAR_API int FAR_FileTell(farfile_t hFile);
 LIBFAR_API void FAR_FileClose(farfile_t hFile);
 LIBFAR_API FILE* FAR_WrapFile(farfile_t hFile, bool bOwn);
 
-static inline FILE* FAR_GetFileH(far_t hArc, const char* path)
+static inline FILE* FAR_OpenArcFile(far_t hArc, const char* path)
 {
 	farfile_t hFile = FAR_GetFile(hArc, path);
 	if (!hFile) return NULL;

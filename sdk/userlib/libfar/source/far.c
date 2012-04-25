@@ -146,7 +146,7 @@ far_t FAR_OpenCommon(FARobj_t* x)
 	return x;
 }
 
-far_t FAR_OpenFile(const char* path)
+far_t FAR_OpenArchive(const char* path)
 {
 	FILE* f = fopen(path, "rb");
 	if (!f) return NULL;
