@@ -304,6 +304,12 @@ _impcopy_err:
 	// Add this module to the list of loaded modules
 	FeOS_ModuleListAdd(rh);
 
+	// Get the start and size of the extra data section
+	rh->extrapos = tell(fd);
+	lseek(fd, 0, SEEK_END);
+	rh->extrasize = tell(fd) - rh->extrapos;
+	lseek(fd, rh->extrapos, SEEK_SET);
+
 	// Run the constructors
 	rh->entrypoint(FEOS_EP_INIT, 0, 0, 0);
 
@@ -313,12 +319,6 @@ _impcopy_err:
 		rh->exidx.table = NULL;
 		rh->exidx.nentries = 0;
 	}
-
-	// Get the start and size of the extra data section
-	rh->extrapos = tell(fd);
-	lseek(fd, 0, SEEK_END);
-	rh->extrasize = tell(fd) - rh->extrapos;
-	lseek(fd, rh->extrapos, SEEK_SET);
 
 	return pMem;
 }
