@@ -88,8 +88,11 @@ int stm_open_r(struct _reent* r, void* fileStruct, const char* path, int flags, 
 		return -1;
 	}
 	
-	if (pStm->Open)
+	if (pStm->Open) {
 		r->_errno = pStm->Open(sFile->cData);
+		if(r->_errno != 0)
+			return -1;
+		}
 
 	return 0;
 }
