@@ -47,6 +47,13 @@ Get a domain's IP address
 
 	host domain.address
 
+ifconfig
+--------
+
+Get your network info
+
+	ifconfig
+
 ls
 --
 
