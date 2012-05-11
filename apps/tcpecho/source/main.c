@@ -11,7 +11,10 @@ const unsigned short port = 7; /* port to listen on */
 
 int main(int argc, const char* argv[])
 {
-	Wifi_Startup();
+	if (Wifi_Startup()) {
+		fprintf(stderr, "Can't init Wifi!\n");
+		return 1;
+	}
 
 	// Listening & accepting a connection
 	struct sockaddr_in local_addr, peer_addr;
