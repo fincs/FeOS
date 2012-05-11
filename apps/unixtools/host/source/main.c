@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   printf("Hostname: %s\n", argv[1]);
 
   // Find the IP address of the server, with gethostbyname
-  struct hostent * myhost = gethostbyname("feos.mtheall.com");
+  struct hostent * myhost = gethostbyname(argv[1]);
 
   int i = 0;
   while(myhost->h_addr_list[i]) {
