@@ -7,6 +7,7 @@ build/
 !/apps/unixtools/
 !/apps/cmdprompt/
 !/apps/stats/
+!/apps/tcpecho/
 /FeOS/
 /testbin/
 /sdk/lib/
