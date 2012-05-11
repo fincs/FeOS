@@ -12,6 +12,7 @@ build/
 /testbin/
 /sdk/lib/
 /sdk/bin/fxe2tool
+/sdk/bin/fartool
 /sdk/source/FEOSBASE/*
 !/sdk/source/FEOSBASE/Makefile
 /sdk/source/FEOSSTDIO/*
