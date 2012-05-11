@@ -40,6 +40,13 @@ Usage:
     cp <SOURCE FILE>... <TARGET DIRECTORY>
     cp <SOURCE FILE> <TARGET FILE>
 
+host
+----
+
+Get a domain's IP address
+
+	host domain.address
+
 ls
 --
 
