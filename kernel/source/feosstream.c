@@ -92,7 +92,7 @@ int stm_open_r(struct _reent* r, void* fileStruct, const char* path, int flags, 
 		r->_errno = pStm->Open(sFile->cData);
 		if(r->_errno != 0)
 			return -1;
-		}
+	}
 
 	return 0;
 }
