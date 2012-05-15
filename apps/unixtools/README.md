@@ -40,6 +40,17 @@ Usage:
     cp <SOURCE FILE>... <TARGET DIRECTORY>
     cp <SOURCE FILE> <TARGET FILE>
 
+ftpd
+----
+
+FTP Server
+
+Usage:
+
+    ftpd
+
+Connect with a standard FTP client. If you get a message "Not enough space", you may need to wait up to five minutes due to dswifi limitations.
+
 host
 ----
 
