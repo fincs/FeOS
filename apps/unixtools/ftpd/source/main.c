@@ -474,7 +474,13 @@ void LIST(int sock, fd_set *master) {
 
     // this is a file
     memset(buf, 0, sizeof(buf));
-    sprintf(buf, "+r\t%s\r\n", path);
+    sprintf(buf, "+i%u.%u,m%u,up%03o,r,s%u,\t%s\r\n",
+                 (unsigned)statbuf.st_dev,
+                 (unsigned)statbuf.st_ino,
+                 (unsigned)statbuf.st_mtime,
+                 (unsigned)statbuf.st_mode & 0777,
+                 (unsigned)statbuf.st_size,
+                 path);
 
     // send the data
     rc = Send(data, buf, strlen(buf));
@@ -509,13 +515,39 @@ void LIST(int sock, fd_set *master) {
     if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0)
       continue;
 
+    sprintf(buf, "%s/%s", path, dent->d_name);
+
+    debug("stat '%s'\n", buf);
+    rc = stat(buf, &statbuf);
+    if(rc == -1) {
+      putDataConnection();
+      closedir(dp);
+      memset(buf, 0, sizeof(buf));
+      sprintf(buf, "426 %s\r\n", strerror(errno));
+      msg = buf;
+      SEND();
+      return;
+    }
+
     // this is a directory
     if(dent->d_type == DT_DIR)
-      sprintf(buf, "+/\t%s\r\n", dent->d_name);
+      sprintf(buf, "+i%u.%u,m%u,up%03o,/,s%u,\t%s\r\n",
+                   (unsigned)statbuf.st_dev,
+                   (unsigned)statbuf.st_ino,
+                   (unsigned)statbuf.st_mtime,
+                   (unsigned)statbuf.st_mode & 0777,
+                   (unsigned)statbuf.st_size,
+                   dent->d_name);
 
     // this is a file
     else if(dent->d_type == DT_REG)
-      sprintf(buf, "+r\t%s\r\n", dent->d_name);
+      sprintf(buf, "+i%u.%u,m%u,up%03o,r,s%u,\t%s\r\n",
+                   (unsigned)statbuf.st_dev,
+                   (unsigned)statbuf.st_ino,
+                   (unsigned)statbuf.st_mtime,
+                   (unsigned)statbuf.st_mode & 0777,
+                   (unsigned)statbuf.st_size,
+                   dent->d_name);
 
     // filter out everything else
     else
