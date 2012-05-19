@@ -32,8 +32,9 @@ BUILD         := build_dbg
 CONF_DEBUG    := 1
 EXTRASRC      := source/debug
 endif
-SOURCES       := source source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSMATH \
-                 source/FEOSDSAPI source/FEOSDSSPR source/FEOSDSBG source/FEOSARM7 source/stdio \
+SOURCES       := source source/stdio source/support \
+                 source/FEOSBASE source/FEOSSTDIO source/FEOSPOSIXEMU source/FEOSMATH \
+                 source/FEOSDSAPI source/FEOSDSSPR source/FEOSDSBG source/FEOSARM7 \
                  $(EXTRASRC)
 DATA          := data
 INCLUDES      := include

@@ -3,5 +3,5 @@
 
 long long __aeabi_lmul(long long a, long long b)
 {
-	return a*b;
+	return a * b;
 }
