@@ -37,6 +37,7 @@ static char path[PATH_MAX]; // buffer for storing paths
 struct sockaddr_in taddr;   // data transfer address
 int data = -1;              // data transfer socket
 
+// The FTP commands are defined in the RFC 959
 #define FUNC(x) void x(int, fd_set*)
 FUNC(CDUP);        // change to parent directory
 FUNC(CWD);         // change working directory
