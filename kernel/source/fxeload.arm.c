@@ -112,11 +112,6 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	}
 
 	totalsize = head.loadsize + head.bsssize + sizeof(fxe_runtime_header) + aModuleNameLen;
-	if(totalsize > 0x200000)
-	{
-		close(fd);
-		return NULL;
-	}
 
 	void* pMem = memalign(32, (totalsize+31) & ~31);
 	if(pMem == NULL)
