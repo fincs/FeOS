@@ -14,7 +14,8 @@ chdir \
 getcwd \
 stat \
 fstat \
-fileno
+fileno \
+ftruncate
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
