@@ -89,7 +89,7 @@ endif
 CFLAGS   := $(ARCH) $(DEBUGFLAG) $(CFLAGSBASE) $(CEXTRAFLAGS) -fomit-frame-pointer -Wall -save-temps -fvisibility=hidden\
             -mthumb-interwork -mword-relocations $(INCLUDE) $(DEFINES) -nostdinc $(CONF_CFLAGS)
 
-CXXFLAGS := $(CFLAGS) $(INCLUDECXX) -fno-rtti -nostdinc++ -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
+CXXFLAGS := $(CFLAGS) $(INCLUDECXX) -fno-rtti -nostdinc++ -std=gnu++11 -fvisibility-inlines-hidden $(CONF_CXXFLAGS)
 
 ifneq ($(CONF_ARM7),)
 CXXFLAGS += -fno-exceptions
