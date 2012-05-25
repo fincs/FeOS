@@ -42,6 +42,29 @@ void sgIP_sockets_Init() {
 	}
 }
 
+// Garbarge timeouting sockets. Internal use.
+int gc_sockets() {
+       int i;
+       SGIP_INTR_PROTECT();
+       // Search the oldest socket in timeout
+       unsigned long oldest_counter = ~0;
+       int oldest_socket = 0;
+       for(i=0;i<SGIP_SOCKET_MAXSOCKETS;i++) {
+               if((socketlist[i].flags & SGIP_SOCKET_FLAG_CLOSING) != SGIP_SOCKET_FLAG_CLOSING) continue;
+               unsigned long counter = (socketlist[i].flags & SGIP_SOCKET_MASK_CLOSE_COUNT);
+               if (counter < oldest_counter) {
+                       oldest_counter = counter;
+                       oldest_socket = i+1;
+               }
+       }
+       // "Timed out" while waiting
+       if(oldest_socket) {
+               forceclosesocket(oldest_socket);
+       }
+       SGIP_INTR_UNPROTECT();
+       return oldest_socket;
+}
+
 // Additional timer routine that cleans up after half-closed sockets.
 void sgIP_sockets_Timer1000ms() {
 	int i;
@@ -73,7 +96,7 @@ int spawn_socket(int flags) {
    int s;
    SGIP_INTR_PROTECT();
    for(s=0;s<SGIP_SOCKET_MAXSOCKETS;s++) if(!(socketlist[s].flags&SGIP_SOCKET_FLAG_ALLOCATED)) break;
-   if(s==SGIP_SOCKET_MAXSOCKETS) {
+   if(s==SGIP_SOCKET_MAXSOCKETS && !(s = gc_sockets())) {
       SGIP_INTR_UNPROTECT();
       return SGIP_ERROR(ENOMEM);
    }
@@ -99,7 +122,7 @@ int socket(int domain, int type, int protocol) {
 	if(type!=SOCK_DGRAM && type!=SOCK_STREAM) return SGIP_ERROR(EINVAL);
 	SGIP_INTR_PROTECT();
 	for(s=0;s<SGIP_SOCKET_MAXSOCKETS;s++) if(!(socketlist[s].flags&SGIP_SOCKET_FLAG_ALLOCATED)) break;	
-	if(s==SGIP_SOCKET_MAXSOCKETS) {
+	if(s==SGIP_SOCKET_MAXSOCKETS && !(s = gc_sockets())) {
 		SGIP_INTR_UNPROTECT();
 		return SGIP_ERROR(ENOMEM);
 	}
