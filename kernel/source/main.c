@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fxe.h"
+#include "feosfifo.h"
 #include <sys/iosupport.h>
 
 #ifdef USE_LIBFILESYSTEM
@@ -31,6 +32,8 @@ extern int keyBufferLength;
 
 int caretBlink = 0;
 
+extern volatile bool inHeadphoneSleep;
+
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
@@ -38,6 +41,8 @@ void irq_vblank()
 
 	if (bKeyUpd) scanKeys();
 	touchRead((touchPosition*)&touchPos);
+
+	if (inHeadphoneSleep) return;
 
 	if (bBgUpd) bgUpdate();
 	if (conMode)
@@ -304,6 +309,7 @@ int main()
 	setVectorBase(0);
 	FeOS_ModuleListInit();
 	FeOS_InitStreams();
+	installFeOSFIFO();
 
 	iprintf(
 		"FeOS kernel\n"

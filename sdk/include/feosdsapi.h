@@ -78,7 +78,8 @@ enum
 	KEY_L      = BIT(9),  // L button
 	KEY_X      = BIT(10), // X button
 	KEY_Y      = BIT(11), // Y button
-	KEY_TOUCH  = BIT(12)  // Touchscreen pen down
+	KEY_TOUCH  = BIT(12), // Touchscreen pen down
+	KEY_LID    = BIT(13)  // Hinge state
 };
 
 enum

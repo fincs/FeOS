@@ -22,6 +22,7 @@ static void freeFifoChannel(int ch)
 }
 
 static void FeOSFifoHandler(int, void*);
+static void lidIrqHandler();
 
 void installFeOSFIFO()
 {
@@ -31,6 +32,8 @@ void installFeOSFIFO()
 static FeOSLoadStruct* ldSt = NULL;
 static instance_t freeMod = NULL;
 static int freeChn;
+
+static volatile int oldPower;
 
 void FeOSFifoHandler(int size, void* userdata)
 {
@@ -52,7 +55,38 @@ void FeOSFifoHandler(int size, void* userdata)
 			freeChn = msg.fifoCh;
 			break;
 		}
+
+		case FEOS_ARM7_HEADPHONE_SLEEP:
+		{
+			oldPower = readPowerManagement(PM_CONTROL_REG);
+			{
+				int newPower = PM_LED_CONTROL(1);
+				if (oldPower & PM_SOUND_AMP)
+					newPower |= PM_SOUND_AMP | PM_SOUND_MUTE;
+				writePowerManagement(PM_CONTROL_REG, newPower);
+			}
+
+			irqSet(IRQ_LID, lidIrqHandler);
+			irqEnable(IRQ_LID);
+			break;
+		}
 	}
+}
+
+void lidIrqHandler()
+{
+	irqDisable(IRQ_LID);
+	irqSet(IRQ_LID, 0);
+	writePowerManagement(PM_CONTROL_REG, oldPower);
+	fifoSendAddress(FIFO_FEOS, FEOS_ARM9_WAKEUP_ADDR);
+}
+
+void __real_systemSleep();
+void __wrap_systemSleep()
+{
+	// Do not systemSleep() if the lid interrupt is set (= there's HeadphoneSleeping)
+	if (REG_IE & IRQ_LID) return;
+	__real_systemSleep();
 }
 
 static void FeOS_LoadModule();

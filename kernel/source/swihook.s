@@ -68,7 +68,7 @@ __SVCTable:
 
 	@ Kernel functions (0x1Z)
 	.word FeOS_DebugPrint
-	.word 0 @swiWaitForVBlank
+	.word FeOS_SetSuspendMode
 	.word __sassert
 	writehook conwrite
 	writehook conerr
@@ -335,6 +335,7 @@ swiimp LoadModule_ARM7 0x01
 swiimp FreeModule_ARM7 0x02
 swiimp keyboardUpdate 0x03
 swiimp DebugPrint 0x10
+swiimp SetSuspendMode 0x11
 swiimp assertfail 0x12
 swiimp DataCacheFlush 0x05
 swiimp DataCacheFlushAll 0x06

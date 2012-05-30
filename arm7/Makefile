@@ -30,7 +30,7 @@ CFLAGS	:=	-g0 -Wall -O2 -save-temps\
 CFLAGS	+=	$(INCLUDE) -DARM7
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,-wrap,systemSleep -Wl,-Map,$(notdir $*).map
 
 
 #---------------------------------------------------------------------------------

@@ -85,6 +85,9 @@ irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
 int __getMode();
 #define isUserMode() (__getMode() == 0x10)
 
+enum { MODE_GET = -1, MODE_DISABLED = 0, MODE_NORMAL, MODE_HEADPHONES, MODE_COUNT };
+int FeOS_swi_SetSuspendMode(int mode);
+
 #define ERRSTR_INVALIDPARAM "Invalid parameter"
 #define CHK_HINST(hInst) sassert(AddressCheckMainRAM(hInst), ERRSTR_INVALIDPARAM);
 

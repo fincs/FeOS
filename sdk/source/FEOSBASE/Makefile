@@ -27,6 +27,7 @@ FeOS_DrainWriteBuffer \
 FeOS_WaitForMemAddr \
 FeOS_SuspendIRQ_t \
 FeOS_RestoreIRQ_t \
+FeOS_SetSuspendMode \
 FeOS_DebugPrint \
 FeOS_PushExitFunc \
 FeOS_PopExitFunc \

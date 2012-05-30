@@ -93,6 +93,11 @@ enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
 void FeOS_SetAutoUpdate(int which, bool enable);
 bool FeOS_GetAutoUpdate(int which);
 
+enum { SuspendMode_Get = -1, SuspendMode_Disable = 0, SuspendMode_Normal, SuspendMode_Headphones };
+int FeOS_SetSuspendMode(int mode);
+
+#define FeOS_GetSuspendMode() FeOS_SetSuspendMode(SuspendMode_Get)
+
 typedef struct
 {
 	word_t total, free, used;
