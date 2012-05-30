@@ -129,6 +129,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_swi_WaitForMemAddr, FeOS_WaitForMemAddr),
 	ADD_FUNC_ALIAS(FeOS_swi_SuspendIRQ_t, FeOS_SuspendIRQ_t),
 	ADD_FUNC_ALIAS(FeOS_swi_RestoreIRQ_t, FeOS_RestoreIRQ_t),
+	ADD_FUNC_ALIAS(FeOS_swi_SetSuspendMode, FeOS_SetSuspendMode),
 	ADD_FUNC(FeOS_PushExitFunc),
 	ADD_FUNC(FeOS_PopExitFunc),
 	ADD_FUNC_ALIAS(FeOS_ModuleExit, exit),
