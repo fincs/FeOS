@@ -9,6 +9,7 @@ FeOS_FifoSendDatamsg \
 FeOS_FifoCheckAddress \
 FeOS_FifoCheckValue32 \
 FeOS_FifoCheckDatamsg \
+FeOS_FifoCheckDatamsgLength \
 FeOS_FifoGetAddress \
 FeOS_FifoGetValue32 \
 FeOS_FifoGetDatamsg \

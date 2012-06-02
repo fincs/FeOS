@@ -62,7 +62,7 @@ __SVCTable:
 	.word irqDisable
 	.word InitConMode
 	.word InitFreeMode
-	.word _SetDatamsgHandler
+	.word 0 @_SetDatamsgHandler
 	.word _SetValue32Handler
 	.word _SetAddressHandler
 
@@ -113,7 +113,8 @@ __SVCTable:
 	.word fifoGetAddress
 	.word fifoGetValue32
 	.word fifoGetDatamsg
-	.space 4*7
+	.word fifoCheckDatamsgLength
+	.space 4*6
 	
 	@ Math functions (0x5Z)
 	.word FeOS_div3232
@@ -346,7 +347,7 @@ swiimp IrqEnable 0x09
 swiimp IrqDisable 0x0A
 swiimp ConsoleMode 0x0B
 swiimp DirectMode 0x0C
-swiimp SetDatamsgHandler 0x0D
+@swiimp SetDatamsgHandler 0x0D
 swiimp SetValue32Handler 0x0E
 swiimp SetAddressHandler 0x0F
 
@@ -365,6 +366,7 @@ swiimp FifoCheckDatamsg 0x45
 swiimp FifoGetAddress 0x46
 swiimp FifoGetValue32 0x47
 swiimp FifoGetDatamsg 0x48
+swiimp FifoCheckDatamsgLength 0x49
 
 swiimp div3232 0x50
 swiimp mod3232 0x51

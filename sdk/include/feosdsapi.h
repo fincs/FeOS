@@ -46,18 +46,19 @@ typedef volatile long long vs64;
 #define swiWaitForVBlank   FeOS_WaitForVBlank
 #define timerTick          FeOS_TimerTick
 #define timerStop          FeOS_TimerStop
-#define fifoSetDatamsgHandler FeOS_FifoSetDatamsgHandler
-#define fifoSetValue32Handler FeOS_FifoSetValue32Handler
-#define fifoSetAddressHandler FeOS_FifoSetAddressHandler
-#define fifoSendAddress       FeOS_FifoSendAddress
-#define fifoSendValue32       FeOS_FifoSendValue32
-#define fifoSendDatamsg       FeOS_FifoSendDatamsg
-#define fifoCheckAddress      FeOS_FifoCheckAddress
-#define fifoCheckValue32      FeOS_FifoCheckValue32
-#define fifoCheckDatamsg      FeOS_FifoCheckDatamsg
-#define fifoGetAddress        FeOS_FifoGetAddress
-#define fifoGetValue32        FeOS_FifoGetValue32
-#define fifoGetDatamsg        FeOS_FifoGetDatamsg
+#define fifoSetDatamsgHandler  FeOS_FifoSetDatamsgHandler
+#define fifoSetValue32Handler  FeOS_FifoSetValue32Handler
+#define fifoSetAddressHandler  FeOS_FifoSetAddressHandler
+#define fifoSendAddress        FeOS_FifoSendAddress
+#define fifoSendValue32        FeOS_FifoSendValue32
+#define fifoSendDatamsg        FeOS_FifoSendDatamsg
+#define fifoCheckAddress       FeOS_FifoCheckAddress
+#define fifoCheckValue32       FeOS_FifoCheckValue32
+#define fifoCheckDatamsg       FeOS_FifoCheckDatamsg
+#define fifoCheckDatamsgLength FeOS_FifoCheckDatamsgLength
+#define fifoGetAddress         FeOS_FifoGetAddress
+#define fifoGetValue32         FeOS_FifoGetValue32
+#define fifoGetDatamsg         FeOS_FifoGetDatamsg
 
 enum
 {

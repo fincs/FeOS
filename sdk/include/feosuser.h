@@ -76,6 +76,7 @@ bool FeOS_FifoSendDatamsg(int, word_t, void*);
 bool FeOS_FifoCheckAddress(int);
 bool FeOS_FifoCheckValue32(int);
 bool FeOS_FifoCheckDatamsg(int);
+int FeOS_FifoCheckDatamsgLength(int);
 void* FeOS_FifoGetAddress(int);
 word_t FeOS_FifoGetValue32(int);
 int FeOS_FifoGetDatamsg(int, word_t, void*);

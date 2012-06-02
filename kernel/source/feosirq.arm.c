@@ -8,6 +8,33 @@ void FeOS_IRQPoll();
 // User-mode FIFO handler support, to be moved to a separate file
 //-----------------------------------------------------------------------------
 
+#define _MAKELIBNDSVER(A,B,C) ((A)*10000 + (B)*100 + (C))
+#define _LIBNDS_VER _MAKELIBNDSVER(_LIBNDS_MAJOR_,_LIBNDS_MINOR_,_LIBNDS_PATCH_)
+
+#if _LIBNDS_VER <= _MAKELIBNDSVER(1, 5, 7)
+
+// fifoCheckDatamsgLength is amusingly missing from libnds versions up to 1.5.7.
+// This code segment is to be removed when a new version is released.
+#define FIFO_BUFFER_GETEXTRA(index) ((fifo_buffer[(index)*2]>>16)&0xFFF)
+extern vu32 fifo_buffer[256*2];
+typedef struct fifo_queue
+{
+	vu16 head;
+	vu16 tail;
+} fifo_queue;
+extern fifo_queue fifo_data_queue[16];
+
+int fifoCheckDatamsgLength(int channel)
+{
+       if(channel<0 || channel>=16) return -1;
+       if(!fifoCheckDatamsg(channel)) return -1;
+
+       int block = fifo_data_queue[channel].head;
+       return FIFO_BUFFER_GETEXTRA(block);
+}
+
+#endif
+
 static void* userdata_array[FIFO_PROG_CH_NUM];
 static FifoDatamsgHandlerFunc datamsghnd_array[FIFO_PROG_CH_NUM];
 static FifoValue32HandlerFunc value32hnd_array[FIFO_PROG_CH_NUM];
@@ -15,17 +42,16 @@ static FifoAddressHandlerFunc addresshnd_array[FIFO_PROG_CH_NUM];
 
 enum
 {
-	QUEUE_DATAMSG, QUEUE_VALUE32, QUEUE_ADDRESS
+	/*QUEUE_DATAMSG, */ QUEUE_VALUE32, QUEUE_ADDRESS
 };
 
 typedef struct tagFifoMsgQueueEntry
 {
 	struct tagFifoMsgQueueEntry* next;
 	u16 type, channel;
-	//void* userdata;
 	union
 	{
-		int datamsgSize;
+		//int datamsgSize;
 		word_t value32;
 		void* address;
 	};
@@ -94,7 +120,7 @@ static void FeOS_AddFifoMsgToQueue(FifoMsgQueueEntry* msg)
 	leaveCriticalSection(cs);
 }
 
-int FeOS_swi_FifoGetDatamsg(int, word_t, void*);
+//int FeOS_swi_FifoGetDatamsg(int, word_t, void*);
 
 void FeOS_RunFifoQueue()
 {
@@ -106,12 +132,14 @@ void FeOS_RunFifoQueue()
 		void* userdata = userdata_array[chn];
 		switch(ent->type)
 		{
+			/*
 			case QUEUE_DATAMSG:
 				if (datamsghnd_array[chn])
 					datamsghnd_array[chn](ent->datamsgSize, userdata);
 				else
 					FeOS_swi_FifoGetDatamsg(ent->channel, 0, NULL); // delete the data msg
 				break;
+				*/
 			case QUEUE_VALUE32:
 				if (value32hnd_array[chn])
 					value32hnd_array[chn](ent->value32, userdata);
@@ -127,6 +155,16 @@ void FeOS_RunFifoQueue()
 	fifoMsgStackPos = FIFOMSGSTACK_SIZE;
 }
 
+void FeOS_HandleDatamsgs()
+{
+	int i, length;
+	for (i = 0; i < FIFO_PROG_CH_NUM; i ++)
+		if (datamsghnd_array[i])
+			while ((length = FeOS_swi_FifoCheckDatamsgLength(FIFO_PROG_CH + i)) != -1)
+				datamsghnd_array[i](length, userdata_array[i]);
+}
+
+/*
 static void StubFifoDatamsgHandler(int datamsgSize, void* userdata)
 {
 	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
@@ -135,6 +173,7 @@ static void StubFifoDatamsgHandler(int datamsgSize, void* userdata)
 	msg->channel = (u16) (word_t) userdata;
 	msg->datamsgSize = datamsgSize;
 }
+*/
 
 static void StubFifoValue32Handler(word_t value32, void* userdata)
 {
@@ -154,6 +193,7 @@ static void StubFifoAddressHandler(void* address, void* userdata)
 	msg->address = address;
 }
 
+/*
 void _SetDatamsgHandler(int channel, bool set)
 {
 	if (set)
@@ -161,6 +201,7 @@ void _SetDatamsgHandler(int channel, bool set)
 	else
 		fifoSetDatamsgHandler(channel, NULL, NULL);
 }
+*/
 
 void _SetValue32Handler(int channel, bool set)
 {
@@ -183,7 +224,13 @@ void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, voi
 	int ch = channel - FIFO_PROG_CH;
 	userdata_array[ch] = userdata;
 	datamsghnd_array[ch] = handler;
-	FeOS_swi_SetDatamsgHandler(channel, !!handler);
+	//FeOS_swi_SetDatamsgHandler(channel, !!handler);
+	if (handler)
+	{
+		int l = 0;
+		while ((l = FeOS_swi_FifoCheckDatamsgLength(channel)) != -1)
+			handler(l, userdata);
+	}
 	FeOS_RunFifoQueue();
 }
 
@@ -243,6 +290,7 @@ static void FeOS_ProcessIRQ(word_t flags)
 	if (flags & IRQ_FIFO_NOT_EMPTY)
 	{
 		FeOS_RunFifoQueue();
+		FeOS_HandleDatamsgs();
 
 		// We don't want user code responding to this IRQ
 		flags &= ~IRQ_FIFO_NOT_EMPTY;

@@ -105,7 +105,8 @@ void FeOS_swi_InstrCacheInvalidate(const void* mem, size_t size);
 void FeOS_swi_InstrCacheInvalidateAll();
 void FeOS_swi_IrqEnable(word_t mask);
 void FeOS_swi_IrqDisable(word_t mask);
-void FeOS_swi_SetDatamsgHandler(int, bool);
+//void FeOS_swi_SetDatamsgHandler(int, bool);
+int FeOS_swi_FifoCheckDatamsgLength(int ch);
 void FeOS_swi_SetValue32Handler(int, bool);
 void FeOS_swi_SetAddressHandler(int, bool);
 #endif

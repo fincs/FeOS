@@ -20,6 +20,7 @@ BEGIN_TABLE(FEOSARM7)
 	ADD_FUNC2(FifoCheckAddress),
 	ADD_FUNC2(FifoCheckValue32),
 	ADD_FUNC2(FifoCheckDatamsg),
+	ADD_FUNC2(FifoCheckDatamsgLength),
 	ADD_FUNC2(FifoGetAddress),
 	ADD_FUNC2(FifoGetValue32),
 	ADD_FUNC2(FifoGetDatamsg),
