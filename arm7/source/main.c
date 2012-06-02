@@ -69,7 +69,7 @@ int main()
 
 	while (!exitflag)
 	{
-		swiWaitForVBlank();
+		coopWaitForVBlank();
 		FeOS_VBlankFunc();
 		if (!(REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)))
 			break;

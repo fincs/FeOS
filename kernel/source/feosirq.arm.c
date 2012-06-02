@@ -2,7 +2,23 @@
 #include "feosfifo.h"
 #include <stdio.h>
 
+#ifndef ARM7
 void FeOS_IRQPoll();
+#else
+static void FeOS_IRQPoll() { swiSetHaltCR(0x80); }
+#endif
+
+#ifdef ARM7
+asm("\
+.align 2\n\
+.global __ARMSWP\n\
+.type __ARMSWP STT_FUNC\n\
+__ARMSWP:\n\
+	swp r0, r0, [r1]\n\
+	bx lr");
+
+word_t __ARMSWP(word_t value, volatile word_t* addr);
+#endif
 
 //-----------------------------------------------------------------------------
 // User-mode FIFO handler support, to be moved to a separate file
@@ -59,7 +75,11 @@ typedef struct tagFifoMsgQueueEntry
 
 // Ersatz memory allocator
 
+#ifdef ARM9
 #define FIFOMSGSTACK_SIZE (4*1024)
+#else
+#define FIFOMSGSTACK_SIZE 1024
+#endif
 
 static byte_t fifoMsgStack[FIFOMSGSTACK_SIZE];
 static int fifoMsgStackPos = FIFOMSGSTACK_SIZE;
@@ -86,9 +106,14 @@ asm("\
 	.type __clearFifoMsgQueue STT_FUNC\n\
 __clearFifoMsgQueue:\n\
 	mov r0, #0\n\
-	mov r1, #0\n\
-	strd r0, [pc]\n\
-	bx lr\n\
+	mov r1, #0\n"
+#ifdef ARM9
+"	strd r0, [pc]\n"
+#else
+"	adr r2, __fifoMsgQueue\n"
+"	stm r2, {r0, r1}\n"
+#endif
+"	bx lr\n\
 	.global __fifoMsgQueue\n\
 __fifoMsgQueue:\n\
 	.word 0\n\
@@ -155,6 +180,10 @@ void FeOS_RunFifoQueue()
 	fifoMsgStackPos = FIFOMSGSTACK_SIZE;
 }
 
+#ifdef ARM7
+#define FeOS_swi_FifoCheckDatamsgLength fifoCheckDatamsgLength
+#endif
+
 void FeOS_HandleDatamsgs()
 {
 	int i, length;
@@ -219,6 +248,16 @@ void _SetAddressHandler(int channel, bool set)
 		fifoSetAddressHandler(channel, NULL, NULL);
 }
 
+#ifdef ARM7
+#define FeOS_FifoSetDatamsgHandler coopFifoSetDatamsgHandler
+#define FeOS_FifoSetValue32Handler coopFifoSetValue32Handler
+#define FeOS_FifoSetAddressHandler coopFifoSetAddressHandler
+#define FeOS_SetInterrupt coopIrqSet
+#define FeOS_CheckPendingIRQs coopIrqCheck
+#define _FeOS_WaitForIRQ coopIrqWait
+#define FeOS_NextIRQ coopIrqNext
+#endif
+
 void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata)
 {
 	int ch = channel - FIFO_PROG_CH;
@@ -233,6 +272,11 @@ void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, voi
 	}
 	FeOS_RunFifoQueue();
 }
+
+#ifdef ARM7
+#define FeOS_swi_SetValue32Handler _SetValue32Handler
+#define FeOS_swi_SetAddressHandler _SetAddressHandler
+#endif
 
 void FeOS_FifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata)
 {
@@ -320,7 +364,10 @@ word_t FeOS_CheckPendingIRQs()
 	return totalflags;
 };
 
-static void _FeOS_WaitForIRQ(word_t mask)
+#ifdef ARM9
+static
+#endif
+void _FeOS_WaitForIRQ(word_t mask)
 {
 	FeOS_CheckPendingIRQs();
 	for(;;)
@@ -331,6 +378,16 @@ static void _FeOS_WaitForIRQ(word_t mask)
 	}
 }
 
+#ifdef ARM7
+void coop_swiIntrWaitCompat(word_t how, word_t what)
+{
+	word_t mask = coopIrqCheck();
+	if (mask & what) return;
+	coopIrqWait(what);
+}
+#endif
+
+#ifdef ARM9
 static irqWaitFunc_t irqWaitFunc = NULL;
 
 void FeOS_WaitForIRQ(word_t mask)
@@ -345,6 +402,7 @@ irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc)
 		irqWaitFunc = newFunc;
 	return oldFunc;
 }
+#endif
 
 word_t FeOS_NextIRQ()
 {

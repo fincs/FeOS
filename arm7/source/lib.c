@@ -17,9 +17,22 @@ long long __aeabi_lmul(long long, long long);
 
 #define arm7_func_count (sizeof(arm7_funcs) / sizeof(fxe2_export_t))
 
+void coopTimerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback)
+{
+	timer &= 3;
+	TIMER_DATA(timer) = ticks;
+	if (callback)
+	{
+		coopIrqSet(IRQ_TIMER(timer), callback);
+		irqEnable(IRQ_TIMER(timer));
+		TIMER_CR(timer) = TIMER_IRQ_REQ | divider | TIMER_ENABLE;
+	}else
+		TIMER_CR(timer) = divider | TIMER_ENABLE;
+}
+
 static const fxe2_export_t arm7_funcs[] =
 {
-	ADD_FUNC(swiWaitForVBlank),
+	ADD_FUNC_ALIAS(coopWaitForVBlank, swiWaitForVBlank),
 	ADD_FUNC(irqSet),
 	ADD_FUNC(irqClear),
 	ADD_FUNC(irqEnable),
@@ -38,12 +51,12 @@ static const fxe2_export_t arm7_funcs[] =
 	ADD_FUNC(fifoCheckAddress),
 	ADD_FUNC(fifoCheckValue32),
 	ADD_FUNC(fifoCheckDatamsg),
-	//ADD_FUNC(fifoCheckDatamsgLength), // this function does not exist at all?!?!
+	ADD_FUNC(fifoCheckDatamsgLength),
 	ADD_FUNC(fifoGetAddress),
 	ADD_FUNC(fifoGetValue32),
 	ADD_FUNC(fifoGetDatamsg),
 	ADD_FUNC(swiDelay),
-	ADD_FUNC(swiIntrWait),
+	ADD_FUNC_ALIAS(coop_swiIntrWaitCompat, swiIntrWait),
 	ADD_FUNC(memcpy),
 	ADD_FUNC(memcmp),
 	ADD_FUNC(memset),
@@ -59,7 +72,15 @@ static const fxe2_export_t arm7_funcs[] =
 	ADD_FUNC(__aeabi_uidivmod),
 	ADD_FUNC(__aeabi_ldivmod),
 	ADD_FUNC(__aeabi_uldivmod),
-	ADD_FUNC(__aeabi_lmul)
+	ADD_FUNC(__aeabi_lmul),
+
+	ADD_FUNC(coopFifoSetDatamsgHandler),
+	ADD_FUNC(coopFifoSetValue32Handler),
+	ADD_FUNC(coopFifoSetAddressHandler),
+	ADD_FUNC(coopIrqSet),
+	ADD_FUNC(coopIrqCheck),
+	ADD_FUNC(coopIrqNext),
+	ADD_FUNC(coopTimerStart)
 };
 
 bool FeOS_ResolveImp(word_t* addr, const char* name)

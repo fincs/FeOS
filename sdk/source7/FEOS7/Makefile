@@ -42,7 +42,14 @@ __aeabi_uidiv \
 __aeabi_uidivmod \
 __aeabi_ldivmod \
 __aeabi_uldivmod \
-__aeabi_lmul
+__aeabi_lmul \
+coopFifoSetDatamsgHandler \
+coopFifoSetValue32Handler \
+coopFifoSetAddressHandler \
+coopIrqSet \
+coopIrqCheck \
+coopIrqNext \
+coopTimerStart
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

@@ -20,6 +20,8 @@ extern "C"
 #include <feosdsapi.h>
 #include <feosdsspr.h>
 #include <feosdsbg.h>
+#else
+#include <feos7.h>
 #endif
 
 #ifdef __cplusplus
