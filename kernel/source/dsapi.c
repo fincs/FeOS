@@ -252,7 +252,11 @@ BEGIN_TABLE(FEOSDSBG)
 	ADD_FUNC(bgShow),
 	ADD_FUNC(bgHide),
 	ADD_FUNC(bgSetCenterf),
-	ADD_FUNC(bgSetAffineMatrixScroll)
+	ADD_FUNC(bgSetAffineMatrixScroll),
+	ADD_FUNC(bgExtPaletteEnable),
+	ADD_FUNC(bgExtPaletteEnableSub),
+	ADD_FUNC(bgExtPaletteDisable),
+	ADD_FUNC(bgExtPaletteDisableSub)
 END_TABLE(FEOSDSBG)
 
 MAKE_FAKEMODULE(FEOSDSBG)
