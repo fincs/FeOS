@@ -3,6 +3,7 @@
 #---------------------------------------------------------------------------------
 
 FEOSBIN = $(FEOSSDK)/bin
+FEOSUSERLIB = $(FEOSSDK)/userlib
 
 ifeq ($(FEOSDEST),)
 export FEOSDEST = $(FEOSSDK)/../FeOS
@@ -113,7 +114,7 @@ ifneq ($(CONF_ARM7),)
 LIBDIRS += $(DEVKITPRO)/libnds
 endif
 endif
-LIBDIRS += $(foreach lib,$(CONF_USERLIBS),$(FEOSSDK)/userlib/$(lib))
+LIBDIRS += $(foreach lib,$(CONF_USERLIBS),$(FEOSUSERLIB)/$(lib))
 LIBDIRS += $(CONF_LIBDIRS)
 
 #---------------------------------------------------------------------------------
