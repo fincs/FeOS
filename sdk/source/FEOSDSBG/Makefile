@@ -30,7 +30,11 @@ bgScrollf \
 bgShow \
 bgHide \
 bgSetCenterf \
-bgSetAffineMatrixScroll
+bgSetAffineMatrixScroll \
+bgExtPaletteEnable \
+bgExtPaletteEnableSub \
+bgExtPaletteDisable \
+bgExtPaletteDisableSub
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

@@ -74,6 +74,10 @@ void bgShow(int);
 void bgHide(int);
 void bgSetCenterf(int, int, int);
 void bgSetAffineMatrixScroll(int, int, int, int, int, int, int);
+void bgExtPaletteEnable(void);
+void bgExtPaletteEnableSub(void);
+void bgExtPaletteDisable(void);
+void bgExtPaletteDisableSub(void);
 
 static inline void bgWrapOn(int id)
 {
