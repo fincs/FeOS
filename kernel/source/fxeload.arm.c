@@ -1,6 +1,6 @@
 #include "fxe.h"
 #include "feosfifo.h"
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>

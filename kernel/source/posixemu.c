@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 
 static inline int _fileno_helper(FILE* f) { return fileno(f); }
@@ -26,6 +27,13 @@ BEGIN_TABLE(FEOSPOSIXEMU)
 	// Misc functions
 	ADD_FUNC(stat),
 	ADD_FUNC(ftruncate),
+
+	// POSIX I/O
+	ADD_FUNC(open),
+	ADD_FUNC(close),
+	ADD_FUNC(read),
+	ADD_FUNC(write),
+	ADD_FUNC(lseek)
 END_TABLE(FEOSPOSIXEMU)
 
 MAKE_FAKEMODULE(FEOSPOSIXEMU)

@@ -15,7 +15,12 @@ getcwd \
 stat \
 fstat \
 fileno \
-ftruncate
+ftruncate \
+open \
+close \
+read \
+write \
+lseek
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
