@@ -1,5 +1,16 @@
 #include "farbuild.h"
 
+#ifdef WIN32
+static inline void FixMinGWPath(char* buf)
+{
+	if (*buf == '/')
+	{
+		buf[0] = buf[1];
+		buf[1] = ':';
+	}
+}
+#endif
+
 int main(int argc, char* argv[])
 {
 	if(argc != 3)
@@ -9,12 +20,8 @@ int main(int argc, char* argv[])
 	}
 
 #ifdef WIN32
-	if(*argv[1] == '/')
-	{
-		// Fix MinGW paths.
-		argv[1][0] = argv[1][1];
-		argv[1][1] = ':';
-	}
+	FixMinGWPath(argv[1]);
+	FixMinGWPath(argv[2]);
 #endif
 
 	FAR_Builder oBuilder;
