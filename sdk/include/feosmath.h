@@ -11,6 +11,11 @@
 #define degreesToAngle(degrees) ((degrees) * DEGREES_IN_CIRCLE / 360)
 #define angleToDegrees(angle)   ((angle) * 360 / DEGREES_IN_CIRCLE)
 
+#define inttof32(n)   ((n) << 12)                     // convert int to f32
+#define f32toint(n)   ((n) >> 12)                     // convert f32 to int
+#define floattof32(n) ((int)((n) * (1 << 12)))        // convert float to f32
+#define f32tofloat(n) (((float)(n)) / (float)(1<<12)) // convert f32 to float
+
 short sinLerp(short);
 short cosLerp(short);
 int tanLerp(short);

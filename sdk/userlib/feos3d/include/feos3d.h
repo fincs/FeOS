@@ -93,11 +93,6 @@ typedef hword_t fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDep
 
 //////////////////////////////////////////////////////////////////////
 
-#define inttof32(n)          ((n) << 12) /*!< \brief convert int to f32 */
-#define f32toint(n)          ((n) >> 12) /*!< \brief convert f32 to int */
-#define floattof32(n)        ((int)((n) * (1 << 12))) /*!< \brief convert float to f32 */
-#define f32tofloat(n)        (((float)(n)) / (float)(1<<12)) /*!< \brief convert f32 to float */
-
 typedef short t16;        /*!< \brief text coordinate 12.4 fixed point */
 #define f32tot16(n)          ((t16)(n >> 8)) /*!< \brief convert f32 to t16 */
 #define inttot16(n)          ((n) << 4) /*!< \brief convert int to t16 */
