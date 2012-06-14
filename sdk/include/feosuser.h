@@ -109,3 +109,5 @@ void FeOS_GetMemStats(usagestats_t*);
 
 #define memBarrier() asm volatile("":::"memory")
 #define barrierAccess(x) do { memBarrier(); (x); memBarrier(); } while(0)
+
+int FeOS_GetTickCount();

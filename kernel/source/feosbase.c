@@ -103,6 +103,12 @@ void FeOS_GetMemStats(usagestats_t* pStats)
 	pStats->total = heapLimit - heapStart;
 }
 
+int FeOS_GetTickCount()
+{
+	extern volatile int vblankCounter;
+	return vblankCounter;
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -145,6 +151,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_GetAutoUpdate),
 	ADD_FUNC(FeOS_GetDiskStats),
 	ADD_FUNC(FeOS_GetMemStats),
+	ADD_FUNC(FeOS_GetTickCount),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),

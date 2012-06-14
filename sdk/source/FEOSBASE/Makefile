@@ -43,6 +43,7 @@ FeOS_SetAutoUpdate \
 FeOS_GetAutoUpdate \
 FeOS_GetDiskStats \
 FeOS_GetMemStats \
+FeOS_GetTickCount \
 __aeabi_idiv \
 __aeabi_idivmod \
 __aeabi_uidiv \

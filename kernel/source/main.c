@@ -33,11 +33,14 @@ extern int keyBufferLength;
 int caretBlink = 0;
 
 extern volatile bool inHeadphoneSleep;
+volatile int vblankCounter = 0; // upper bound: ~2.275 years
 
 void irq_vblank()
 {
 	// Done here because it's kernel mode code
 	chk_exit();
+
+	vblankCounter ++;
 
 	if (bKeyUpd) scanKeys();
 	touchRead((touchPosition*)&touchPos);
