@@ -74,6 +74,15 @@ Usage:
 
     ls [PATH]...
 
+lsmod
+-----
+
+List currently loaded modules (programmed by fincs)
+
+Usage:
+
+	lsmod
+
 mkdir
 -----
 
