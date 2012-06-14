@@ -36,7 +36,7 @@ void* realloc(void*, size_t);
 
 // Environment
 void abort() __attribute__((noreturn));
-//int atexit(void (*)());
+int atexit(void (*)(void));
 void exit(int) __attribute__((noreturn));
 int system(const char* command);
 
