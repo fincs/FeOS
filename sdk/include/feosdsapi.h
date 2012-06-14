@@ -333,6 +333,16 @@ void FeOS_SetKeyRepeat(byte_t, byte_t);
 void FeOS_GetStylusPos(styluspos_t*);
 void FeOS_KeysUpdate();
 
+// libnds-compat stylus access
+typedef struct { int px, py; } touchPosition;
+static inline void touchRead(touchPosition* tp)
+{
+	styluspos_t sp;
+	FeOS_GetStylusPos(&sp);
+	tp->px = sp.x;
+	tp->py = sp.y;
+}
+
 #define DEFAULT_IRQFUNC ((irqWaitFunc_t)0)
 #define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
 typedef void (*irqWaitFunc_t)(word_t);
