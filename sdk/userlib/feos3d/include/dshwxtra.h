@@ -136,8 +136,6 @@ typedef long_t int32;
 typedef unsigned long long uint64;
 typedef long long int64;
 
-#define sassert(a,b) ((void)0)
-
 #define COPY_MODE_COPY  0
 #define COPY_MODE_FILL  BIT(24)
 #define COPY_MODE_HWORD 0
