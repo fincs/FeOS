@@ -49,6 +49,7 @@
 #include "nds/arm9/dynamicArray.h"
 */
 #include <feos.h>
+#include <assert.h>
 #include "dshwxtra.h"
 #include "glDynArray.h"
 
