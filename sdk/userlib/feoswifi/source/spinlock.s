@@ -1,45 +1,42 @@
 
 	.text
+	.arm
+	.global SLasm_Acquire
+	.hidden SLasm_Acquire
+	.type	SLasm_Acquire STT_FUNC
+@---------------------------------------------------------------------------------
+SLasm_Acquire:
+@---------------------------------------------------------------------------------
+	ldr	r2,[r0]
+	cmp	r2,#0
+	movne	r0,#1
+	bxne	lr
+	mov	r2,r1
+	swp r2,r2,[r0]
+	cmp r2,#0
+	cmpne r2,r1
+	moveq r0,#0
+	bxeq lr
+	swp r2,r2,[r0]
+	mov r0,#1
+	bx lr
 
-	.code 32
-
-
-.GLOBAL SLasm_Acquire, SLasm_Release
-.HIDDEN SLasm_Acquire, SLasm_Release
-.TYPE SLasm_Acquire STT_FUNC
-.TYPE SLasm_Release STT_FUNC
-.ARM
-SLasm_Acquire:					
-   ldr r2,[r0]					
-   cmp r2,#0					
-   movne r0,#1	                
-   bxne lr		                
-   mov	r2,r1					
-   swp r2,r2,[r0]				
-   cmp r2,#0					
-   cmpne r2,r1	                
-   moveq r0,#0	                
-   bxeq lr		                
-   swp r2,r2,[r0]				
-   mov r0,#1                   
-   bx lr		                
-
-
-
-SLasm_Release:					
-   ldr r2,[r0]					
-   cmp r2,r1	                
-   movne r0,#2                 
-   bxne lr		                
-   mov r2,#0					
-   swp r2,r2,[r0]				
-   cmp r2,r1					
-   moveq r0,#0	                
-   movne r0,#2                 
-   bx lr		                
-
-
+	.global SLasm_Release
+	.hidden SLasm_Release
+	.type	SLasm_Release STT_FUNC
+@---------------------------------------------------------------------------------
+SLasm_Release:
+@---------------------------------------------------------------------------------
+	ldr r2,[r0]
+	cmp r2,r1
+	movne r0,#2
+	bxne lr
+	mov r2,#0
+	swp r2,r2,[r0]
+	cmp r2,r1
+	moveq r0,#0
+	movne r0,#2
+	bx lr
 
 	.pool
 	.end
-
