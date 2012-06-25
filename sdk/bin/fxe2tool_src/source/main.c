@@ -279,14 +279,22 @@ int WriteRelocations(elf2fx2_cnvstruct_t* cs)
 		while((i < nwords) && !loaddata[i]) i ++, rs ++;
 		while((i < nwords) && loaddata[i]) i ++, rp ++;
 
+		// Remove empty trailing relocations
+		if (i == nwords && rs && !rp)
+			break;
+
 		// Write excess skip relocations
 		for(reloc.skip = 0xFFFF, reloc.patch = 0; rs > 0xFFFF; rs -= 0xFFFF)
+		{
 			safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+			cs->fxe2hdr.nrelocs ++;
+		}
 
 		// Write excess patch relocations
 		for(reloc.skip = eswap_hword(rs), reloc.patch = 0xFFFF; rp > 0xFFFF; rp -= 0xFFFF)
 		{
 			safe_call(WriteData(cs->outf, &reloc, sizeof(fxe2_reloc_t)));
+			cs->fxe2hdr.nrelocs ++;
 			rs = reloc.skip = 0;
 		}
 
