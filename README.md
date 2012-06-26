@@ -11,9 +11,10 @@ Build prerequisites
 
 You need the following in order to build FeOS:
 
-- devkitARM r39 or higher
-- libnds 1.5.7 or higher
-- libfat 1.0.10 or higher
+- devkitARM r41 or higher
+- libnds 1.5.8 or higher
+- libfat 1.0.11 or higher
+- dswifi 0.3.15 or higher
 - A working C compiler for the host (Windows users: use MinGW)
 
 Before building, you must set the `FEOSSDK` environment variable to point to the `/sdk` directory (if on Windows, you **must** use Unix-style paths, like `/c/Users/.../gitrepos/FeOS/sdk`).

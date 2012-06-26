@@ -12,7 +12,7 @@ endif
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
-PREFIX         := arm-eabi-
+PREFIX         := arm-none-eabi-
 
 export CC      := $(PREFIX)gcc
 export CXX     := $(PREFIX)g++
@@ -20,6 +20,7 @@ export AS      := $(PREFIX)as
 export AR      := $(PREFIX)ar
 export OBJCOPY := $(PREFIX)objcopy
 export STRIP   := $(PREFIX)strip
+export NM      := $(PREFIX)nm
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -187,9 +188,9 @@ ifeq ($(strip $(CONF_TARGET)),staticlib)
 endif
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/$(THIS_MAKEFILE)
 ifneq ($(strip $(CONF_TARGET)),staticlib)
-	@arm-eabi-nm -CSn $(OUTPUT).elf > $(BUILD)/$(TARGET).alt.map
+	@$(NM) -CSn $(OUTPUT).elf > $(BUILD)/$(TARGET).alt.map
 else
-	@arm-eabi-nm -CSn $(OUTPUT).a > $(BUILD)/$(TARGET).alt.map
+	@$(NM) -CSn $(OUTPUT).a > $(BUILD)/$(TARGET).alt.map
 endif
 ifeq ($(strip $(CONF_TARGET)),dynlib)
 	@if [ -e $(TARGET).imp.a ]; then \

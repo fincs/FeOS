@@ -464,9 +464,9 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			fprintf(tempfile, ".global %s\n.hidden %s\n%s:", symname, symname, symname);
 		fprintf(tempfile, "__imp_%s:\n\t.word 0", symname);
 		fclose(tempfile);
-		sprintf(cmd, "arm-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
+		sprintf(cmd, "arm-none-eabi-gcc -x assembler-with-cpp -g0 -c %s.imp.s -o %s.imp.o", symname, symname);
 		if (system(cmd) != 0)
-			die("arm-eabi-gcc returned error");
+			die("arm-none-eabi-gcc returned error");
 
 		safe_call(AddExpImp(cs, &exp_list, symname, symaddr, AEI_EXPORT));
 	}
@@ -477,12 +477,12 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		if (system(cmd) != 0)
 			die("rm returned error");
 		FILE* tempfile = fopen("__mkimp.mk", "w");
-		fprintf(tempfile, "all:\n\t@arm-eabi-ar -rc %s $(wildcard *.imp.o)\n", imp_name);
+		fprintf(tempfile, "all:\n\t@arm-none-eabi-ar -rc %s $(wildcard *.imp.o)\n", imp_name);
 		fclose(tempfile);
-		//sprintf(cmd, "arm-eabi-ar -rc %s *.imp.o", imp_name);
+		//sprintf(cmd, "arm-none-eabi-ar -rc %s *.imp.o", imp_name);
 		//if (system(cmd) != 0)
 		if (system("make -f __mkimp.mk"))
-			die("arm-eabi-ar returned error");
+			die("arm-none-eabi-ar returned error");
 		sprintf(cmd, "rm -f *.imp.o *.imp.s __mkimp.mk");
 		if (system(cmd) != 0)
 			die("rm returned error");
