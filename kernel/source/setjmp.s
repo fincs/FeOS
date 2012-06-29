@@ -16,6 +16,10 @@ setjmp: @ r0 - buffer
 	bx  lr
 
 longjmp: @ r0 - buffer, r1 - excpt code
+	@ Disallow 0 as setjmp return value
+	cmp r1, #0
+	moveq r1, #1
+	
 	@ Read the registers from the jump buffer
 	ldmia r0!, {r4-r11, sp, lr}
 	
