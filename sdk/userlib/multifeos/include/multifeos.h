@@ -25,6 +25,8 @@ extern "C" {
 typedef void* thread_t;
 typedef int (*threadEP_t)(void* param);
 
+#define FeOS_CancelThread FeOS_FreeThread
+
 MULTIFEOS_API thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param);
 MULTIFEOS_API void FeOS_Yield();
 MULTIFEOS_API thread_t FeOS_GetCurrentThread();
