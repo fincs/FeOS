@@ -47,8 +47,11 @@ MULTIFEOS_API void FeOS_UninstallYieldIRQ();
 
 static inline int FeOS_ThreadWaitClose(thread_t hThread)
 {
+	int rc;
 	while (FeOS_IsThreadActive(hThread)) FeOS_Yield();
-	return FeOS_GetThreadRC(hThread);
+	rc = FeOS_GetThreadRC(hThread);
+	FeOS_FreeThread(hThread);
+	return rc;
 }
 
 #ifdef __cplusplus
