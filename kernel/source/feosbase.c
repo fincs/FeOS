@@ -335,7 +335,7 @@ int FeOS_Execute(int argc, const char* argv[])
 void FeOS_ModuleExit(int rc)
 {
 	FeOS_ExitDone = true;
-	longjmp(FeOS_ExitBuf, rc);
+	longjmp0(FeOS_ExitBuf, rc);
 }
 
 void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)

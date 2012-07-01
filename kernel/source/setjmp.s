@@ -2,10 +2,11 @@
 
 .arm
 .align 2
-.global setjmp, longjmp
-.hidden setjmp, longjmp
+.global setjmp, longjmp, longjmp0
+.hidden setjmp, longjmp, longjmp0
 .type setjmp STT_FUNC
 .type longjmp STT_FUNC
+.type longjmp0 STT_FUNC
 
 setjmp: @ r0 - buffer
 	@ Write the registers to the jump buffer
@@ -20,6 +21,7 @@ longjmp: @ r0 - buffer, r1 - excpt code
 	cmp r1, #0
 	moveq r1, #1
 	
+longjmp0:
 	@ Read the registers from the jump buffer
 	ldmia r0!, {r4-r11, sp, lr}
 	
