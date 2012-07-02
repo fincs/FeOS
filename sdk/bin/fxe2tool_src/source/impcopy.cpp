@@ -23,7 +23,7 @@ extern "C" void WriteImpCopy(FILE* f)
 {
 	// Write header
 	{
-		fxe2_impcopy_head_t head = { FX2_IMPCOPY_NORMAL, impcopytbl.size() };
+		fxe2_impcopy_head_t head = { FX2_IMPCOPY_NORMAL, (word_t)impcopytbl.size() };
 		fwrite(&head, sizeof(fxe2_impcopy_head_t), 1, f);
 	}
 
