@@ -35,25 +35,30 @@ MULTIFEOS_API bool FeOS_IsThreadActive(thread_t hThread);
 MULTIFEOS_API void FeOS_FreeThread(thread_t hThread);
 MULTIFEOS_API void FeOS_SetThreadPrio(thread_t hThread, int prio);
 MULTIFEOS_API int FeOS_GetThreadRC(thread_t hThread);
+MULTIFEOS_API int FeOS_ThreadJoin();
 
 MULTIFEOS_API thread_t FeOS_CreateProcess(int argc, const char* argv[]);
 
-MULTIFEOS_API void FeOS_IRQWaitYield(word_t mask);
 MULTIFEOS_API word_t FeOS_NextIRQYield();
-MULTIFEOS_API void FeOS_IRQWaitCheck();
 
-MULTIFEOS_API void FeOS_InstallYieldIRQ();
-MULTIFEOS_API void FeOS_UninstallYieldIRQ();
-
-#define FeOS_ThreadJoin FeOS_ThreadWaitClose
-
-static inline int FeOS_ThreadWaitClose(thread_t hThread)
+static inline void FeOS_Idle()
 {
-	int rc;
-	while (FeOS_IsThreadActive(hThread)) FeOS_Yield();
-	rc = FeOS_GetThreadRC(hThread);
-	FeOS_FreeThread(hThread);
-	return rc;
+	FeOS_WaitForIRQ(~0);
+}
+
+// Simple lock API
+
+typedef volatile word_t lock_t;
+
+static inline void FeOS_AcquireLock(lock_t* pLock, bool bIrqIdling)
+{
+	while (*pLock) (bIrqIdling ? FeOS_Idle : FeOS_Yield)();
+	*pLock = 1;
+}
+
+static inline void FeOS_ReleaseLock(lock_t* pLock)
+{
+	*pLock = 0;
 }
 
 #ifdef __cplusplus

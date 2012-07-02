@@ -20,14 +20,20 @@ threadSt _firstThread;
 
 threadSt* curThread = &_firstThread;
 int nThreads = 1;
+int threadsWaiting = 0;
 
 void __attribute__((noreturn)) __newThread(void* param, threadEP_t entryPoint, word_t* stackPtr);
+
+static irqWaitFunc_t oldIrqWaitFunc;
+static void _irqWaitYield(word_t mask);
+static threadSt* _irqWaitCheck();
 
 FEOSINIT void initFirstThread()
 {
 	curThread->execStat = FeOS_GetCurExecStatus();
 	curThread->prev = curThread;
 	curThread->next = curThread;
+	oldIrqWaitFunc = FeOS_SetIRQWaitFunc(_irqWaitYield);
 	FeOS_StayResident();
 }
 
@@ -71,11 +77,8 @@ thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param)
 	return (thread_t) t;
 }
 
-static void _Yield(threadSt* t)
+void _doYield(threadSt* t)
 {
-	if (setjmp(curThread->ctx))
-		return;
-
 	curThread = t;
 
 	FeOS_SetCurExecStatus(curThread->execStat);
@@ -89,13 +92,21 @@ void FeOS_Yield()
 	if (setjmp(t->ctx))
 		return;
 
+	/*if (t == &_firstThread)*/ do
+	{
+		threadSt* t2 = _irqWaitCheck();
+		if (t2)
+		{
+			// Use the thread _irqWaitCheck() told us to yield to
+			_doYield(t2);
+			return;
+		}
+	} while (threadsWaiting == nThreads);
+
 	do t = t->next;
 	while (t->flags & THREAD_EXECBITS);
 
-	curThread = t;
-
-	FeOS_SetCurExecStatus(curThread->execStat);
-	longjmp(curThread->ctx, 1);
+	_doYield(t);
 }
 
 thread_t FeOS_GetCurrentThread()
@@ -108,7 +119,6 @@ void FeOS_ExitThread(int rc)
 	if (curThread == &_firstThread) return;
 	curThread->flags |= THREAD_EXIT;
 	curThread->rc = rc;
-	nThreads --;
 	FeOS_Yield();
 }
 
@@ -123,9 +133,21 @@ void FeOS_FreeThread(thread_t hThread)
 	if (hThread == (thread_t) curThread) return;
 
 	threadSt* t = (threadSt*) hThread;
+	if (t->flags & THREAD_IRQWAIT)
+		threadsWaiting --;
 	t->prev->next = t->next;
 	t->next->prev = t->prev;
 	free(t->stack);
+	nThreads --;
+}
+
+int FeOS_ThreadJoin(thread_t hThread)
+{
+	int rc;
+	while (FeOS_IsThreadActive(hThread)) FeOS_Idle();
+	rc = FeOS_GetThreadRC(hThread);
+	FeOS_FreeThread(hThread);
+	return rc;
 }
 
 void FeOS_SetThreadPrio(thread_t hThread, int prio)
@@ -192,9 +214,7 @@ thread_t FeOS_CreateProcess(int argc, const char* argv[])
 	return t;
 }
 
-int threadsWaiting = 0;
-
-void FeOS_IRQWaitYield(word_t mask)
+void _irqWaitYield(word_t mask)
 {
 	threadsWaiting ++;
 	curThread->irqMask = mask;
@@ -222,22 +242,23 @@ static void _swapPos(threadSt* a, threadSt* b)
 	b->next->prev = b;
 }
 
-void FeOS_IRQWaitCheck()
+threadSt* _irqWaitCheck()
 {
 	if (!threadsWaiting)
-	{
-		FeOS_Yield();
-		return;
-	}
+		return NULL;
 
 	// Get the interrupt mask. If all other threads are waiting for IRQs, we can then
 	// perform the wait for IRQ.
-	word_t mask = (threadsWaiting == (nThreads - 1)) ? FeOS_NextIRQ() : FeOS_CheckPendingIRQs();
+	word_t mask = (threadsWaiting == nThreads) ? FeOS_NextIRQ() : FeOS_CheckPendingIRQs();
+
+	if (!mask) // implies threadsWaiting != nThreads
+		return NULL;
 
 	threadSt *nextT = NULL, *curPos = NULL;
 
-	threadSt* t;
-	for (t = curThread->next; t != curThread && threadsWaiting; t = t->next)
+	threadSt* t = curThread;
+	int i;
+	for (i = 0; i < nThreads && threadsWaiting; t = t->next, i ++)
 	{
 		if (!(t->flags & THREAD_IRQWAIT)) continue;
 		bool isNextIRQ = t->irqMask == 0;
@@ -245,8 +266,6 @@ void FeOS_IRQWaitCheck()
 		{
 			if (isNextIRQ) t->irqMask = mask;
 			t->flags &= ~THREAD_IRQWAIT;
-			//if (nextT == NULL && t->flags & THREAD_HIGHPRIO)
-			//	nextT = t;
 			if (t->flags & THREAD_HIGHPRIO)
 			{
 				if (nextT == NULL)
@@ -263,21 +282,5 @@ void FeOS_IRQWaitCheck()
 		}
 	}
 
-	if (nextT) _Yield(nextT);
-	else FeOS_Yield();
-}
-
-int lCount = 0;
-irqWaitFunc_t oldFunc;
-
-void FeOS_InstallYieldIRQ()
-{
-	if (++lCount == 1)
-		oldFunc = FeOS_SetIRQWaitFunc(FeOS_IRQWaitYield);
-}
-
-void FeOS_UninstallYieldIRQ()
-{
-	if (--lCount == 0)
-		FeOS_SetIRQWaitFunc(oldFunc);
+	return nextT;
 }
