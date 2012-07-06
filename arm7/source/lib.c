@@ -92,5 +92,5 @@ bool FeOS_ResolveImp(word_t* addr, const char* name)
 			*addr = arm7_funcs[i].address;
 			return true;
 		}
-	return true;
+	return false;
 }
