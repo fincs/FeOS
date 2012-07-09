@@ -14,6 +14,7 @@ void FeOS_GetStylusPos(styluspos_t* pos)
 void FeOS_swi_ConsoleMode();
 void FeOS_swi_DirectMode();
 int GetCurMode();
+void videoReset();
 
 static OamState* FeOS_GetMainOAM()
 {
@@ -146,6 +147,13 @@ static modeshim_t* installModeShim(modeshim_t* pNewShim)
 	return pOldShim;
 }
 
+static void FeOS_VideoReset()
+{
+	if (GetCurMode()) return;
+
+	videoReset();
+}
+
 BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(keysDown, FeOS_GetKeysDown),
 	ADD_FUNC_ALIAS(keysHeld, FeOS_GetKeysHeld),
@@ -167,6 +175,7 @@ BEGIN_TABLE(FEOSDSAPI)
 	ADD_FUNC_ALIAS(FeOS_swi_TimerTick, FeOS_TimerTick),
 	ADD_FUNC_ALIAS(getModeShim, FeOS_GetMode),
 	ADD_FUNC_ALIAS(installModeShim, FeOS_ModeShim),
+	ADD_FUNC(FeOS_VideoReset),
 	ADD_FUNC(dmaCopyWords),
 	ADD_FUNC(dmaCopyHalfWords),
 	ADD_FUNC(dmaFillWords),

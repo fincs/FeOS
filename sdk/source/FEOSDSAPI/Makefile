@@ -23,6 +23,7 @@ FeOS_TimerWrite \
 FeOS_TimerTick \
 FeOS_GetMode \
 FeOS_ModeShim \
+FeOS_VideoReset \
 dmaCopyWords \
 dmaCopyHalfWords \
 dmaFillWords \

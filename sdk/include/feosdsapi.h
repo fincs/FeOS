@@ -382,6 +382,8 @@ int FeOS_GetMode();
 #define FEOS_GET_SHIM ((const modeshim_t*)~0)
 const modeshim_t* FeOS_ModeShim(const modeshim_t* pNewShim);
 
+void FeOS_VideoReset();
+
 void dmaCopyWords(int, const void*, void*, word_t);
 void dmaCopyHalfWords(int, const void*, void*, word_t);
 void dmaFillWords(word_t, void*, word_t);
