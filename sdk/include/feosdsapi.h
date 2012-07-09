@@ -374,8 +374,8 @@ void FeOS_ConsoleMode();
 void FeOS_DirectMode();
 int FeOS_GetMode();
 
-#define FEOS_GET_SHIM ((modeshim_t*)~0)
-modeshim_t* FeOS_ModeShim(modeshim_t* pNewShim);
+#define FEOS_GET_SHIM ((const modeshim_t*)~0)
+const modeshim_t* FeOS_ModeShim(const modeshim_t* pNewShim);
 
 void dmaCopyWords(int, const void*, void*, word_t);
 void dmaCopyHalfWords(int, const void*, void*, word_t);
