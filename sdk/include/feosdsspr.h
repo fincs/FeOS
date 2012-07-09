@@ -48,10 +48,78 @@ typedef struct
 {
 } OamState;
 
-typedef struct
+typedef union
 {
-	hword_t attribute[3];
-	hword_t filler;
+	struct
+	{
+		struct
+		{
+			u16 y :8; // Sprite Y position.
+			union
+			{
+				struct
+				{
+					u8            :1;
+					bool isHidden :1; // Sprite is hidden (isRotoscale cleared).
+					u8            :6;
+				};
+				struct
+				{
+					bool isRotateScale :1; // Sprite uses affine parameters if set.
+					bool isSizeDouble  :1; // Sprite bounds is doubled (isRotoscale set).
+					u8 blendMode       :2; // Sprite object mode.
+					bool isMosaic      :1; // Enables mosaic effect if set.
+					u8 colorMode       :1; // Sprite color mode.
+					u8 shape           :2; // Sprite shape.
+				};
+			};
+		};
+
+		union
+		{
+			struct
+			{
+				u16 x :9; // Sprite X position.
+				u8    :7;
+			};
+			struct
+			{
+				u8 :8;
+				union
+				{
+					struct
+					{
+						u8         :4;
+						bool hFlip :1; // Flip sprite horizontally (isRotoscale cleared).
+						bool vFlip :1; // Flip sprite vertically (isRotoscale cleared).
+						u8         :2;
+					};
+					struct
+					{
+						u8               :1;
+						u8 rotationIndex :5; // Affine parameter number to use (isRotoscale set).
+						u8 size          :2; // Sprite size.
+					};
+				};
+			};
+		};
+
+		struct
+		{
+			u16 gfxIndex :10; // Upper-left tile index.
+			u8 priority  :2;  // Sprite priority.
+			u8 palette   :4;  // Sprite palette to use in paletted color modes.
+		};
+
+		u16 attribute3; // Rotset filler
+	};
+
+	struct
+	{
+		u16 attribute[3];
+		u16 filler;
+	};
+
 } SpriteEntry;
 
 #define oamMain (*_oamMain)
