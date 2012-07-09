@@ -61,7 +61,7 @@ int main()
 	installSystemFIFO();
 	installFeOSFIFO();
 
-	irqSet(IRQ_VCOUNT, VCountHandler);
+	coopIrqSet(IRQ_VCOUNT, VCountHandler);
 
 	irqEnable(IRQ_VBLANK | IRQ_VCOUNT | IRQ_NETWORK);
 
