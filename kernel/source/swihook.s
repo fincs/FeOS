@@ -195,6 +195,14 @@ __FeOS_WaitForMemAddr:
 .global PrepareUserMode
 .type PrepareUserMode STT_FUNC
 PrepareUserMode:
+	@ Copy ITCM MPU section to GBA ROM section
+	mrc p15, 0, r0, c6, c4, 0
+	mcr p15, 0, r0, c6, c3, 0
+
+	@ Setup ITCM block section
+	ldr r0, =( (0b01011 << 1) | 0x01000000 | 1) @ PAGE_4K
+	mcr p15, 0, r0, c6, c4, 0
+
 	@ Set new access settings
 	ldr r0, AccessSettings
 	mcr p15, 0, r0, c5, c0, 3 @ code
@@ -202,13 +210,15 @@ PrepareUserMode:
 	bx  lr
 
 AccessSettings:
-	.word 0x33311151
+	.word 0x33313151
+	@.word 0x33311151
 	@.word 0x31113151
 	@.word 0x32113551
 	@.word 0x32313551
 
 AccessSettings2:
-	.word 0x33311153
+	.word 0x33313153
+	@.word 0x33311153
 
 .align 2
 .global UnblockIORegion
