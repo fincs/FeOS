@@ -38,6 +38,7 @@ build/
 !/sdk/userlib/feos3d/
 !/sdk/userlib/multifeos/
 !/sdk/userlib/libfar/
+!/sdk/userlib/libitcm/
 *.exe
 *.nds
 *.elf
