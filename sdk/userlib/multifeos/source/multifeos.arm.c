@@ -138,6 +138,7 @@ void FeOS_FreeThread(thread_t hThread)
 	t->prev->next = t->next;
 	t->next->prev = t->prev;
 	free(t->stack);
+	FeOS_ExecStatusRelease(t->execStat);
 	nThreads --;
 }
 
