@@ -11,6 +11,7 @@ extern "C"
 {
 #endif
 
+#include <feosver.h>
 #include <feosbase.h>
 
 #ifndef ARM7

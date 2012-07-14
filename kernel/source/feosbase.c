@@ -109,6 +109,11 @@ int FeOS_GetTickCount()
 	return vblankCounter;
 }
 
+int FeOS_GetVersion()
+{
+	return FEOS_VERSION_PACK;
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -152,6 +157,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_GetDiskStats),
 	ADD_FUNC(FeOS_GetMemStats),
 	ADD_FUNC(FeOS_GetTickCount),
+	ADD_FUNC(FeOS_GetVersion),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),

@@ -1,5 +1,6 @@
 #pragma once
 #include <nds.h>
+#include "../../sdk/include/feosver.h"
 
 #ifdef ARM9
 #define ITCM_DATA __attribute__((section(".itcm")))
