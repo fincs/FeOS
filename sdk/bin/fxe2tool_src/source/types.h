@@ -7,6 +7,8 @@
 #define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
+#include "../../../include/feosver.h"
+
 typedef unsigned int word_t;
 typedef unsigned short hword_t;
 typedef unsigned char byte_t;

@@ -301,6 +301,25 @@ void FeOS_InitStreams();
 
 void ExcptHandler_C();
 
+void error_die()
+{
+	iprintf("\nPress START to exit...\n");
+	for (;;)
+	{
+		swiWaitForVBlank();
+		if (keysDown() & KEY_START)
+			exit(1);
+	}
+}
+
+#define ANSIESC_RED "\x1b[31;1m"
+#define ANSIESC_GREEN "\x1b[32;1m"
+#define ANSIESC_YELLOW "\x1b[33;1m"
+#define ANSIESC_DEFAULT "\x1b[39;1m"
+
+#define MSG_OK   ANSIESC_GREEN "  OK\n" ANSIESC_DEFAULT
+#define MSG_FAIL ANSIESC_RED "FAIL\n\n" ANSIESC_DEFAULT
+
 int main()
 {
 	videoInit();
@@ -315,43 +334,51 @@ int main()
 	installFeOSFIFO();
 
 	iprintf(
-		"FeOS kernel\n"
-		"-----------\n\n"
-		"Copyright (c) 2010-12, fincs\n\n");
+		"\n  FeOS kernel v" FEOS_VERSION_TEXT "\n"
+		"  Written in 2010-12 by fincs\n");
 
 #ifdef DEBUG
-	iprintf("**DEBUG BUILD**\n");
-	iprintf("Built on " __DATE__ ", " __TIME__ "\n\n");
+	iprintf(ANSIESC_YELLOW "  **DEBUG BUILD**\n");
+	iprintf("  Built: " __DATE__ ", " __TIME__ "\n" ANSIESC_DEFAULT);
 #endif
-	iprintf("Initializing filesystem...\n");
+	iprintf("\nInitializing filesystem... ");
 #ifndef USE_LIBFILESYSTEM
 	if(!fatInitDefault())
 #else
 	if(!nitroFSInit())
 #endif
 	{
-		iprintf("Filesystem error\n");
-		for(;;)
-			swiWaitForVBlank();
+		iprintf(MSG_FAIL);
+		iprintf("Make sure you have DLDI patched\n");
+		iprintf("the kernel binary. If the issue\n");
+		iprintf("persists, try using HBMenu.\n\n");
+		iprintf("  http://devkitpro.org/hbmenu\n");
+		iprintf("  http://feos.mtheall.com/forum\n");
+		error_die();
 	}
-	iprintf("Filesystem OK\n");
+	iprintf(MSG_OK);
 
+	iprintf("Initializing user mode...  ");
 	InstallThunks();
 	PrepareUserMode();
 	DoTheUserMode();
-	iprintf("User mode OK\n\n");
+	iprintf(MSG_OK);
 
 #ifdef DEBUG
-	iprintf("Loading debugging library...\n");
+	iprintf("Loading debug library...   ");
 	instance_t hCxxLib = LoadModule("feoscxx");
 	if (!hCxxLib)
 	{
-		iprintf("Error loading library!\n");
-		for (;;) swiWaitForVBlank();
+		iprintf(MSG_FAIL);
+		iprintf("The following file is missing\n");
+		iprintf("or it may have been corrupted:\n");
+		iprintf("  /data/FeOS/lib/feoscxx.fx2\n");
+		error_die();
 	}
+	iprintf(MSG_OK);
 #endif
 
-	iprintf("Loading command prompt...\n\n");
+	iprintf("Startup...\n\n");
 
 	const char* argv[] = { "cmd", ":startup", NULL };
 

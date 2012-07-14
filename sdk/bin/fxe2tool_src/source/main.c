@@ -583,7 +583,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 	if(eswap_word(ehdr->e_entry) > cs.fxe2hdr.loadsize)
 		die("Entrypoint out of bounds!");
 	cs.fxe2hdr.entrypoint = ehdr->e_entry;
-	cs.fxe2hdr.flags = FX2_SUBSYSTEM_EXEC; // TEMPTEMP
+	cs.fxe2hdr.flags = FX2_SUBSYSTEM_STANDARD;
+	cs.fxe2hdr.osmajorver = FEOS_VERSION_MAJOR;
+	cs.fxe2hdr.osminorver = FEOS_VERSION_MINOR;
 
 	// Prerelocate the binary
 	safe_call(PrerelocateBinary(&cs));

@@ -8,6 +8,13 @@
 
 static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName);
 
+static const char* moduleSearchPaths[] =
+{
+	"/data/FeOS/lib",
+	"/data/FeOS/bin",
+	NULL
+};
+
 instance_t LoadModule(const char* aFilename)
 {
 	sassert(aFilename, ERRSTR_INVALIDPARAM);
@@ -72,24 +79,19 @@ instance_t LoadModule(const char* aFilename)
 
 			struct stat st;
 
-			// First look at the lib folder
-			sniprintf(buf, PATH_MAX+1, "/data/FeOS/lib/%s.fx2", aFilename);
-			if (stat(buf, &st) == 0) goto __LM_win;
-
-			// Then at the bin folder
-			sniprintf(buf, PATH_MAX+1, "/data/FeOS/bin/%s.fx2", aFilename);
-			if (stat(buf, &st) == 0) goto __LM_win;
-
-			// Fail; we can't find the module
-			free(buf);
-			return NULL;
-
-__LM_win:
+			// Iterate through the search paths in order to find the module
+			const char** aBuf;
+			for (aBuf = moduleSearchPaths; *aBuf; aBuf ++)
 			{
-				instance_t ret = _LoadModule_imp(buf, aFilename);
-				free(buf);
-				return ret;
+				sniprintf(buf, PATH_MAX+1, "%s/%s.fx2", *aBuf, aFilename);
+				if (stat(buf, &st) == 0)
+					break;
 			}
+
+			// Load the module
+			instance_t ret = *aBuf ? _LoadModule_imp(buf, aFilename) : NULL;
+			free(buf);
+			return ret;
 		}
 	}
 }
@@ -105,7 +107,9 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 	fxe2_header_t head;
 	size_t totalsize;
 	if(read(fd, &head, sizeof(fxe2_header_t)) != sizeof(fxe2_header_t)
-		|| head.magic != 0x31305A46 /* FX01 */)
+		|| head.magic != 0x31305A46 /* FX01 */
+		|| FX2_SUBSYSTEM(head.flags) != FX2_SUBSYSTEM_STANDARD
+		|| FEOS_VPACK_MAKE(head.osmajorver, head.osminorver) > FEOS_VERSION_PACK)
 	{
 		close(fd);
 		return NULL;
