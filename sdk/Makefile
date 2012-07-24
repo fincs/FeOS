@@ -3,35 +3,35 @@
 .PHONY: all clean
 
 all:
-	@make -C bin/fxe2tool_src
-	@make -C bin/fartool_src
-	@make -C source/FEOSBASE
-	@make -C source/FEOSSTDIO
-	@make -C source/FEOSPOSIXEMU
-	@make -C source/FEOSMATH
-	@make -C source/FEOSDSAPI
-	@make -C source/FEOSDSSPR
-	@make -C source/FEOSDSBG
-	@make -C source/FEOSARM7
-	@make -C source7/FEOS7
-	@make -f libfeos.mk
-	@make -f libfeos.mk DEBUGVER=1
-	@make -f libfeos7.mk
-	@make -f libfeoscxx.mk
+	@$(MAKE) -C bin/fxe2tool_src
+	@$(MAKE) -C bin/fartool_src
+	@$(MAKE) -C source/FEOSBASE
+	@$(MAKE) -C source/FEOSSTDIO
+	@$(MAKE) -C source/FEOSPOSIXEMU
+	@$(MAKE) -C source/FEOSMATH
+	@$(MAKE) -C source/FEOSDSAPI
+	@$(MAKE) -C source/FEOSDSSPR
+	@$(MAKE) -C source/FEOSDSBG
+	@$(MAKE) -C source/FEOSARM7
+	@$(MAKE) -C source7/FEOS7
+	@$(MAKE) -f libfeos.mk
+	@$(MAKE) -f libfeos.mk DEBUGVER=1
+	@$(MAKE) -f libfeos7.mk
+	@$(MAKE) -f libfeoscxx.mk
 
 clean:
-	@make -C bin/fxe2tool_src clean
-	@make -C bin/fartool_src clean
-	@make -C source/FEOSBASE clean
-	@make -C source/FEOSSTDIO clean
-	@make -C source/FEOSPOSIXEMU clean
-	@make -C source/FEOSMATH clean
-	@make -C source/FEOSDSAPI clean
-	@make -C source/FEOSDSSPR clean
-	@make -C source/FEOSDSBG clean
-	@make -C source/FEOSARM7 clean
-	@make -C source7/FEOS7 clean
-	@make -f libfeos.mk clean
-	@make -f libfeos.mk DEBUGVER=1 clean
-	@make -f libfeos7.mk clean
-	@make -f libfeoscxx.mk clean
+	@$(MAKE) -C bin/fxe2tool_src clean
+	@$(MAKE) -C bin/fartool_src clean
+	@$(MAKE) -C source/FEOSBASE clean
+	@$(MAKE) -C source/FEOSSTDIO clean
+	@$(MAKE) -C source/FEOSPOSIXEMU clean
+	@$(MAKE) -C source/FEOSMATH clean
+	@$(MAKE) -C source/FEOSDSAPI clean
+	@$(MAKE) -C source/FEOSDSSPR clean
+	@$(MAKE) -C source/FEOSDSBG clean
+	@$(MAKE) -C source/FEOSARM7 clean
+	@$(MAKE) -C source7/FEOS7 clean
+	@$(MAKE) -f libfeos.mk clean
+	@$(MAKE) -f libfeos.mk DEBUGVER=1 clean
+	@$(MAKE) -f libfeos7.mk clean
+	@$(MAKE) -f libfeoscxx.mk clean

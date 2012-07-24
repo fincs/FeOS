@@ -16,7 +16,8 @@ endif
 .PHONY: all  clean     install\
         sdk  sdkclean  sdkinstall\
         lib  libclean  libinstall\
-        apps appsclean appsinstall
+        apps appsclean appsinstall\
+        $(APPS)
 
 ################################################################################
 # generic rules
@@ -42,11 +43,13 @@ sdk:
 	@$(MAKE) --no-print-directory -C kernel || exit 1
 	@$(MAKE) --no-print-directory -C kernel DEBUGVER=1 || exit 1
 
-lib:
+lib: sdk
 	@$(MAKE) --no-print-directory -C sdk/userlib || exit 1
 
-apps:
-	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i || exit 1; done
+apps: lib $(APPS)
+
+$(APPS): lib
+	@$(MAKE) --no-print-directory -C $@ || exit 1
 
 ################################################################################
 # 'clean' rules

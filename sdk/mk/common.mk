@@ -186,7 +186,7 @@ $(BUILD): $(CONF_PREREQUISITES)
 ifeq ($(strip $(CONF_TARGET)),staticlib)
 	@mkdir -p lib
 endif
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/$(THIS_MAKEFILE)
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/$(THIS_MAKEFILE)
 ifneq ($(strip $(CONF_TARGET)),staticlib)
 	@$(NM) -CSn $(OUTPUT).elf > $(BUILD)/$(TARGET).alt.map
 else

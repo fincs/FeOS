@@ -50,7 +50,7 @@ export OFILES := $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 clean:
 	@rm -fr $(BUILD) $(OUTPUT)

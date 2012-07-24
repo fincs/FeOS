@@ -19,4 +19,3 @@ $(USERLIBS):
 	@$(MAKE) --no-print-directory -C $@ || exit 1
 
 -include $(DEPENDS)
-
