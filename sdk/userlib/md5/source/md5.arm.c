@@ -1,9 +1,22 @@
 /* This code is based off of RFC 1321 - The MD5 Message Digest Algorithm */
-#include "md5.h"
+
+#include <feos.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+typedef struct {
+  u32 bits[2];
+  u32 scratch[4];
+  u8  buffer[64];
+} MD5_CTX;
+
+int MD5_Init(MD5_CTX **c);
+int MD5_Update(MD5_CTX **c, const void *data, unsigned long len);
+int MD5_Final(unsigned char *md, MD5_CTX **c);
 
 static void Transform(u32 *buf, u32 *in);
-static inline int ror(int v, int sh)
-{   
+
+static inline int ror(int v, int sh) {   
   __asm__ __volatile__(
     "ror  %[result], %[operand], %[shift]"
     : [result]"=r"(v)       // Output registers
@@ -13,8 +26,7 @@ static inline int ror(int v, int sh)
   return v;
 }
 
-static u8 PADDING[64] =
-{
+static u8 PADDING[64] = {
   0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -22,7 +34,7 @@ static u8 PADDING[64] =
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
 #define F(x, y, z) (((x) & (y)) | ((~(x)) & (z)))
@@ -51,82 +63,113 @@ static u8 PADDING[64] =
    (a) += (b); \
   }
 
-void md5Initialize(md5Context *m)
-{
-  m->bits[0] = m->bits[1] = 0;
+FEOS_EXPORT int MD5_Init(MD5_CTX **c) {
+  MD5_CTX *ctx;
 
-  m->scratch[0] = 0x67452301;
-  m->scratch[1] = 0xefcdab89;
-  m->scratch[2] = 0x98badcfe;
-  m->scratch[3] = 0x10325476;
+  if(c == NULL)
+    return 0;
+
+  ctx = malloc(sizeof(MD5_CTX));
+  if(ctx == NULL)
+    return 0;
+
+  *c = ctx;
+  ctx->bits[0] = ctx->bits[1] = 0;
+
+  ctx->scratch[0] = 0x67452301;
+  ctx->scratch[1] = 0xefcdab89;
+  ctx->scratch[2] = 0x98badcfe;
+  ctx->scratch[3] = 0x10325476;
+  return 1;
 }
 
-void md5Update(md5Context *m, u8 *inBuf, u32 inLen)
-{
+FEOS_EXPORT int MD5_Update(MD5_CTX **c, const void *data, unsigned long len) {
+  MD5_CTX *ctx;
+  const char *buf;
   u32 in[16];
   int mdi;
   u32 i, ii;
 
-  mdi = ((m->bits[0] >> 3) & 0x3F);
+  if(c == NULL || data == NULL)
+    return 0;
 
-  if((m->bits[0] + (inLen << 3)) < m->bits[0])
-    m->bits[1]++;
-  m->bits[0] += (inLen << 3);
-  m->bits[1] += (inLen >> 29);
+  ctx = *c;
+  if(ctx == NULL)
+    return 0;
 
-  while(inLen--)
-  {
-    m->buffer[mdi++] = *inBuf++;
+  buf = data;
+  mdi = ((ctx->bits[0] >> 3) & 0x3F);
 
-    if (mdi == 0x40)
-    {
+  if((ctx->bits[0] + (len << 3)) < ctx->bits[0])
+    ctx->bits[1]++;
+  ctx->bits[0] += (len << 3);
+  ctx->bits[1] += (len >> 29);
+
+  while(len--) {
+    ctx->buffer[mdi++] = *buf++;
+
+    if (mdi == 0x40) {
       for(i = 0, ii = 0; i < 16; i++, ii += 4)
-        in[i] = ((m->buffer[ii+3]) << 24) |
-                ((m->buffer[ii+2]) << 16) |
-                ((m->buffer[ii+1]) << 8)  |
-                (m->buffer[ii]);
-      Transform(m->scratch, in);
+        in[i] = ((ctx->buffer[ii+3]) << 24) |
+                ((ctx->buffer[ii+2]) << 16) |
+                ((ctx->buffer[ii+1]) << 8)  |
+                (ctx->buffer[ii]);
+      Transform(ctx->scratch, in);
       mdi = 0;
     }
   }
+
+  return 1;
 }
 
-void md5Finalize(md5Context *m)
-{
+FEOS_EXPORT int MD5_Final(unsigned char *md, MD5_CTX **c) {
+  MD5_CTX *ctx;
   u32 in[16];
   int mdi;
   u32 i, ii;
   u32 padLen;
 
-  in[14] = m->bits[0];
-  in[15] = m->bits[1];
+  if(c == NULL)
+    return 0;
 
-  mdi = ((m->bits[0] >> 3) & 0x3F);
+  ctx = *c;
+  if(ctx == NULL)
+    return 0;
+
+  if(md == NULL) {
+    free(ctx);
+    return 1;
+  }
+
+  in[14] = ctx->bits[0];
+  in[15] = ctx->bits[1];
+
+  mdi = ((ctx->bits[0] >> 3) & 0x3F);
 
   padLen = (mdi < 56) ? (56 - mdi) : (120 - mdi);
-  md5Update(m, PADDING, padLen);
+  MD5_Update(c, PADDING, padLen);
 
-  for(i = 0, ii = 0; i < 14; i++, ii += 4)
-    in[i] = ((m->buffer[ii+3]) << 24) |
-            ((m->buffer[ii+2]) << 16) |
-            ((m->buffer[ii+1]) << 8)  |
-            (m->buffer[ii]);
-  Transform(m->scratch, in);
-
-  for(i = 0, ii = 0; i < 4; i++, ii += 4)
-  {
-    m->digest[ii] = (m->scratch[i] & 0xFF);
-    m->digest[ii+1] =
-      ((m->scratch[i] >> 8) & 0xFF);
-    m->digest[ii+2] =
-      ((m->scratch[i] >> 16) & 0xFF);
-    m->digest[ii+3] =
-      ((m->scratch[i] >> 24) & 0xFF);
+  for(i = 0, ii = 0; i < 14; i++, ii += 4) {
+    in[i] = ((ctx->buffer[ii+3]) << 24) |
+            ((ctx->buffer[ii+2]) << 16) |
+            ((ctx->buffer[ii+1]) << 8)  |
+            ((ctx->buffer[ii+0]) << 0);
   }
+
+  Transform(ctx->scratch, in);
+
+  for(i = 0, ii = 0; i < 4; i++, ii += 4) {
+    md[ii+0] = ((ctx->scratch[i] >> 0)  & 0xFF);
+    md[ii+1] = ((ctx->scratch[i] >> 8)  & 0xFF);
+    md[ii+2] = ((ctx->scratch[i] >> 16) & 0xFF);
+    md[ii+3] = ((ctx->scratch[i] >> 24) & 0xFF);
+  }
+
+  free(ctx);
+  return 1;
 }
 
-static void Transform(u32 *buf, u32 *in)
-{
+static void Transform(u32 *buf, u32 *in) {
   u32 a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
   /* Round 1 */
