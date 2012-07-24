@@ -36,4 +36,4 @@ CONF_DEFINES =
 include $(FEOSMK)/app.mk
 
 install: all
-	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/bin/$(TARGET).fx2 || exit 1
+	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/bin/$(TARGET).fx2
