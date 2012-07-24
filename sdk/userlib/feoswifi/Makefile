@@ -34,4 +34,4 @@ CONF_DEFINES = -DBUILD_FEOSWIFI
 include $(FEOSMK)/dynlib.mk
 
 install: all
-	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/lib/$(TARGET).fx2 || exit 1
+	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/lib/$(TARGET).fx2
