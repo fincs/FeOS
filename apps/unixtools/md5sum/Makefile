@@ -29,9 +29,9 @@ SOURCES       := source
 DATA          := data
 INCLUDES      := include
 
-CONF_DEFINES =
-CONF_LIBDIRS =
-CONF_LIBS =
+CONF_DEFINES  =
+CONF_USERLIBS = md5
+CONF_LIBS     = -lmd5
 
 include $(FEOSMK)/app.mk
 
