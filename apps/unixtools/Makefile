@@ -1,10 +1,13 @@
-export SUBDIRS := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
+SUBDIRS := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
+.PHONY: $(SUBDIRS)
 
-all:
-	@for i in $(SUBDIRS); do $(MAKE) -C $$i; done
+all: $(SUBDIRS)
 
 clean:
 	@for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
 
-install:
+install: all
 	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+
+$(SUBDIRS):
+	$(MAKE) -C $@

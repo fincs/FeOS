@@ -10,12 +10,12 @@ endif
 all: $(USERLIBS)
 
 clean:
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i clean || exit 1; done
+	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i clean; done
 
 install: all
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i install || exit 1; done
+	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i install; done
 
 $(USERLIBS):
-	@$(MAKE) --no-print-directory -C $@ || exit 1
+	@$(MAKE) --no-print-directory -C $@
 
 -include $(DEPENDS)

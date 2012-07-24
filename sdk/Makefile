@@ -1,37 +1,32 @@
 .SUFFIXES:
 
-.PHONY: all clean
+TOOLS := bin/fxe2tool_src \
+         bin/fartool_src
+FAKES := source/FEOSBASE \
+         source/FEOSSTDIO \
+         source/FEOSPOSIXEMU \
+         source/FEOSMATH \
+         source/FEOSDSAPI \
+         source/FEOSDSSPR \
+         source/FEOSDSBG \
+         source/FEOSARM7 \
+         source7/FEOS7
 
-all:
-	@$(MAKE) -C bin/fxe2tool_src
-	@$(MAKE) -C bin/fartool_src
-	@$(MAKE) -C source/FEOSBASE
-	@$(MAKE) -C source/FEOSSTDIO
-	@$(MAKE) -C source/FEOSPOSIXEMU
-	@$(MAKE) -C source/FEOSMATH
-	@$(MAKE) -C source/FEOSDSAPI
-	@$(MAKE) -C source/FEOSDSSPR
-	@$(MAKE) -C source/FEOSDSBG
-	@$(MAKE) -C source/FEOSARM7
-	@$(MAKE) -C source7/FEOS7
+.PHONY: all clean $(TOOLS) $(FAKES)
+
+all: $(TOOLS) $(FAKES)
 	@$(MAKE) -f libfeos.mk
 	@$(MAKE) -f libfeos.mk DEBUGVER=1
 	@$(MAKE) -f libfeos7.mk
 	@$(MAKE) -f libfeoscxx.mk
 
 clean:
-	@$(MAKE) -C bin/fxe2tool_src clean
-	@$(MAKE) -C bin/fartool_src clean
-	@$(MAKE) -C source/FEOSBASE clean
-	@$(MAKE) -C source/FEOSSTDIO clean
-	@$(MAKE) -C source/FEOSPOSIXEMU clean
-	@$(MAKE) -C source/FEOSMATH clean
-	@$(MAKE) -C source/FEOSDSAPI clean
-	@$(MAKE) -C source/FEOSDSSPR clean
-	@$(MAKE) -C source/FEOSDSBG clean
-	@$(MAKE) -C source/FEOSARM7 clean
-	@$(MAKE) -C source7/FEOS7 clean
+	@for i in $(TOOLS); do $(MAKE) -C $$i clean; done
+	@for i in $(FAKES); do $(MAKE) -C $$i clean; done
 	@$(MAKE) -f libfeos.mk clean
 	@$(MAKE) -f libfeos.mk DEBUGVER=1 clean
 	@$(MAKE) -f libfeos7.mk clean
 	@$(MAKE) -f libfeoscxx.mk clean
+
+$(TOOLS) $(FAKES):
+	@$(MAKE) -C $@
