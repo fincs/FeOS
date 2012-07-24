@@ -1,16 +1,6 @@
 /* This code is based off of RFC 1321 - The MD5 Message Digest Algorithm */
 
-#ifdef FEOS
 #include <feos.h>
-#elif defined(ARM9)
-#include <nds.h>
-#define FEOS_EXPORT
-#else
-#include <stdint.h>
-typedef uint8_t  u8;
-typedef uint32_t u32;
-#define FEOS_EXPORT
-#endif
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -18,7 +8,6 @@ typedef struct {
   u32 bits[2];
   u32 scratch[4];
   u8  buffer[64];
-//  u8  digest[16];
 } MD5_CTX;
 
 int MD5_Init(MD5_CTX **c);
@@ -27,7 +16,6 @@ int MD5_Final(unsigned char *md, MD5_CTX **c);
 
 static void Transform(u32 *buf, u32 *in);
 
-#ifdef ARM9
 static inline int ror(int v, int sh) {   
   __asm__ __volatile__(
     "ror  %[result], %[operand], %[shift]"
@@ -37,17 +25,6 @@ static inline int ror(int v, int sh) {
 
   return v;
 }
-#else
-static inline int ror(int v, int sh) {
-  __asm__ __volatile__(
-    "ror %%cl, %%eax"
-    : "=a" (v)
-    : "a" (v), "c" (sh)
-    );
-
-  return v;
-}
-#endif
 
 static u8 PADDING[64] = {
   0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
