@@ -39,6 +39,7 @@ build/
 !/sdk/userlib/multifeos/
 !/sdk/userlib/libfar/
 !/sdk/userlib/libitcm/
+!/sdk/userlib/md5/
 *.exe
 *.nds
 *.elf
