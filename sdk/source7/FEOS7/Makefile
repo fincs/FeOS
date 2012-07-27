@@ -13,6 +13,9 @@ timerStart \
 timerPause \
 timerStop \
 timerElapsed \
+micSetAmp \
+micReadData8 \
+micReadData12 \
 fifoSendAddress \
 fifoSendValue32 \
 fifoSendDatamsg \
