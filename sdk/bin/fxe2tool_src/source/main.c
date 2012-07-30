@@ -238,6 +238,30 @@ int PrerelocateBinary(elf2fx2_cnvstruct_t* cs)
 	return 0;
 }
 
+int FixupFromARMStubs(elf2fx2_cnvstruct_t* cs)
+{
+	// symbol listing
+	int i;
+	for(i = 0; i < cs->nsyms; i ++)
+	{
+		Elf32_Sym* sym = cs->syms + i;
+		//if (ELF32_ST_BIND(sym->st_info) == STB_LOCAL) continue; // Ignore local symbols
+		const char* symname = (const char*)(cs->symnames + eswap_word(sym->st_name));
+		if(!*symname) continue;
+		if (strncmp(symname, "__", 2) == 0)
+		{
+			if (strncmp(symname+strlen(symname)-9, "_from_arm", 9) != 0)
+				continue;
+			word_t symaddr = eswap_word(sym->st_value);
+			word_t symat = eswap_word(*(word_t*)(cs->loaddata + symaddr));
+			if (symat == 0xE51FF004) // ldr pc, [pc, #-4]
+				// Bingo! We must RELOCATE this
+				AddRelocation(cs, symaddr + 4);
+		}
+	}
+	return 0;
+}
+
 int WriteData(FILE* f, void* p, size_t s)
 {
 	if(fwrite(p, 1, s, f) != s)
@@ -589,6 +613,9 @@ int ReadAndConvertElf(FILE* outf, byte_t* img)
 
 	// Prerelocate the binary
 	safe_call(PrerelocateBinary(&cs));
+
+	// Fix up __xyz_from_arm jump stubs
+	safe_call(FixupFromARMStubs(&cs));
 
 	if (HasImpCopy())
 		cs.fxe2hdr.flags |= FX2_LDRFLAGS_HASIMPCOPY;
