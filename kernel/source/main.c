@@ -6,10 +6,6 @@
 #include "feosfifo.h"
 #include <sys/iosupport.h>
 
-#ifdef USE_LIBFILESYSTEM
-#include <filesystem.h>
-#endif
-
 #include "hudicons.h"
 #include "caret.h"
 
@@ -342,11 +338,7 @@ int main()
 	iprintf("  Built: " __DATE__ ", " __TIME__ "\n" ANSIESC_DEFAULT);
 #endif
 	iprintf("\nInitializing filesystem... ");
-#ifndef USE_LIBFILESYSTEM
 	if(!fatInitDefault())
-#else
-	if(!nitroFSInit())
-#endif
 	{
 		iprintf(MSG_FAIL);
 		iprintf("Make sure you have DLDI patched\n");
