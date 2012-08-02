@@ -39,7 +39,7 @@ int mkdirp(char *path, int mode, int verbose) {
 
   c = path;
   do {
-    if(mkdir(path, mode)) {
+    if(*path && mkdir(path, mode)) {
       if(errno != EEXIST) {
         fprintf(stderr, "mkdir: '%s': %s\n", path, strerror(errno));
         for(c = path; c < end; c++) {
@@ -51,7 +51,7 @@ int mkdirp(char *path, int mode, int verbose) {
         return 1;
       }
     }
-    else if(verbose)
+    else if(*path && verbose)
       printf("mkdir: created directory '%s'\n", path);
 
     while(c < end && *c != 0)
