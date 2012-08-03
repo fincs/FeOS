@@ -13,6 +13,7 @@ build/
 /sdk/lib/
 /sdk/bin/fxe2tool
 /sdk/bin/fartool
+/sdk/bin/fpkgtool
 /sdk/source/FEOSBASE/*
 !/sdk/source/FEOSBASE/Makefile
 /sdk/source/FEOSSTDIO/*
@@ -45,6 +46,7 @@ build/
 *.elf
 *.dbg
 *.fx2
+*.fpkg
 *.a
 *.ppg
 *.pnproj
