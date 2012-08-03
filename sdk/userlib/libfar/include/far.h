@@ -17,6 +17,9 @@ extern "C" {
 typedef void* far_t;
 typedef void* farfile_t;
 
+enum { FAR_ENUM_CONTINUE = 0, FAR_ENUM_BREAK = 1 };
+typedef int (* farEnumCb)(void* userData, far_t hFar, const char* path, bool isDir);
+
 LIBFAR_API far_t FAR_OpenArchive(const char* path);
 LIBFAR_API far_t FAR_OpenModule(instance_t hInst);
 LIBFAR_API void FAR_Close(far_t hArc);
@@ -29,6 +32,8 @@ LIBFAR_API int FAR_FileSeek(farfile_t hFile, int pos, int mode);
 LIBFAR_API int FAR_FileTell(farfile_t hFile);
 LIBFAR_API void FAR_FileClose(farfile_t hFile);
 LIBFAR_API FILE* FAR_WrapFile(farfile_t hFile, bool bOwn);
+
+LIBFAR_API int FAR_EnumFiles(far_t hArc, farEnumCb callback, void* userData);
 
 static inline FILE* FAR_OpenArcFile(far_t hArc, const char* path)
 {

@@ -296,3 +296,38 @@ FILE* FAR_WrapFile(farfile_t hFile, bool bOwn)
 {
 	return FeOS_OpenStream(bOwn ? &FARFILE_stmown : &FARFILE_stm, hFile);
 }
+
+static char enumBuf[256];
+
+static int enumDir(FARobj_t* pArc, FARentry_t* entArr, int entNum, farEnumCb callback, void* userData)
+{
+	int i;
+	char* enumPos = enumBuf + strlen(enumBuf);
+	int rc = callback(userData, pArc, enumBuf, true);
+	if (rc != 0)
+		return rc;
+	for (i = 0; i < entNum; i ++)
+	{
+		FARentry_t* ent = entArr + i;
+		strcpy(enumPos, pArc->namebuf + ent->nameoff - pArc->namepos);
+		if (FAR_EFLAG_GETTYPE(ent->flags) == FAR_ETYPE_DIR)
+		{
+			strcat(enumPos, "/");
+			rc = enumDir(pArc, (FARentry_t*)((byte_t*)pArc->entries + ent->dataoff - sizeof(FARheader_t)), ent->size, callback, userData);
+		}else
+			rc = callback(userData, pArc, enumBuf, false);
+
+		if (rc != 0)
+			return rc;
+	}
+	*enumPos = 0;
+	return 0;
+}
+
+int FAR_EnumFiles(far_t hArc, farEnumCb callback, void* userData)
+{
+	FARobj_t* pArc = F(hArc);
+	strcpy(enumBuf, "/");
+
+	return enumDir(pArc, pArc->entries, pArc->ntopentries, callback, userData);
+}
