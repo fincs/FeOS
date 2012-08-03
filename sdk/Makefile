@@ -1,7 +1,8 @@
 .SUFFIXES:
 
 TOOLS := bin/fxe2tool_src \
-         bin/fartool_src
+         bin/fartool_src \
+         bin/fpkgtool_src
 FAKES := source/FEOSBASE \
          source/FEOSSTDIO \
          source/FEOSPOSIXEMU \
