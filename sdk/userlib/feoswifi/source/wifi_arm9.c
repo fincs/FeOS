@@ -101,7 +101,6 @@ typedef struct WHEAP_RECORD {
 #define WHEAP_PAD_SIZE      ((WHEAP_PAD_START)+(WHEAP_PAD_END))
 #define WHEAP_SIZE_CUTOFF   ((WHEAP_RECORD_SIZE)+64)
 
-
 int wHeapsize;
 wHeapRecord * wHeapStart; // start of heap
 wHeapRecord * wHeapFirst; // first free block
@@ -254,8 +253,7 @@ void ethhdr_print(char f, void * d) {
 
 
 
-
-Wifi_MainStruct Wifi_Data_Struct;
+__attribute__((aligned(32))) static byte_t __wifiDataStruct[(sizeof(Wifi_MainStruct)+15)&~15];
 
 volatile Wifi_MainStruct * WifiData = 0;
 
@@ -362,6 +360,8 @@ void Wifi_SetSyncHandler(WifiSyncHandler wshfunc) {
 void Wifi_DisableWifi() {
 	WifiData->reqMode=WIFIMODE_DISABLED;
 	WifiData->reqReqFlags &= ~WFLAG_REQ_APCONNECT;
+	while (WifiData->curMode != WIFIMODE_DISABLED)
+		FeOS_WaitForIRQ(~0);
 }
 void Wifi_EnableWifi() {
 	WifiData->reqMode=WIFIMODE_NORMAL;
@@ -803,9 +803,9 @@ void Wifi_Timer(int num_ms) {
 #endif
 
 unsigned long Wifi_Init(int initflags) {
-	erasemem(&Wifi_Data_Struct,sizeof(Wifi_Data_Struct));
+	erasemem(&__wifiDataStruct,sizeof(__wifiDataStruct));
     DC_FlushAll();
-	WifiData = (Wifi_MainStruct *) memUncached(&Wifi_Data_Struct); // should prevent the cache from eating us alive.
+	WifiData = (Wifi_MainStruct *) memUncached(__wifiDataStruct); // should prevent the cache from eating us alive.
 
 #ifdef WIFI_USE_TCP_SGIP
     switch(initflags & WIFIINIT_OPTION_HEAPMASK) {
@@ -829,7 +829,7 @@ unsigned long Wifi_Init(int initflags) {
 #endif
     
 	WifiData->flags9 = WFLAG_ARM9_ACTIVE | (initflags & WFLAG_ARM9_INITFLAGMASK) ;
-	return (u32) &Wifi_Data_Struct;
+	return (u32) WifiData;
 }
 
 int Wifi_CheckInit() {
