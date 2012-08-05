@@ -360,8 +360,6 @@ void Wifi_SetSyncHandler(WifiSyncHandler wshfunc) {
 void Wifi_DisableWifi() {
 	WifiData->reqMode=WIFIMODE_DISABLED;
 	WifiData->reqReqFlags &= ~WFLAG_REQ_APCONNECT;
-	while (WifiData->curMode != WIFIMODE_DISABLED)
-		FeOS_WaitForIRQ(~0);
 }
 void Wifi_EnableWifi() {
 	WifiData->reqMode=WIFIMODE_NORMAL;
@@ -829,7 +827,7 @@ unsigned long Wifi_Init(int initflags) {
 #endif
     
 	WifiData->flags9 = WFLAG_ARM9_ACTIVE | (initflags & WFLAG_ARM9_INITFLAGMASK) ;
-	return (u32) WifiData;
+	return (u32) __wifiDataStruct;
 }
 
 int Wifi_CheckInit() {
@@ -1087,9 +1085,10 @@ FEOS_EXPORT void Wifi_Deinit()
 	FeOS_TimerStop(3);
 	if (Wifi_CheckInit())
 	{
-		Wifi_DisableWifi();
-		if(synchandler) synchandler();
-		fifoSendValue32(FIFO_DSWIFI, WIFI_DISABLE);
+		// Deinitialize the Wifi hardware
+		fifoSendAddress(FIFO_DSWIFI, (void*)0x02000000);
+		while (WifiData->flags7 & WFLAG_ARM7_RUNNING) // wait for the ARM7 to actually do it
+			FeOS_WaitForIRQ(~0);
 		WifiData = NULL;
 	}
 	fifoSetValue32Handler(FIFO_DSWIFI, NULL, NULL);

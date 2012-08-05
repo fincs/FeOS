@@ -45,6 +45,28 @@ void powerButtonCB()
 	exitflag = true;
 }
 
+extern void SetLedState(int flag);
+
+// This is required so that it is actually possible to deinit dswifi
+static void customWifiAddressHandler(void* address, void* userdata)
+{
+	if (address != (void*)0x02000000)
+	{
+		irqEnable(IRQ_WIFI);
+		Wifi_Init((u32)address);
+	}else
+	{
+		irqDisable(IRQ_WIFI);
+		Wifi_Deinit();
+		extern volatile void* WifiData;
+		extern int keepalive_time, chdata_save5;
+		WifiData = 0;
+		keepalive_time = 0;
+		chdata_save5 = 0;
+		SetLedState(0);
+	}
+}
+
 int main()
 {
 	readUserSettings();
@@ -60,6 +82,9 @@ int main()
 	//installSoundFIFO();
 	installSystemFIFO();
 	installFeOSFIFO();
+
+	// Overwrite the dswifi address handler
+	fifoSetAddressHandler(FIFO_DSWIFI, customWifiAddressHandler, 0);
 
 	coopIrqSet(IRQ_VCOUNT, VCountHandler);
 
