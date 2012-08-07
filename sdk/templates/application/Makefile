@@ -29,9 +29,14 @@ SOURCES       := source
 DATA          := data
 INCLUDES      := include
 
+MANIFEST      := package.manifest
+PACKAGENAME   := $(TARGET)
+
 CONF_DEFINES =
 
 include $(FEOSMK)/app.mk
+include $(FEOSMK)/package.mk
 
 install: all
+	@mkdir -p $(FEOSDEST)/data/FeOS/bin
 	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/bin/$(TARGET).fx2

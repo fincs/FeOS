@@ -1,0 +1,30 @@
+; FeOS package manifest file
+; This is a comment
+
+; The following fields are mandatory
+
+Title: FeOS SDK Application Template
+Author: Somebody <somebody@somewhere.com>
+Description: This is the FeOS SDK Application Template
+Version: 1.0
+
+; All fields below are optional
+
+Copyright: 2012 Somebody
+
+; Dependencies are a comma-delimited package list. Minimum versions (optional)
+; can be specified with the (>= versionnumber) syntax.
+
+;Depends: somelib1, somelib2 (>= 1.1)
+
+; The license can be one of the following:
+; MIT/Simplified-BSD/ISC/WTFPL/Unlicense/GPLv2/GPLv3/LGPLv2/LGPLv3
+
+;License: WTFPL
+
+; Install/uninstall hooks - they are commands to be execute before/after installation/uninstallation:
+; Available hooks:
+;Pre-Install:
+;Post-Install:
+;Pre-Uninstall:
+;Post-Uninstall:

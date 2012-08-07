@@ -29,9 +29,14 @@ SOURCES       := source
 DATA          := data
 INCLUDES      := include
 
+MANIFEST      := package.manifest
+PACKAGENAME   := $(TARGET)
+
 CONF_DEFINES = -DEXAMPLELIB_BUILD
 
 include $(FEOSMK)/dynlib.mk
+include $(FEOSMK)/package.mk
 
 install: all
+	@mkdir -p $(FEOSDEST)/data/FeOS/lib
 	@cp $(TARGET).fx2 $(FEOSDEST)/data/FeOS/lib/$(TARGET).fx2
