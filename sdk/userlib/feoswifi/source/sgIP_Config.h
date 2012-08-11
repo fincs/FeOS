@@ -243,6 +243,7 @@ extern "C" {
 #define SGIP_INTR_UNPROTECT() \
 	leaveCriticalSection(tIME)
 */
+/*
 #define SGIP_INTR_PROTECT() \
 	int tIME; \
 	tIME=FeOS_SuspendIRQ_t()
@@ -250,6 +251,14 @@ extern "C" {
 	tIME=FeOS_SuspendIRQ_t()
 #define SGIP_INTR_UNPROTECT() \
 	FeOS_RestoreIRQ_t(tIME)
+*/
+
+// FeOS: interrupt protection is not necessary anymore
+// because user mode ISRs don't actually interrupt the working thread
+
+#define SGIP_INTR_PROTECT()
+#define SGIP_INTR_REPROTECT()
+#define SGIP_INTR_UNPROTECT()
 #define SGIP_WAITEVENT() \
    sgIP_IntrWaitEvent()
 #else // !SGIP_INTERRUPT_THREADING_MODEL
