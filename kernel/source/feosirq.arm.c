@@ -340,6 +340,39 @@ static void FeOS_ProcessIRQ(word_t flags)
 		flags &= ~IRQ_FIFO_NOT_EMPTY;
 	}
 
+#ifdef ARM9
+	if (flags & IRQ_VBLANK)
+	{
+		extern volatile bool inHeadphoneSleep;
+		extern bool bKeyUpd, bBgUpd, bOAMUpd, conMode;
+		void _FeOS_oamUpdate(OamState* oam);
+		void _FeOS_bgUpdate();
+
+		if (!conMode) do
+		{
+			if (bKeyUpd) scanKeys();
+
+			if (inHeadphoneSleep)
+				break;
+
+			if (bBgUpd)
+			{
+				bBgUpd = false;
+				_FeOS_bgUpdate();
+				bBgUpd = true;
+			}
+
+			if (bOAMUpd)
+			{
+				bOAMUpd = false;
+				_FeOS_oamUpdate(&oamMain);
+				_FeOS_oamUpdate(&oamSub);
+				bOAMUpd = true;
+			}
+		} while(0);
+	}
+#endif
+
 	int i; word_t mask; VoidFn fn;
 	for (i = 0; i < MAX_IRQS && (mask = irqTable[i].mask); i ++)
 		if ((mask & flags) && (fn = irqTable[i].handler))

@@ -38,14 +38,15 @@ void irq_vblank()
 
 	vblankCounter ++;
 
-	if (bKeyUpd) scanKeys();
 	touchRead((touchPosition*)&touchPos);
 
-	if (inHeadphoneSleep) return;
-
-	if (bBgUpd) bgUpdate();
 	if (conMode)
 	{
+		scanKeys();
+		bgUpdate();
+
+		if (inHeadphoneSleep) return;
+
 		oamSub.oamMemory[0].isHidden = !__inFAT;
 		oamSub.oamMemory[1].isHidden = !stdioRead;
 		oamMain.oamMemory[0].x = con->cursorX * 8;
@@ -53,18 +54,16 @@ void irq_vblank()
 		caretBlink ++;
 		if (caretBlink >= 30) caretBlink = 0;
 		oamMain.oamMemory[0].isHidden = (caretBlink > 15);
-	}
-	if (bOAMUpd)
-	{
+
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
-	}
 
-	if (conMode && !stdioRead)
-	{
-		int oldOff = keyBufferOffset, oldLen = keyBufferLength;
-		keyboardUpdate();
-		keyBufferOffset = oldOff, keyBufferLength = oldLen;
+		if (!stdioRead)
+		{
+			int oldOff = keyBufferOffset, oldLen = keyBufferLength;
+			keyboardUpdate();
+			keyBufferOffset = oldOff, keyBufferLength = oldLen;
+		}
 	}
 }
 
