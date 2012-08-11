@@ -3,7 +3,7 @@
 
 static int ModuleEnumCb(instance_t hInst, const char* name, word_t size, void* user_data)
 {
-	if (hInst != FeOS_GetInstance())
+	if (hInst != FeOS_GetInstance() && size)
 		printf("%08X %s: %d bytes\n", (word_t)hInst, name, size);
 	return ENUM_CONTINUE;
 }
