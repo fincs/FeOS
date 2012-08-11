@@ -77,13 +77,6 @@ You can create .cmd files, which contain a list of commands to run. In order to 
 
 FeOS runs `/data/FeOS/autoexec.cmd` on startup, in a similar fashion to MS-DOS' `autoexec.bat`.
 
-When an application hangs...
-----------------------------
-
-When an application hangs, you can terminate said application by holding down Down on the D-pad then pressing the "Menu" key on the on-screen keyboard.
-
-**WARNING**: This feature forcefully exits the application. It could lead to system unstability, memory leaks, disk corruption and/or data loss. **Use with caution**. It also does not work with multi-threaded code.
-
 To do
 -----
 

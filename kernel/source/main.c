@@ -202,6 +202,8 @@ bool FeOS_GetAutoUpdate(int which)
 	}
 }
 
+#ifdef CONF_ENABLEAPPKILL
+
 void ForcefulExit()
 {
 	FeOS_ModuleExit(E_APPKILLED);
@@ -260,6 +262,8 @@ void KillCurrentApp()
 	else           KillCurrentApp_IRQ();
 }
 
+#endif
+
 void OnFold()
 {
 }
@@ -275,7 +279,9 @@ void kbd_key(int key)
 	switch(key)
 	{
 		case DVK_MENU:
+#ifdef CONF_ENABLEAPPKILL
 			if (keysHeld() & KEY_DOWN) KillCurrentApp();
+#endif
 			break;
 		case DVK_FOLD:
 			OnFold();
@@ -296,7 +302,7 @@ void FeOS_InitStreams();
 
 void ExcptHandler_C();
 
-void error_die()
+static void error_die()
 {
 	iprintf("\nPress START to exit...\n");
 	for (;;)
