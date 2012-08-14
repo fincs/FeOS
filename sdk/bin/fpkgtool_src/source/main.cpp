@@ -38,11 +38,11 @@ int GzipToDeflate(FileClass& f, int otherPos)
 	int flg = inf.ReadByte();
 	inf.Skip(6);
 	if (flg & 4)
-		f.Skip(f.ReadHword());
+		inf.Skip(inf.ReadHword());
 	if (flg & 8)
-		skipString(f);
+		skipString(inf);
 	if (flg & 16)
-		skipString(f);
+		skipString(inf);
 	if (flg & 2)
 		inf.Skip(2);
 
@@ -67,7 +67,7 @@ int GzipToDeflate(FileClass& f, int otherPos)
 	f.WriteRaw(buf, len - 8);
 	int q = f.Tell();
 	r = q - r;
-	int uncompSize = *(int*)(buf + len-8 + 4); // find size
+	word_t uncompSize = eswap_word(*(word_t*)(buf + len-8 + 4)); // find size
 	f.Seek(otherPos);
 	f.WriteWord(r);
 	f.WriteWord(uncompSize);
