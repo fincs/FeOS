@@ -1,3 +1,5 @@
+#ifdef DEBUG
+
 #include "feos.h"
 #include "fxe.h"
 #include <stdio.h>
@@ -62,3 +64,5 @@ void __attribute__((noreturn)) __sassert(const char* file, int line, const char*
 	for (;;)
 		swiWaitForVBlank();
 }
+
+#endif

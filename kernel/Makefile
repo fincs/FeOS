@@ -51,7 +51,7 @@ CFLAGS	:=	-g -Wall $(COPTFLAG) -funwind-tables -save-temps\
 CFLAGS	+=	$(INCLUDE) -DARM9 $(DEFINES)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
-ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	:=	-g $(ARCH) $(DEFINES)
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-wrap,systemValueHandler -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
