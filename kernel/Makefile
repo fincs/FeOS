@@ -19,14 +19,19 @@ include $(DEVKITARM)/ds_rules
 ifeq ($(DEBUGVER),)
 TARGET		:=	FeOS
 BUILD		:=	build
+GAME_TITLE	:=	FeOS
 else
 TARGET      :=	FeOSd
 BUILD		:=	build_dbg
+GAME_TITLE	:=	FeOS (DEBUG)
 endif
 SOURCES		:=	source
 INCLUDES	:=	include
-DATA		:=	data  
-GRAPHICS	:=	gfx  
+DATA		:=	data
+GRAPHICS	:=	gfx
+
+GAME_SUBTITLE1	:=	DS Operating System
+GAME_SUBTITLE2	:=	feos.mtheall.com
 
 #---------------------------------------------------------------------------------
 # options for code generation
