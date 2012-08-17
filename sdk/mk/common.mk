@@ -78,7 +78,7 @@ CXXFLAGS += -fno-exceptions
 endif
 
 ASFLAGS  := $(DEBUGFLAG) $(ARCH) $(DEFINES) $(INCLUDE)
-LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld $(ARCH) -Wl,-d,-q,$(GCSECTIONS)$(LDEXTRA)-Map,$(TARGET).map
+LDFLAGS  := -nostartfiles -nostdlib -T $(FEOSBIN)/fxe2.ld $(ARCH) -Wl,-d,-q,$(GCSECTIONS)$(LDEXTRA)-Map,$(TARGET).map $(CONF_LDFLAGS)
 
 ifeq ($(CONF_NOSTDLIB),)
 LIBS     := -lfeos$(LIBFEOSSUF) $(CXXLIB)
