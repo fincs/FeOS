@@ -1,13 +1,18 @@
-SUBDIRS := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
-.PHONY: $(SUBDIRS)
+APPS := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
 
-all: $(SUBDIRS)
+ifeq ($(FEOSDEST),)
+export FEOSDEST = $(FEOSSDK)/../FeOS
+endif
 
-clean:
-	@for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+.PHONY: all clean install $(APPS)
 
+all: $(APPS)
+
+clean: TARGET := clean
+clean: all
+
+install: TARGET := install
 install: all
-	@for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
 
-$(SUBDIRS):
-	$(MAKE) -C $@
+$(APPS):
+	@$(MAKE) --no-print-directory -C $@ $(TARGET)

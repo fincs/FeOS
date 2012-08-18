@@ -1,6 +1,3 @@
-SUBDIRS  := $(patsubst %/,%,$(dir $(wildcard */Makefile)))
-APPS     := $(patsubst %/,%,$(dir $(wildcard apps/*/Makefile)))
-
 ifeq ($(FEOSDEST),)
 export FEOSDEST = $(FEOSSDK)/../FeOS
 endif
@@ -17,22 +14,24 @@ endif
         sdk  sdkclean  sdkinstall\
         lib  libclean  libinstall\
         apps appsclean appsinstall\
-        $(APPS)
+        outputfolders
 
 ################################################################################
 # generic rules
 ################################################################################
 all: $(ALL)
-	@mkdir -p $(FEOSDEST)/data/FeOS/bin
-	@mkdir -p $(FEOSDEST)/data/FeOS/lib
-	@mkdir -p $(FEOSDEST)/data/FeOS/arm7
 
 clean: $(addsuffix clean,$(ALL))
 	@rm -f $(FEOSDEST)/data/FeOS/bin/*
 	@rm -f $(FEOSDEST)/data/FeOS/lib/*
 	@rm -f $(FEOSDEST)/data/FeOS/arm7/*
 
-install: all $(addsuffix install,$(ALL))
+install: $(addsuffix install,$(ALL))
+
+outputfolders:
+	@mkdir -p $(FEOSDEST)/data/FeOS/bin
+	@mkdir -p $(FEOSDEST)/data/FeOS/lib
+	@mkdir -p $(FEOSDEST)/data/FeOS/arm7
 
 ################################################################################
 # 'all' rules
@@ -46,10 +45,8 @@ sdk:
 lib: sdk
 	@$(MAKE) --no-print-directory -C sdk/userlib
 
-apps: lib $(APPS)
-
-$(APPS): lib
-	@$(MAKE) --no-print-directory -C $@
+apps: lib
+	@$(MAKE) --no-print-directory -C apps
 
 ################################################################################
 # 'clean' rules
@@ -64,22 +61,19 @@ libclean:
 	@$(MAKE) --no-print-directory -C sdk/userlib clean
 
 appsclean:
-	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i clean; done
+	@$(MAKE) --no-print-directory -C apps clean
 
 ################################################################################
 # 'install' rules
 ################################################################################
-sdkinstall: sdk
+sdkinstall: sdk outputfolders
 	@cp kernel/FeOS.nds $(FEOSDEST)/FeOS.nds
 	@cp kernel/FeOSd.nds $(FEOSDEST)/FeOSd.nds
 	@cp sdk/feoscxx.fx2 $(FEOSDEST)/data/FeOS/lib/feoscxx.fx2
 	@[ -e $(AUTOEXEC) ] || touch $(AUTOEXEC)
 
-libinstall: lib
-	@mkdir -p $(FEOSDEST)/data/FeOS/bin
-	@mkdir -p $(FEOSDEST)/data/FeOS/lib
-	@mkdir -p $(FEOSDEST)/data/FeOS/arm7
+libinstall: outputfolders
 	@$(MAKE) --no-print-directory -C sdk/userlib install
 
-appsinstall: apps
-	@for i in $(APPS); do $(MAKE) --no-print-directory -C $$i install; done
+appsinstall: libinstall
+	@$(MAKE) --no-print-directory -C apps install

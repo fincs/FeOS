@@ -9,13 +9,13 @@ endif
 
 all: $(USERLIBS)
 
-clean:
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i clean; done
+clean: TARGET := clean
+clean: all
 
+install: TARGET := install
 install: all
-	@for i in $(USERLIBS); do $(MAKE) --no-print-directory -C $$i install; done
 
 $(USERLIBS):
-	@$(MAKE) --no-print-directory -C $@
+	@$(MAKE) --no-print-directory -C $@ $(TARGET)
 
 -include $(DEPENDS)
