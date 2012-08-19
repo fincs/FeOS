@@ -4,6 +4,7 @@ build/
 /sdk/build_cxx/
 /kernel/build_dbg/
 /apps/*
+!/apps/Makefile
 !/apps/unixtools/
 !/apps/cmdprompt/
 !/apps/stats/
