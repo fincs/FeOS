@@ -32,7 +32,8 @@ fgets \
 fputs \
 ungetc \
 remove \
-rename
+rename \
+getdelim
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

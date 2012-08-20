@@ -104,6 +104,13 @@ int rename(const char*, const char*);
 
 int fileno(FILE*);
 
+ssize_t getdelim(char** ppBuf, size_t* pSize, int delim, FILE* f);
+
+static inline ssize_t getline(char** ppBuf, size_t* pSize, FILE* f)
+{
+	return getdelim(ppBuf, pSize, '\n', f);
+}
+
 #ifdef __cplusplus
 }
 #endif

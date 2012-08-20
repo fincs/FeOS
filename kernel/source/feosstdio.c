@@ -84,7 +84,8 @@ BEGIN_TABLE(FEOSSTDIO)
 
 	// Misc
 	ADD_FUNC(remove),
-	ADD_FUNC(rename)
+	ADD_FUNC(rename),
+	ADD_FUNC_ALIAS(__getdelim, getdelim)
 END_TABLE(FEOSSTDIO)
 
 MAKE_FAKEMODULE(FEOSSTDIO)
