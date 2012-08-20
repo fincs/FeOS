@@ -20,7 +20,8 @@ open \
 close \
 read \
 write \
-lseek
+lseek \
+fdopen
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

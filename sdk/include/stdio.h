@@ -51,6 +51,8 @@ FILE* fopen(const char*, const char*);
 FILE* freopen(const char*, const char*, FILE*);
 int fclose(FILE*);
 
+FILE* fdopen(int fd, const char*);
+
 size_t fread(void*, size_t, size_t, FILE*);
 size_t fwrite(const void*, size_t, size_t, FILE*);
 int feof(FILE*);
