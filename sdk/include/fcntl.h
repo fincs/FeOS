@@ -6,6 +6,7 @@
 
 #pragma once
 #include <sys/types.h>
+#include <stdio.h>
 
 #define O_RDONLY   0        // +1 == FREAD
 #define O_WRONLY   1        // +1 == FWRITE
