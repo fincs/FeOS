@@ -11,7 +11,7 @@ export CXX   := g++
 export STRIP := strip
 
 CFLAGS   := -g0 -Wall -O2
-CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++0x
 
 LDFLAGS := -g0
 
