@@ -21,6 +21,9 @@ threadSt _firstThread;
 threadSt* curThread = &_firstThread;
 int nThreads = 1;
 int threadsWaiting = 0;
+int threadsFinished = 0;
+
+#define inactiveThreadCount() (threadsWaiting + threadsFinished)
 
 void __attribute__((noreturn)) __newThread(void* param, threadEP_t entryPoint, word_t* stackPtr);
 
@@ -92,7 +95,7 @@ void FeOS_Yield()
 	if (setjmp(t->ctx))
 		return;
 
-	/*if (t == &_firstThread)*/ do
+	do
 	{
 		threadSt* t2 = _irqWaitCheck();
 		if (t2)
@@ -101,7 +104,7 @@ void FeOS_Yield()
 			_doYield(t2);
 			return;
 		}
-	} while (threadsWaiting == nThreads);
+	} while (inactiveThreadCount() == nThreads);
 
 	do t = t->next;
 	while (t->flags & THREAD_EXECBITS);
@@ -119,6 +122,7 @@ void FeOS_ExitThread(int rc)
 	if (curThread == &_firstThread) return;
 	curThread->flags |= THREAD_EXIT;
 	curThread->rc = rc;
+	threadsFinished ++;
 	FeOS_Yield();
 }
 
@@ -135,6 +139,8 @@ void FeOS_FreeThread(thread_t hThread)
 	threadSt* t = (threadSt*) hThread;
 	if (t->flags & THREAD_IRQWAIT)
 		threadsWaiting --;
+	if (t->flags & THREAD_EXIT)
+		threadsFinished --;
 	t->prev->next = t->next;
 	t->next->prev = t->prev;
 	free(t->stack);
@@ -248,11 +254,11 @@ threadSt* _irqWaitCheck()
 	if (!threadsWaiting)
 		return NULL;
 
-	// Get the interrupt mask. If all other threads are waiting for IRQs, we can then
-	// perform the wait for IRQ.
-	word_t mask = (threadsWaiting == nThreads) ? FeOS_NextIRQ() : FeOS_CheckPendingIRQs();
+	// Get the interrupt mask. If all other threads are inactive (such as waiting for IRQs),
+	// we can then perform the wait for IRQ.
+	word_t mask = (inactiveThreadCount() == nThreads) ? FeOS_NextIRQ() : FeOS_CheckPendingIRQs();
 
-	if (!mask) // implies threadsWaiting != nThreads
+	if (!mask) // implies inactiveThreadCount() != nThreads
 		return NULL;
 
 	threadSt *nextT = NULL, *curPos = NULL;
