@@ -1,6 +1,6 @@
 .PHONY: package pkg_direxist install
 
-clean: CONF_EXTRACLEAN := $(PACKAGENAME).fpkg
+clean: CONF_EXTRACLEAN += $(PACKAGENAME).fpkg
 
 package: export FEOSDEST := $(CURDIR)/.pkg
 package: pkg_direxist install
