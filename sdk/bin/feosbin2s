@@ -18,7 +18,7 @@ echo ".align 2"
 echo ".global $2"
 echo ".hidden $2"
 echo "$2:"
-echo -e "\t.incbin \"$1\""
+echo '.incbin "'$1'"'
 echo ".global $2_end"
 echo ".hidden $2_end"
 echo "$2_end:"
