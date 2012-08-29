@@ -16,6 +16,7 @@ build/
 /sdk/bin/fxe2tool
 /sdk/bin/fartool
 /sdk/bin/fpkgtool
+/sdk/bin/fmantool
 /sdk/source/FEOSBASE/*
 !/sdk/source/FEOSBASE/Makefile
 /sdk/source/FEOSSTDIO/*
