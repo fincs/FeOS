@@ -3,7 +3,7 @@
 TOOLS := bin/fxe2tool_src \
          bin/fartool_src \
          bin/fpkgtool_src \
-         bin/fmantool_src \
+         bin/fmantool_src
 FAKES := source/FEOSBASE \
          source/FEOSSTDIO \
          source/FEOSPOSIXEMU \
