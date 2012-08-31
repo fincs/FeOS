@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-enum { THREAD_EXIT = BIT(0), THREAD_IRQWAIT = BIT(1), THREAD_EXECBITS = 3, THREAD_HIGHPRIO = BIT(2) };
+enum { THREAD_EXIT = BIT(0), THREAD_IRQWAIT = BIT(1), THREAD_EXECBITS = 3, THREAD_HIGHPRIO = BIT(2), THREAD_DETACHED = BIT(3) };
 
 typedef struct tag_threadSt
 {
@@ -53,7 +53,7 @@ thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param)
 	t->stack = (word_t*) mem;
 	t->execStat = FeOS_GetCurExecStatus();
 	FeOS_ExecStatusAddRef(t->execStat);
-	t->flags = curThread->flags;
+	t->flags = curThread->flags & THREAD_HIGHPRIO;
 
 	threadSt* insPoint;
 	if (curThread != &_firstThread)
@@ -106,8 +106,17 @@ void FeOS_Yield()
 		}
 	} while (inactiveThreadCount() == nThreads);
 
-	do t = t->next;
-	while (t->flags & THREAD_EXECBITS);
+	do
+	{
+		t = t->next;
+
+		while ((t->flags & THREAD_DETACHED) && (t->flags & THREAD_EXIT))
+		{
+			threadSt* next = t->next;
+			FeOS_FreeThread(t);
+			t = next;
+		}
+	} while (t->flags & THREAD_EXECBITS);
 
 	_doYield(t);
 }
@@ -233,6 +242,14 @@ static int _runAsyncEP(void* _param)
 thread_t FeOS_RunAsync(const char* command)
 {
 	return FeOS_CreateThread(16*1024, _runAsyncEP, (void*)command);
+}
+
+void FeOS_DetachThread(thread_t hThread)
+{
+	if (hThread == &_firstThread || hThread == curThread)
+		return;
+	threadSt* t = (threadSt*) hThread;
+	t->flags |= THREAD_DETACHED;
 }
 
 void _irqWaitYield(word_t mask)
