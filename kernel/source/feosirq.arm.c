@@ -397,9 +397,6 @@ word_t FeOS_CheckPendingIRQs()
 	return totalflags;
 };
 
-#ifdef ARM9
-static
-#endif
 void _FeOS_WaitForIRQ(word_t mask)
 {
 	FeOS_CheckPendingIRQs();

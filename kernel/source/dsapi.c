@@ -55,7 +55,7 @@ static void _FeOS_oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
 		oam->oamRotationMemory[i].vdy = (1<<8);
 	}
 
-	FeOS_WaitForVBlank();
+	FeOS_WaitForVBlankRaw();
 
 	FeOS_swi_DataCacheFlush(oam->oamMemory, 128*sizeof(SpriteEntry));
 

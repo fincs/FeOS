@@ -63,12 +63,6 @@ static inline bool AddressCheckMainRAM(const void* addr)
 #define E_INVALIDARG (-11)
 #define E_APPKILLED (-12)
 
-void FeOS_WaitForIRQ(word_t);
-static inline void FeOS_WaitForVBlank()
-{
-	FeOS_WaitForIRQ(IRQ_VBLANK);
-}
-
 typedef void (*irqWaitFunc_t)(word_t);
 
 void FeOS_RunFifoQueue();
@@ -78,7 +72,18 @@ void FeOS_FifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, voi
 VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t mask);
+void _FeOS_WaitForIRQ(word_t mask);
 word_t FeOS_NextIRQ();
+
+static inline void FeOS_WaitForVBlank()
+{
+	FeOS_WaitForIRQ(IRQ_VBLANK);
+}
+
+static inline void FeOS_WaitForVBlankRaw()
+{
+	_FeOS_WaitForIRQ(IRQ_VBLANK);
+}
 
 #define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
 irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
