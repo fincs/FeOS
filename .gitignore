@@ -51,6 +51,7 @@ build/
 *.fx2
 *.fpkg
 *.a
+*.db
 *.ppg
 *.pnproj
 *.pnps
