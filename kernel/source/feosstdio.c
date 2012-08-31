@@ -6,42 +6,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-FILE* stdin_hook = NULL;
-FILE* stdout_hook = NULL;
-FILE* stderr_hook = NULL;
+#define stdin_hook curExecStatus->stdin_hook
+#define stdout_hook curExecStatus->stdout_hook
+#define stderr_hook curExecStatus->stderr_hook
 
 FILE* FeOS_GetStdin()
 {
-	return !stdin_hook ? stdin : stdin_hook;
+	return !stdin_hook ? stdin : (FILE*)stdin_hook;
 }
 
 FILE* FeOS_GetStdout()
 {
-	return !stdout_hook ? stdout : stdout_hook;
+	return !stdout_hook ? stdout : (FILE*)stdout_hook;
 }
 
 FILE* FeOS_GetStderr()
 {
-	return !stderr_hook ? stderr : stderr_hook;
+	return !stderr_hook ? stderr : (FILE*)stderr_hook;
 }
 
 FILE* FeOS_SetStdin(FILE* newstdin)
 {
-	FILE* oldstdin = stdin_hook;
+	FILE* oldstdin = (FILE*)stdin_hook;
 	stdin_hook = newstdin;
 	return oldstdin;
 }
 
 FILE* FeOS_SetStdout(FILE* newstdout)
 {
-	FILE* oldstdout = stdout_hook;
+	FILE* oldstdout = (FILE*)stdout_hook;
 	stdout_hook = newstdout;
 	return oldstdout;
 }
 
 FILE* FeOS_SetStderr(FILE* newstderr)
 {
-	FILE* oldstderr = stderr_hook;
+	FILE* oldstderr = (FILE*)stderr_hook;
 	stderr_hook = newstderr;
 	return oldstderr;
 }

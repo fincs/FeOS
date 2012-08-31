@@ -110,4 +110,18 @@ void FeOS_swi_IrqDisable(word_t mask);
 int FeOS_swi_FifoCheckDatamsgLength(int ch);
 void FeOS_swi_SetValue32Handler(int, bool);
 void FeOS_swi_SetAddressHandler(int, bool);
+
+typedef struct
+{
+	word_t refcount;
+	instance_t curInstance;
+	word_t* exitBuf;
+	bool exitDone;
+	void *stdin_hook;
+	void *stdout_hook;
+	void *stderr_hook;
+} executeStatus_t;
+
+extern executeStatus_t* curExecStatus;
+
 #endif

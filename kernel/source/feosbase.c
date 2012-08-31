@@ -246,24 +246,22 @@ static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 	return FEOS_RC_OK;
 }
 
-typedef struct
-{
-	word_t refcount;
-	instance_t curInstance;
-	word_t* exitBuf;
-	bool exitDone;
-} executeStatus_t;
-
 static executeStatus_t defaultExecStatus;
-static executeStatus_t* curExecStatus = &defaultExecStatus;
+executeStatus_t* curExecStatus = &defaultExecStatus;
 
 execstat_t FeOS_ExecStatusCreate()
 {
-	execstat_t pSt = (execstat_t) malloc(sizeof(executeStatus_t));
+	executeStatus_t* pSt = (executeStatus_t*) malloc(sizeof(executeStatus_t));
 	if (!pSt) return NULL;
 
 	memset(pSt, 0, sizeof(executeStatus_t));
-	((executeStatus_t*)pSt)->refcount = 1;
+	pSt->refcount = 1;
+
+	// Inherit standard stream hooks
+	pSt->stdin_hook = curExecStatus->stdin_hook;
+	pSt->stdout_hook = curExecStatus->stdout_hook;
+	pSt->stderr_hook = curExecStatus->stderr_hook;
+
 	return pSt;
 }
 
