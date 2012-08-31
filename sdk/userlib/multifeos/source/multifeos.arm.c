@@ -221,6 +221,20 @@ thread_t FeOS_CreateProcess(int argc, const char* argv[])
 	return t;
 }
 
+static int _runAsyncEP(void* _param)
+{
+	FeOS_ExecStatusRelease(curThread->execStat);
+	curThread->execStat = FeOS_ExecStatusCreate();
+	if (!curThread->execStat) return -1;
+	FeOS_SetCurExecStatus(curThread->execStat);
+	return system((const char*)_param);
+}
+
+thread_t FeOS_RunAsync(const char* command)
+{
+	return FeOS_CreateThread(16*1024, _runAsyncEP, (void*)command);
+}
+
 void _irqWaitYield(word_t mask)
 {
 	threadsWaiting ++;

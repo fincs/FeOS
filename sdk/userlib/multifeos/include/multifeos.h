@@ -38,6 +38,7 @@ MULTIFEOS_API int FeOS_GetThreadRC(thread_t hThread);
 MULTIFEOS_API int FeOS_ThreadJoin();
 
 MULTIFEOS_API thread_t FeOS_CreateProcess(int argc, const char* argv[]);
+MULTIFEOS_API thread_t FeOS_RunAsync(const char* command);
 
 MULTIFEOS_API word_t FeOS_NextIRQYield();
 
