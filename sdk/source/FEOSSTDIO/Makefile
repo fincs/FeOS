@@ -21,6 +21,7 @@ ftell \
 fflush \
 ferror \
 clearerr \
+setvbuf \
 vfprintf \
 vsprintf \
 vsnprintf \

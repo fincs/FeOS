@@ -65,6 +65,12 @@ int fflush(FILE*);
 int ferror(FILE*);
 void clearerr(FILE*);
 
+#define _IOFBF 0 // Fully buffered
+#define _IOLBF 1 // Line buffered
+#define _IONBF 2 // Unbuffered
+
+int setvbuf(FILE*, char*, int, size_t);
+
 int vfprintf(FILE*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
 int vsprintf(char*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
 int vsnprintf(char*, size_t, const char*, va_list) __attribute__ ((format (__printf__, 3, 0)));

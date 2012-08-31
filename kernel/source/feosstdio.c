@@ -69,6 +69,7 @@ BEGIN_TABLE(FEOSSTDIO)
 	ADD_FUNC(fflush),
 	ADD_FUNC(ferror),
 	ADD_FUNC(clearerr),
+	ADD_FUNC(setvbuf),
 
 	// Formatting
 	ADD_FUNC_ALIAS(vfiprintf, vfprintf),
