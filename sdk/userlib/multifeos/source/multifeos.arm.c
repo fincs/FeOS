@@ -255,8 +255,11 @@ void FeOS_DetachThread(thread_t hThread)
 int FeOS_RunInContext(thread_t hThread, threadEP_t func, void* param)
 {
 	threadSt* t = (threadSt*) hThread;
-	FeOS_SetCurExecStatus(t->execStat);
+	execstat_t oldSt = curThread->execStat;
+	curThread->execStat = t->execStat;
+	FeOS_SetCurExecStatus(curThread->execStat);
 	int rc = func(param);
+	curThread->execStat = oldSt;
 	FeOS_SetCurExecStatus(curThread->execStat);
 	return rc;
 }
