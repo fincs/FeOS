@@ -252,6 +252,15 @@ void FeOS_DetachThread(thread_t hThread)
 	t->flags |= THREAD_DETACHED;
 }
 
+int FeOS_RunInContext(thread_t hThread, threadEP_t func, void* param)
+{
+	threadSt* t = (threadSt*) hThread;
+	FeOS_SetCurExecStatus(t->execStat);
+	int rc = func(param);
+	FeOS_SetCurExecStatus(curThread->execStat);
+	return rc;
+}
+
 void _irqWaitYield(word_t mask)
 {
 	threadsWaiting ++;
