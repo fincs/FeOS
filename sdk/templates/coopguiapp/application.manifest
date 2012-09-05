@@ -1,0 +1,11 @@
+; Mandatory keys
+; The icon path is relative to /data/FeOS/gui/ if it does not begin with /
+; The icon must be a 16-bit 64x64 bitmap stored in a GRF file
+;
+; Do not forget to change Icon and Command to match $(TARGET) (normally the
+; name of the folder containing the source code)!
+
+Title: Coop GUI Application
+Description: FeOS SDK Template
+Icon: coopguiapp.grf
+Command: coopguiapp

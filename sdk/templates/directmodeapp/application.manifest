@@ -1,0 +1,19 @@
+; Mandatory keys
+; The icon path is relative to /data/FeOS/gui/ if it does not begin with /
+; The icon must be a 16-bit 64x64 bitmap stored in a GRF file
+;
+; Do not forget to change Icon and Command to match $(TARGET) (normally the
+; name of the folder containing the source code)!
+
+Title: Direct Mode Application
+Description: FeOS SDK Template
+Icon: directmodeapp.grf
+Command: directmodeapp
+
+; If this key is present, b0rkshell runs the command in its thread
+; (therefore allowing it to use faster DTCM stack). Otherwise it is
+; launched in a separate thread, allowing it to use the cooperative
+; GUI API which allows for switching between multiple running programs
+; as well as background processing.
+; The value is ignored (here it is blank).
+Direct-Mode-App:
