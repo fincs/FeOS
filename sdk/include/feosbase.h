@@ -48,5 +48,3 @@ extern char __hinstance[];
 #define FEOSENTRY EXTERNC
 #define FEOSINIT __attribute__((constructor))
 #define FEOSFINI __attribute__((destructor))
-
-typedef void (* FeOSExitFunc)(int);

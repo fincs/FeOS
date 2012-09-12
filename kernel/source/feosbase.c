@@ -34,11 +34,6 @@ void FeOS_swi_RestoreIRQ_t(int);
 void FeOS_swi_DrainWriteBuffer();
 void FeOS_swi_WaitForMemAddr(volatile byte_t*, byte_t);
 
-// Compat. functions
-
-static int FeOS_PushExitFunc(FeOSExitFunc func) { return 1; }
-static void FeOS_PopExitFunc() { }
-
 // Execution status functions
 
 typedef void* execstat_t;
@@ -141,8 +136,6 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_swi_SuspendIRQ_t, FeOS_SuspendIRQ_t),
 	ADD_FUNC_ALIAS(FeOS_swi_RestoreIRQ_t, FeOS_RestoreIRQ_t),
 	ADD_FUNC_ALIAS(FeOS_swi_SetSuspendMode, FeOS_SetSuspendMode),
-	ADD_FUNC(FeOS_PushExitFunc),
-	ADD_FUNC(FeOS_PopExitFunc),
 	ADD_FUNC_ALIAS(FeOS_ModuleExit, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
 	ADD_FUNC(FeOS_GetModuleExidxTbl),

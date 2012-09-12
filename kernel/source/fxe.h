@@ -107,7 +107,6 @@ typedef struct
 #define FEOS_RC_ERR 0xFFFFFFFF
 
 typedef word_t (* FeOSMain)(word_t, word_t, word_t, word_t);
-typedef void (* FeOSExitFunc)(int);
 
 typedef struct
 {
