@@ -40,7 +40,7 @@ typedef struct fifo_queue
 } fifo_queue;
 extern fifo_queue fifo_data_queue[16];
 
-int fifoCheckDatamsgLength(int channel)
+int __attribute__((weak)) fifoCheckDatamsgLength(int channel)
 {
        if(channel<0 || channel>=16) return -1;
        if(!fifoCheckDatamsg(channel)) return -1;
