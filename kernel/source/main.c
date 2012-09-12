@@ -1,5 +1,4 @@
 #include "feos.h"
-#include <fat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "fxe.h"
@@ -321,6 +320,10 @@ static void error_die()
 #define MSG_OK   ANSIESC_GREEN "  OK\n" ANSIESC_DEFAULT
 #define MSG_FAIL ANSIESC_RED "FAIL\n\n" ANSIESC_DEFAULT
 
+#ifdef HAVE_GETCWDCLUSTERPTR
+vu32* g_fatCwdClusterPtr;
+#endif
+
 int main()
 {
 	videoInit();
@@ -343,7 +346,7 @@ int main()
 	iprintf("  Built: " __DATE__ ", " __TIME__ "\n" ANSIESC_DEFAULT);
 #endif
 	iprintf("\nInitializing filesystem... ");
-	if(!fatInitDefault())
+	if (!fatInitDefault())
 	{
 		iprintf(MSG_FAIL);
 		iprintf("Make sure you have DLDI patched\n");
@@ -353,10 +356,14 @@ int main()
 		iprintf("  http://feos.mtheall.com/forum\n");
 		error_die();
 	}
+#ifdef HAVE_GETCWDCLUSTERPTR
+	g_fatCwdClusterPtr = (vu32*) FAT_getCwdClusterPtr("/");
+	FeOS_InitDefaultExecStatus();
+#endif
+	InstallThunks();
 	iprintf(MSG_OK);
 
 	iprintf("Initializing user mode...  ");
-	InstallThunks();
 	PrepareUserMode();
 	DoTheUserMode();
 	iprintf(MSG_OK);

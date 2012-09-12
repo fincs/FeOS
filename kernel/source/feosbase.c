@@ -249,9 +249,22 @@ static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 static executeStatus_t defaultExecStatus;
 executeStatus_t* curExecStatus = &defaultExecStatus;
 
+#ifdef HAVE_GETCWDCLUSTERPTR
+void FeOS_InitDefaultExecStatus()
+{
+	defaultExecStatus.cwdBuffer = _getCwdBuf();
+}
+
+#define EXECSTAT_ADDENDUM 256
+#else
+#define EXECSTAT_ADDENDUM 0
+#endif
+
+#define GET_ADDENDUM(x) ((char*)(x) + sizeof(executeStatus_t));
+
 execstat_t FeOS_ExecStatusCreate()
 {
-	executeStatus_t* pSt = (executeStatus_t*) malloc(sizeof(executeStatus_t));
+	executeStatus_t* pSt = (executeStatus_t*) malloc(sizeof(executeStatus_t) + EXECSTAT_ADDENDUM);
 	if (!pSt) return NULL;
 
 	memset(pSt, 0, sizeof(executeStatus_t));
@@ -261,6 +274,13 @@ execstat_t FeOS_ExecStatusCreate()
 	pSt->stdin_hook = curExecStatus->stdin_hook;
 	pSt->stdout_hook = curExecStatus->stdout_hook;
 	pSt->stderr_hook = curExecStatus->stderr_hook;
+
+#ifdef HAVE_GETCWDCLUSTERPTR
+	// Inherit current working directory
+	pSt->cwdCluster = g_fatCwdCluster;
+	pSt->cwdBuffer = GET_ADDENDUM(pSt);
+	memcpy(pSt->cwdBuffer, curExecStatus->cwdBuffer, EXECSTAT_ADDENDUM);
+#endif
 
 	return pSt;
 }
@@ -281,19 +301,20 @@ void FeOS_ExecStatusRelease(execstat_t hSt)
 
 void FeOS_SetCurExecStatus(execstat_t hSt)
 {
+#ifdef HAVE_GETCWDCLUSTERPTR
+	curExecStatus->cwdCluster = g_fatCwdCluster;
+#endif
 	curExecStatus = (executeStatus_t*) hSt;
+#ifdef HAVE_GETCWDCLUSTERPTR
+	g_fatCwdCluster = curExecStatus->cwdCluster;
+	_setCwdBuf(curExecStatus->cwdBuffer);
+#endif
 }
 
 execstat_t FeOS_GetCurExecStatus()
 {
 	return (execstat_t) curExecStatus;
 }
-
-/*
-instance_t FeOS_CurInstance = NULL;
-static word_t* FeOS_ExitBuf;
-static bool FeOS_ExitDone = false;
-*/
 
 #define FeOS_CurInstance curExecStatus->curInstance
 #define FeOS_ExitBuf     curExecStatus->exitBuf

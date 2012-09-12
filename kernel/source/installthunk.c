@@ -74,7 +74,7 @@ void InstallThunks()
 	dotabs[STD_IN]->read_r = FeOS_KeybdRead;
 	HOOK(dotabs[STD_ERR]->write_r, conerr);
 
-	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("fat"); // force non-constness
+	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("/"); // force non-constness
 	HOOK(dotab->open_r, fatopen);
 	HOOK(dotab->close_r, fatclose);
 	HOOK(dotab->write_r, fatwrite);

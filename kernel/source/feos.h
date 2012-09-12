@@ -3,6 +3,7 @@
 #include "../../sdk/include/feosver.h"
 
 #ifdef ARM9
+#include <fat.h>
 #define ITCM_DATA __attribute__((section(".itcm")))
 #endif
 
@@ -125,8 +126,22 @@ typedef struct
 	void *stdin_hook;
 	void *stdout_hook;
 	void *stderr_hook;
+#ifdef HAVE_GETCWDCLUSTERPTR
+	u32 cwdCluster;
+	char* cwdBuffer;
+#endif
 } executeStatus_t;
 
 extern executeStatus_t* curExecStatus;
+
+#ifdef HAVE_GETCWDCLUSTERPTR
+char* _getCwdBuf();
+void _setCwdBuf(char* newBuf);
+
+extern vu32* g_fatCwdClusterPtr;
+#define g_fatCwdCluster (*g_fatCwdClusterPtr)
+
+void FeOS_InitDefaultExecStatus();
+#endif
 
 #endif
