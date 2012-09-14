@@ -320,7 +320,7 @@ static void error_die()
 #define MSG_OK   ANSIESC_GREEN "  OK\n" ANSIESC_DEFAULT
 #define MSG_FAIL ANSIESC_RED "FAIL\n\n" ANSIESC_DEFAULT
 
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 vu32* g_fatCwdClusterPtr;
 #endif
 
@@ -356,8 +356,8 @@ int main()
 		iprintf("  http://feos.mtheall.com/forum\n");
 		error_die();
 	}
-#ifdef HAVE_GETCWDCLUSTERPTR
-	g_fatCwdClusterPtr = (vu32*) FAT_getCwdClusterPtr("/");
+#ifdef LIBFAT_FEOS_MULTICWD
+	g_fatCwdClusterPtr = (vu32*) _FAT_getCwdClusterPtr("/");
 	FeOS_InitDefaultExecStatus();
 #endif
 	InstallThunks();

@@ -242,7 +242,7 @@ static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 static executeStatus_t defaultExecStatus;
 executeStatus_t* curExecStatus = &defaultExecStatus;
 
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 void FeOS_InitDefaultExecStatus()
 {
 	defaultExecStatus.cwdBuffer = _getCwdBuf();
@@ -268,7 +268,7 @@ execstat_t FeOS_ExecStatusCreate()
 	pSt->stdout_hook = curExecStatus->stdout_hook;
 	pSt->stderr_hook = curExecStatus->stderr_hook;
 
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 	// Inherit current working directory
 	pSt->cwdCluster = g_fatCwdCluster;
 	pSt->cwdBuffer = GET_ADDENDUM(pSt);
@@ -294,11 +294,11 @@ void FeOS_ExecStatusRelease(execstat_t hSt)
 
 void FeOS_SetCurExecStatus(execstat_t hSt)
 {
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 	curExecStatus->cwdCluster = g_fatCwdCluster;
 #endif
 	curExecStatus = (executeStatus_t*) hSt;
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdCluster = curExecStatus->cwdCluster;
 	_setCwdBuf(curExecStatus->cwdBuffer);
 #endif

@@ -126,7 +126,7 @@ typedef struct
 	void *stdin_hook;
 	void *stdout_hook;
 	void *stderr_hook;
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 	u32 cwdCluster;
 	char* cwdBuffer;
 #endif
@@ -134,12 +134,15 @@ typedef struct
 
 extern executeStatus_t* curExecStatus;
 
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 char* _getCwdBuf();
 void _setCwdBuf(char* newBuf);
 
 extern vu32* g_fatCwdClusterPtr;
 #define g_fatCwdCluster (*g_fatCwdClusterPtr)
+
+// Hidden libfat function that gets a pointer to the cwd cluster variable
+uint32_t* _FAT_getCwdClusterPtr(const char* name);
 
 void FeOS_InitDefaultExecStatus();
 #endif

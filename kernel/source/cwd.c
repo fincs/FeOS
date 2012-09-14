@@ -1,5 +1,5 @@
 #include <fat.h>
-#ifdef HAVE_GETCWDCLUSTERPTR
+#ifdef LIBFAT_FEOS_MULTICWD
 
 // cwd.c - based on chdir.c from dkA's newlib, then horribly raped
 
