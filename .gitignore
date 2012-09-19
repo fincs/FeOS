@@ -45,6 +45,7 @@ build/
 !/sdk/userlib/libitcm/
 !/sdk/userlib/md5/
 !/sdk/userlib/coopgui/
+!/sdk/userlib/sndlock/
 *.exe
 *.nds
 *.elf
