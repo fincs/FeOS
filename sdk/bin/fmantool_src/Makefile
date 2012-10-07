@@ -19,7 +19,6 @@ UNAME := $(shell uname -s)
 
 ifneq (,$(findstring MINGW,$(UNAME)))
 	EXEEXT := .exe
-	LDFLAGS += -static-libgcc -static-libstdc++
 endif
 
 ifneq (,$(findstring Darwin,$(UNAME)))
