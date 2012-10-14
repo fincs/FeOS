@@ -318,6 +318,8 @@ static void error_die()
 #define ANSIESC_DEFAULT "\x1b[39;1m"
 
 #define MSG_OK   ANSIESC_GREEN "  OK\n" ANSIESC_DEFAULT
+#define MSG_OK2  ANSIESC_YELLOW "  OK\n\n" ANSIESC_DEFAULT
+#define WARNING ANSIESC_YELLOW "WARNING: " ANSIESC_DEFAULT
 #define MSG_FAIL ANSIESC_RED "FAIL\n\n" ANSIESC_DEFAULT
 
 #ifdef LIBFAT_FEOS_MULTICWD
@@ -361,7 +363,15 @@ int main()
 	FeOS_InitDefaultExecStatus();
 #endif
 	InstallThunks();
+#ifdef LIBFAT_FEOS_MULTICWD
 	iprintf(MSG_OK);
+#else
+	iprintf(MSG_OK2);
+	iprintf(
+		WARNING "Multi-CWD support is\n"
+		"disabled due to the usage of an\n"
+		"old version of libfat.\n\n");
+#endif
 
 	iprintf("Initializing user mode...  ");
 	PrepareUserMode();
@@ -373,10 +383,11 @@ int main()
 	instance_t hCxxLib = LoadModule("feoscxx");
 	if (!hCxxLib)
 	{
-		iprintf(MSG_FAIL);
-		iprintf("The following file is missing\n");
-		iprintf("or it may have been corrupted:\n");
-		iprintf("  /data/FeOS/lib/feoscxx.fx2\n");
+		iprintf(
+			MSG_FAIL
+			"The following file is missing\n"
+			"or it may have been corrupted:\n"
+			"  /data/FeOS/lib/feoscxx.fx2\n");
 		error_die();
 	}
 	iprintf(MSG_OK);
