@@ -1,20 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* strdup(const char* str) {
-  int  size;
-  char *rc;
+char* strdup(const char* str)
+{
+	if (!str) return NULL;
 
-  if(str == NULL)
-    return NULL;
+	int size = strlen(str) + 1;
+	char* newstr = (char*) malloc(size);
+	if (!newstr) return NULL;
 
-  size = strlen(str)+1;
-
-  rc = malloc(size);
-  if(rc == NULL)
-    return NULL;
-
-  memcpy(rc, str, size);
-  return rc;
+	memcpy(newstr, str, size);
+	return newstr;
 }
-
