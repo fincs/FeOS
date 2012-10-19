@@ -117,6 +117,19 @@ static inline ssize_t getline(char** ppBuf, size_t* pSize, FILE* f)
 	return getdelim(ppBuf, pSize, '\n', f);
 }
 
+// newlib compatibility function aliases
+
+#define iprintf   printf
+#define viprintf  vprintf
+#define siprintf  sprintf
+#define vsiprintf vsprintf
+#define fiprintf  fprintf
+#define vfiprintf vfprintf
+
+#define iscanf  scanf
+#define siscanf sscanf
+#define fiscanf fscanf
+
 #ifdef __cplusplus
 }
 #endif
