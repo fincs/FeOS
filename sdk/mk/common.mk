@@ -92,7 +92,7 @@ LIBS     := $(CONF_LIBS) $(LIBS)
 ifneq ($(CONF_NOSTDLIB),1)
 LIBDIRS := $(FEOSSDK)
 ifneq ($(CONF_ARM7),)
-LIBDIRS += $(DEVKITPRO)/libnds
+LIBDIRS := $(DEVKITPRO)/libnds $(LIBDIRS)
 endif
 endif
 LIBDIRS += $(foreach lib,$(CONF_USERLIBS),$(FEOSUSERLIB)/$(lib))
