@@ -51,7 +51,7 @@ int main(int argc, const char* argv[])
 
 	if (bInteractive)
 	{
-		printf("FeOS command prompt v0.0\n\n");
+		printf("FeOS command prompt v" FEOS_VERSION_TEXT "\n\n");
 
 		for (;;)
 		{

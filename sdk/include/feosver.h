@@ -14,8 +14,8 @@
 
 // SDK FeOS version
 #define FEOS_VERSION_MAJOR 0
-#define FEOS_VERSION_MINOR 0
-#define FEOS_VERSION_TEXT "0.0"
+#define FEOS_VERSION_MINOR 1
+#define FEOS_VERSION_TEXT "0.1-alpha"
 
 #if defined(FEOS) && !defined(ARM7)
 

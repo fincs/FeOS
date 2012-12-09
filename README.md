@@ -1,5 +1,5 @@
-FeOS v0.0-prerelease (WIP)
-==========================
+FeOS v0.1-alpha
+===============
 
 Introduction
 ------------

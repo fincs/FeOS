@@ -341,7 +341,7 @@ int main()
 
 	iprintf(
 		"\n  FeOS kernel v" FEOS_VERSION_TEXT "\n"
-		"  Written in 2010-12 by fincs\n");
+		"   by FeOS Team, 2010-13\n");
 
 #ifdef DEBUG
 	iprintf(ANSIESC_YELLOW "  **DEBUG BUILD**\n");
