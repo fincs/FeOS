@@ -10,6 +10,7 @@ build/
 !/apps/stats/
 !/apps/tcpcmd/
 !/apps/fpm/
+!/apps/ver/
 /FeOS/
 /testbin/
 /sdk/lib/
