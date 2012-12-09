@@ -390,7 +390,9 @@ instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
 
 	fxe2_header_t head;
 	if(read(fd, &head, sizeof(fxe2_header_t)) != sizeof(fxe2_header_t)
-		|| head.magic != 0x31305A46 /* FX01 */)
+		|| head.magic != 0x31305A46 /* FX01 */
+		|| FX2_SUBSYSTEM(head.flags) != FX2_SUBSYSTEM_STANDARD
+		|| FEOS_VPACK_MAKE(head.osmajorver, head.osminorver) > FEOS_VERSION_PACK)
 	{
 _shorterr:
 		close(fd);
