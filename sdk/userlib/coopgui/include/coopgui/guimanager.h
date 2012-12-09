@@ -30,6 +30,15 @@ struct IGuiManager
 	// Load a GRF file
 	virtual bool LoadGrf(GrfFile& grf, FILE* f) = 0;
 	bool LoadGrf(GrfFile& grf, const char* aFileName);
+
+	// Open a file using the file type system
+	virtual void OpenFile(const char* aFileName) = 0;
+
+	// Retrieve a file's type icon
+	virtual IFileIcon* GetFileIcon(const char* aFileName) = 0;
+
+	// Retrieve a file's description
+	virtual void GetFileDescription(const char* aFileName, char* buffer, size_t size) = 0;
 };
 
 extern "C" IGuiManager* GetGuiManager();

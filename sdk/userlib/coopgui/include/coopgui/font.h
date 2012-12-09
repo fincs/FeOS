@@ -38,47 +38,6 @@ struct IFont
 	virtual int PrintText(const surface_t* s, int x, int y, const char* text, color_t brush = Colors::Black, word_t flags = 0) = 0;
 };
 
-class FontPtr
-{
-	IFont* ptr;
-
-	inline void Clear()
-	{
-		if (ptr)
-		{
-			ptr->Dispose();
-			ptr = nullptr;
-		}
-	}
-
-	inline void Set(IFont* newPtr)
-	{
-		Clear();
-		ptr = newPtr;
-	}
-
-public:
-
-	inline FontPtr() : ptr(nullptr) { }
-	inline FontPtr(IFont* newPtr) : ptr(newPtr) { }
-	inline FontPtr(FontPtr& oPtr) : ptr(oPtr.ptr) { oPtr.ptr = nullptr; }
-	inline ~FontPtr() { Clear(); }
-
-	inline FontPtr& operator = (IFont* x)
-	{
-		Set(x);
-		return *this;
-	}
-
-	inline FontPtr& operator = (FontPtr& x)
-	{
-		Set(x.ptr);
-		x.ptr = nullptr;
-		return *this;
-	}
-
-	inline IFont* operator -> () { return ptr; }
-	inline operator IFont* () { return ptr; }
-};
+using FontPtr = ResPtr<IFont>;
 
 __COOPGUI_NAMESPACE_END
