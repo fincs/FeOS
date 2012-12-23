@@ -6,6 +6,7 @@
 
 IGuiManager* g_guiManager;
 GrfFile grfKeyboard;
+bool bLoadedGraphics;
 
 static const color_t conPal[16] =
 {
@@ -205,8 +206,12 @@ int main()
 {
 	g_guiManager = GetGuiManagerChecked();
 
-	if (!g_guiManager->LoadGrf(grfKeyboard, "/data/FeOS/gui/assets/keyboard.grf"))
-		return 0;
+	if (!bLoadedGraphics)
+	{
+		if (!g_guiManager->LoadGrf(grfKeyboard, "/data/FeOS/gui/assets/keyboard.grf"))
+			return 0;
+		bLoadedGraphics = true;
+	}
 
 	ConsoleHostApp app;
 	g_guiManager->RunApplication(&app);
