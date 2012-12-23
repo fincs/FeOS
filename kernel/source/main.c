@@ -139,6 +139,7 @@ void videoReset()
 	lcdMainOnTop();
 
 	vramDefault();
+	setBrightness(3, 0);
 
 	VRAM_E_CR = 0;
 	VRAM_F_CR = 0;
