@@ -7,6 +7,7 @@ build/
 !/apps/Makefile
 !/apps/unixtools/
 !/apps/cmdprompt/
+!/apps/cmdhost/
 !/apps/stats/
 !/apps/tcpcmd/
 !/apps/fpm/

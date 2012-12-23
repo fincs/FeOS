@@ -1,0 +1,11 @@
+; Mandatory keys
+; The icon path is relative to /data/FeOS/gui/ if it does not begin with /
+; The icon must be a 16-bit 64x64 bitmap stored in a GRF file
+
+Title: FeOS Command Prompt
+Description: System utility
+Icon: cmdhost.grf
+Command: cmdhost
+
+FileType-Icon: cmdhost.grf
+FileType-Command: cmdhost %
