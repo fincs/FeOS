@@ -18,9 +18,11 @@
 typedef unsigned char byte_t;
 typedef unsigned short hword_t;
 typedef unsigned int word_t;
+typedef unsigned long long dword_t;
 typedef signed char char_t;
 typedef signed short short_t;
 typedef signed int long_t;
+typedef signed long long dlong_t;
 typedef void* instance_t;
 typedef word_t file_t;
 typedef word_t bool_t;
@@ -44,6 +46,7 @@ extern char __hinstance[];
 
 #define FEOS_EXPORT __attribute__((__visibility__("default")))
 #define FEOS_WEAK __attribute__((weak))
+#define FEOS_DEPRECATED __attribute__((deprecated))
 
 #define FEOSENTRY EXTERNC
 #define FEOSINIT __attribute__((constructor))

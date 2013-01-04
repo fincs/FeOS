@@ -98,7 +98,13 @@ typedef struct
 	word_t total, free, used;
 } usagestats_t;
 
-bool FeOS_GetDiskStats(usagestats_t*);
+typedef struct
+{
+	dword_t total, free, used;
+} usagestats64_t;
+
+bool FeOS_GetDiskStats(usagestats_t*) FEOS_DEPRECATED;
+bool FeOS_GetDiskStats64(usagestats64_t*);
 void FeOS_GetMemStats(usagestats_t*);
 
 #define memBarrier() asm volatile("":::"memory")

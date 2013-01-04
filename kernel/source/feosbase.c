@@ -74,6 +74,11 @@ typedef struct
 	word_t total, free, used;
 } usagestats_t;
 
+typedef struct
+{
+	u64 total, free, used;
+} usagestats64_t;
+
 bool FeOS_GetDiskStats(usagestats_t* pStats)
 {
 	struct statvfs fiData;
@@ -81,6 +86,19 @@ bool FeOS_GetDiskStats(usagestats_t* pStats)
 	{
 		pStats->total = fiData.f_frsize * fiData.f_blocks;
 		pStats->free = fiData.f_bsize * fiData.f_bfree;
+		pStats->used = pStats->total - pStats->free;
+		return true;
+	}
+	return false;
+}
+
+bool FeOS_GetDiskStats64(usagestats64_t* pStats)
+{
+	struct statvfs fiData;
+	if (pStats && statvfs("/", &fiData) >= 0)
+	{
+		pStats->total = (u64)fiData.f_frsize * fiData.f_blocks;
+		pStats->free = (u64)fiData.f_bsize * fiData.f_bfree;
 		pStats->used = pStats->total - pStats->free;
 		return true;
 	}
@@ -148,6 +166,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_SetAutoUpdate),
 	ADD_FUNC(FeOS_GetAutoUpdate),
 	ADD_FUNC(FeOS_GetDiskStats),
+	ADD_FUNC(FeOS_GetDiskStats64),
 	ADD_FUNC(FeOS_GetMemStats),
 	ADD_FUNC(FeOS_GetTickCount),
 	ADD_FUNC(FeOS_GetVersion),

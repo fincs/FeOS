@@ -42,6 +42,7 @@ FeOS_GetCurExecStatus \
 FeOS_SetAutoUpdate \
 FeOS_GetAutoUpdate \
 FeOS_GetDiskStats \
+FeOS_GetDiskStats64 \
 FeOS_GetMemStats \
 FeOS_GetTickCount \
 FeOS_GetVersion \
