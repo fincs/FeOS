@@ -1,4 +1,5 @@
 #pragma once
+#pragma interface
 
 __COOPGUI_NAMESPACE_BEGIN
 

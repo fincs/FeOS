@@ -74,11 +74,11 @@ int setvbuf(FILE*, char*, int, size_t);
 int vfprintf(FILE*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
 int vsprintf(char*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0)));
 int vsnprintf(char*, size_t, const char*, va_list) __attribute__ ((format (__printf__, 3, 0)));
-int vfscanf(FILE*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
-int vsscanf(const char*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));;
+int vfscanf(FILE*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));
+int vsscanf(const char*, const char*, va_list) __attribute__ ((format (__scanf__, 2, 0)));
 
 int vprintf(const char*, va_list) __attribute__ ((format (__printf__, 1, 0)));
-int vscanf(const char*, va_list) __attribute__ ((format (__scanf__, 1, 0)));;
+int vscanf(const char*, va_list) __attribute__ ((format (__scanf__, 1, 0)));
 
 int printf(const char*, ...) __attribute__ ((format (__printf__, 1, 2)));
 int fprintf(FILE*, const char*, ...) __attribute__ ((format (__printf__, 2, 3)));

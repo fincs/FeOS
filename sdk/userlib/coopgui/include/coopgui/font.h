@@ -1,4 +1,5 @@
 #pragma once
+#pragma interface
 
 __COOPGUI_NAMESPACE_BEGIN
 
@@ -29,7 +30,7 @@ struct IFont
 
 	virtual int GetHeight() = 0;
 	virtual int GetBaseline() = 0;
-	virtual bool LoadGlyph(int codePoint, glyph_t* /*out*/ pGlyph);
+	virtual bool LoadGlyph(int codePoint, glyph_t* /*out*/ pGlyph) = 0;
 
 	// Print text in a 256x192 16-bit bitmap buffer
 	virtual int PrintText(color_t* buf, int x, int y, const char* text, color_t brush = Colors::Black, word_t flags = 0) = 0;
