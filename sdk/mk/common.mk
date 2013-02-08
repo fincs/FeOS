@@ -174,7 +174,7 @@ endif
 ifeq ($(strip $(CONF_TARGET)),dynlib)
 	@if [ -e $(TARGET).imp.a ]; then \
 		mkdir -p lib; \
-		cp $(TARGET).imp.a lib/lib$(TARGET).a; \
+		mv -f $(TARGET).imp.a lib/lib$(TARGET).a; \
 	fi
 endif
 
