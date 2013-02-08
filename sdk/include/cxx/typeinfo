@@ -34,9 +34,9 @@
 #pragma GCC system_header
 
 #include <exception>
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
+/*#ifdef __GXX_EXPERIMENTAL_CXX0X__
 #include <bits/hash_bytes.h>
-#endif
+#endif*/
 
 #ifdef BUILD_FEOSCXX
 #pragma GCC visibility push(default)
@@ -148,7 +148,7 @@ namespace std
     bool operator!=(const type_info& __arg) const
     { return !operator==(__arg); }
 
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
+/*#ifdef __GXX_EXPERIMENTAL_CXX0X__
     size_t hash_code() const throw()
     {
 #  if !__GXX_MERGED_TYPEINFO_NAMES
@@ -158,7 +158,7 @@ namespace std
       return reinterpret_cast<size_t>(__name);
 #  endif
     }
-#endif // __GXX_EXPERIMENTAL_CXX0X__
+#endif // __GXX_EXPERIMENTAL_CXX0X__*/
 
     // Return true if this is a pointer type of some kind
     virtual bool __is_pointer_p() const;
