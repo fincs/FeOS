@@ -12,4 +12,5 @@ namespace std
 	using ::ptrdiff_t;
 	using ::size_t;
 	using ::ssize_t;
+	using ::nullptr_t;
 }

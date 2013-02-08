@@ -17,4 +17,5 @@ typedef long_t ssize_t;
 #define NULL ((void*)0)
 #else
 #define NULL 0
+typedef decltype(nullptr) nullptr_t;
 #endif
