@@ -668,6 +668,10 @@ get_eit_entry (_Unwind_Control_Block *ucbp, _uw return_address)
     {
       /* Execute region offset to PR */
       UCB_PR_ADDR (ucbp) = selfrel_offset31 (ucbp->pr_cache.ehtp);
+      /* <fincs-edit> Detect stub PRs */
+      extern void __gxx_personality_v0();
+      if (*(unsigned int*)(UCB_PR_ADDR (ucbp)) == 0xF7F000F0)
+          UCB_PR_ADDR (ucbp) = (_uw) &__gxx_personality_v0;
     }
   return _URC_OK;
 }
