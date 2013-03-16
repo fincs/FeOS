@@ -39,6 +39,10 @@ struct IGuiManager
 
 	// Retrieve a file's description
 	virtual void GetFileDescription(const char* aFileName, char* buffer, size_t size) = 0;
+
+	// Create a keyboard. Set layout parameter to null in order to use the current layout.
+	// (Currently layouts are not supported and anything else other than null will make the call fail)
+	virtual IKeyboard* CreateKeyboard(const char* layout = nullptr) = 0;
 };
 
 extern "C" IGuiManager* GetGuiManager();
