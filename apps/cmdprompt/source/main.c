@@ -50,12 +50,26 @@ static inline bool checkNoShellBoot()
 	return (k & KEY_DOWN) && (k & KEY_LEFT) && (k & KEY_A);
 }
 
+static inline bool checkShellDisabled()
+{
+	FILE* f = fopen("/data/FeOS/noshell", "r");
+	if (f)
+	{
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
 static bool executeShell(cmd_data* data)
 {
 	static const char* shell_argv[] = { SHELL_PROGRAM, NULL };
 	static const int shell_argc = 1;
 
 	bool result = true;
+
+	if (checkShellDisabled())
+		return false; // Shortcut.
 
 	if (checkNoShellBoot())
 		result = false;
