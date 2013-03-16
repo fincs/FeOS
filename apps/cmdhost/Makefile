@@ -44,5 +44,4 @@ install: all
 	@cp $(FILETYPES) $(FEOSDEST)/data/FeOS/gui/ftypes/$(TARGET).cfg
 	@grit apptile.png -ftr -fh! -gb -gB16 -gT! -gzl -p! -o $(FEOSDEST)/data/FeOS/gui/$(TARGET).grf
 	@grit fileicon.png -ftr -fh! -gb -gB16 -gT7FFE -gzl -p! -o $(FEOSDEST)/data/FeOS/gui/ftypes/$(TARGET).grf
-	@grit keyboard.png -ftr -fh! -gB8 -gzl -m -mLf -mR8 -mRft -mzl -o $(FEOSDEST)/data/FeOS/gui/assets/keyboard.grf
 	@fmantool application.manifest $(FEOSDEST)/data/FeOS/gui/$(TARGET).app

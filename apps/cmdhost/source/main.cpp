@@ -5,8 +5,6 @@
 #include "selected.h"
 
 IGuiManager* g_guiManager;
-GrfFile grfKeyboard;
-bool bLoadedGraphics;
 
 static const color_t conPal[16] =
 {
@@ -48,7 +46,7 @@ class ConsoleHostApp : public CApplication
 {
 	thread_t hChildThread;
 	CConsole oCon;
-	CKeyboard oKbd;
+	KeyboardPtr oKbd;
 	u16* conMap;
 	SpriteEntry *caretSpr, *selSpr;
 	int blinkTimer;
@@ -56,7 +54,7 @@ class ConsoleHostApp : public CApplication
 	FILE *fwritehook, *freadhook;
 
 	int bgKeybd, bgBmp;
-	u16* bmpBuf;
+	color_t* bmpBuf;
 
 #define _X(x) ((ConsoleHostApp*)(x))
 
@@ -69,11 +67,11 @@ class ConsoleHostApp : public CApplication
 	static ssize_t Read(void* pThis, char* buf, size_t len)
 	{
 		FeOS_Yield();
-		return _X(pThis)->oKbd.handleRead(buf, len);
+		return _X(pThis)->oKbd->SyncRead(buf, len);
 	}
 
 public:
-	ConsoleHostApp() : oKbd(oCon), blinkTimer(0)
+	ConsoleHostApp() : blinkTimer(0)
 	{
 		// Set the title of our application
 		SetTitle("Command Prompt");
@@ -107,6 +105,14 @@ public:
 		FeOS_FreeThread(hChildThread);
 		fclose(freadhook);
 		fclose(fwritehook);
+	}
+
+	bool Initialize()
+	{
+		oKbd = g_guiManager->CreateKeyboard();
+		if (!oKbd)
+			return false;
+		return true;
 	}
 
 	void OnActivate()
@@ -151,12 +157,13 @@ public:
 
 		selSpr->isHidden = true;
 
-		dmaCopy(grfKeyboard.gfxData, bgGetGfxPtr(bgKeybd), MemChunk_GetSize(grfKeyboard.gfxData));
-		dmaCopy(grfKeyboard.mapData, bgGetMapPtr(bgKeybd), MemChunk_GetSize(grfKeyboard.mapData));
-		dmaCopy(grfKeyboard.palData, BG_PALETTE_SUB,       MemChunk_GetSize(grfKeyboard.palData));
+		auto kbdGfx = oKbd->GetGraphics();
+		dmaCopy(kbdGfx->gfxData, bgGetGfxPtr(bgKeybd), MemChunk_GetSize(kbdGfx->gfxData));
+		dmaCopy(kbdGfx->mapData, bgGetMapPtr(bgKeybd), MemChunk_GetSize(kbdGfx->mapData));
+		dmaCopy(kbdGfx->palData, BG_PALETTE_SUB,       MemChunk_GetSize(kbdGfx->palData));
 
 		bmpBuf = bgGetGfxPtr(bgBmp);
-		oKbd.renderLabels(bmpBuf);
+		oKbd->SetDrawBuffer(bmpBuf);
 	}
 
 	void OnVBlank()
@@ -169,8 +176,10 @@ public:
 
 		word_t kDown = keysDown();
 
+		bool bIsReading = oKbd->InSyncRead();
+
 		oCon.render(conMap);
-		setBrightness(2, oKbd.isReading() ? 0 : -8);
+		setBrightness(2, bIsReading ? 0 : -8);
 
 		blinkTimer ++;
 		if (blinkTimer >= 30) blinkTimer = 0;
@@ -180,9 +189,13 @@ public:
 
 		if (kDown & KEY_TOUCH)
 		{
-			CTouchPos tp;
-			if (oKbd.handleClick(bmpBuf, tp))
+			TouchPos tp;
+			int ret = oKbd->OnClick(tp);
+			if (ret >= 0)
 			{
+				if (bIsReading && ret != 0)
+					oCon.print(ret);
+
 				selSpr->x = tp.px - 4;
 				selSpr->y = tp.py - 4;
 				selSpr->isHidden = false;
@@ -206,14 +219,9 @@ int main()
 {
 	g_guiManager = GetGuiManagerChecked();
 
-	if (!bLoadedGraphics)
-	{
-		if (!g_guiManager->LoadGrf(grfKeyboard, "/data/FeOS/gui/assets/keyboard.grf"))
-			return 0;
-		bLoadedGraphics = true;
-	}
-
 	ConsoleHostApp app;
+	if (!app.Initialize())
+		return 0;
 	g_guiManager->RunApplication(&app);
 
 	return 0;
