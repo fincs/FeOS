@@ -1,11 +1,19 @@
 #pragma once
 
-__COOPGUI_NAMESPACE_BEGIN
+namespace FeOS
+{
+namespace UI
+{
+
+/** @addtogroup coopgui Cooperative GUI
+ *  @{
+ */
 
 //-----------------------------------------------------------------------
 // Default IApplication Implementation
 //-----------------------------------------------------------------------
 
+//! \brief Application interface implementation base class.
 template <typename AppInterface>
 class CApplicationEx : public AppInterface
 {
@@ -13,19 +21,22 @@ class CApplicationEx : public AppInterface
 	AppCookie m_appCookie;
 
 protected:
+	//! \brief Closes the application.
 	inline void Close() { m_appInfo.Flags |= AppFlags::Closed; }
 
+	//! \brief Sets the title of the application.
 	inline void SetTitle(const char* newTitle)
 	{
 		m_appInfo.Title = newTitle;
 	}
 
+	//! \brief Sets the behavioural flags of the application (see AppInfo::Flags).
 	inline void SetFlags(word_t newFlags)
 	{
 		m_appInfo.Flags = newFlags;
 	}
 
-	// nullptr - default icon
+	//! \brief Sets the icon of the application. If `nullptr`, the default icon is used.
 	inline void SetIcon(color_t* pIcon)
 	{
 		m_appInfo.Icon = pIcon;
@@ -58,6 +69,10 @@ public:
 	inline void OnBgProcess() { }
 };
 
+//! \brief Default application interface implementation. You should inherit from this class.
 using CApplication = CApplicationEx<IApplication>;
 
-__COOPGUI_NAMESPACE_END
+/** @} */
+
+}
+}

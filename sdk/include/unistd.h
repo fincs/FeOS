@@ -12,9 +12,19 @@ extern "C"
 {
 #endif
 
-int chdir(const char*);
-char* getcwd(char*, size_t);
-int ftruncate(int fd, off_t length);
+/** @file unistd.h
+ *  \brief POSIX-like misc functions
+ */
+
+/** @addtogroup crt_io Input/Output
+ *  @{
+ */
+
+int chdir(const char*); //!< Changes the current directory.
+char* getcwd(char*, size_t); //!< Gets the current directory.
+int ftruncate(int fd, off_t length); //!< Truncates a file.
+
+/** @} */
 
 #ifdef __cplusplus
 }

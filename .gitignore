@@ -1,4 +1,5 @@
 build/
+/sdk/docs/
 /sdk/build7/
 /sdk/build_dbg/
 /sdk/build_cxx/

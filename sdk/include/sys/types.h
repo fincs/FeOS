@@ -1,6 +1,6 @@
 //
 // FeOS C Standard Library
-// sys/stat.h
+// sys/types.h
 //     POSIX-like type definitions
 //
 
@@ -8,11 +8,21 @@
 #include <stddef.h>
 #include <time.h>
 
-#define NAME_MAX 767
+/** @file types.h
+ *  \brief POSIX-like type definitions
+ */
 
-typedef int dev_t;
-typedef int mode_t;
-typedef int ino_t;
-typedef unsigned short uid_t;
-typedef unsigned short gid_t;
-typedef unsigned short nlink_t;
+/** @addtogroup crt_io Input/Output
+ *  @{
+ */
+
+#define NAME_MAX 767 //!< Maximum filename length.
+
+typedef int dev_t; //!< TODO: description
+typedef int mode_t; //!< TODO: description
+typedef int ino_t; //!< TODO: description
+typedef unsigned short uid_t; //!< TODO: description
+typedef unsigned short gid_t; //!< TODO: description
+typedef unsigned short nlink_t; //!< TODO: description
+
+/** @} */

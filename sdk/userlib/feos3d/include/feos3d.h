@@ -28,7 +28,7 @@
 
 
 ---------------------------------------------------------------------------------*/
-/*! \file videoGL.h
+/*! \file feos3d.h
 	\brief openGL (ish) interface to DS 3D hardware.
 */
 

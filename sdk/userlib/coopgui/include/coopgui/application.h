@@ -1,57 +1,87 @@
 #pragma once
 #pragma interface
 
-__COOPGUI_NAMESPACE_BEGIN
+#ifndef DOXYGEN
+#define __IFACEVER(x) static inline constexpr int __iface_ver() { return (x); }
+#else
+#define __IFACEVER(x)
+#endif
+
+namespace FeOS
+{
+namespace UI
+{
+
+/** @addtogroup coopgui Cooperative GUI
+ *  @{
+ */
 
 //-----------------------------------------------------------------------
 // Application Interface
 //-----------------------------------------------------------------------
 
 // Application flags
+#ifndef DOXYGEN
 __ENUM_BEGIN(AppFlags, word_t)
-	UsesSelect = BIT(0), // Disables default handling of the SELECT button
-	Closed = (word_t)BIT(31), // Used internally in order to close the application
+	UsesSelect = BIT(0),
+	Closed = (word_t)BIT(31),
 	// More to come...
 __ENUM_END(AppFlags);
+#endif
 
-// Application info structure
+//! \brief Application info structure
 struct AppInfo
 {
-	int InterfaceVersion;
-	const char* Title;
+	int InterfaceVersion; //!< Specifies the interface version
+	const char* Title; //!< \brief Specifies the title of the application
+	//! \brief Specifies behavioural flags.
+	//!
+	//! - `AppFlags::UsesSelect` -- Disables default handling of the SELECT button
+	//! - `AppFlags::Closed` -- Used internally in order to close the application
 	word_t Flags;
-	color_t* Icon;
+	color_t* Icon; //!< Specifies the icon of the application (16x16 16bit image)
 };
 
-// Application cookie
+//! Application cookie.
+#ifndef DOXYGEN
 typedef struct { } _tagAppCookie, *AppCookie;
+#else
+typedef void* AppCookie;
+#endif
 
-#define __IFACEVER(x) static inline constexpr int __iface_ver() { return (x); }
-
+//! Application interface
 struct IApplication
 {
 	__IFACEVER(1);
 
-	// Get information about the application - the returned pointer
-	// MUST be valid and constant during the lifetime of the object
+	//! \brief Get information about the application.
+	//! \returns The returned pointer MUST be valid and constant during the lifetime of the object
 	virtual const AppInfo* GetInfo() = 0;
 
-	// Get or set the application cookie (nullptr = get, otherwise set).
-	// Returns the (old in case of setting) application cookie.
+	//! \brief Get or set the application cookie (nullptr = get, otherwise set).
+	//! \returns The (old in case of setting) application cookie.
 	virtual AppCookie GetOrSetCookie(AppCookie cookie) = 0;
 
-	// Called when an application is (de)activated (aka switched from/to)
-	// Do your video inits in OnActivate and any necessary cleanups in OnDeactivate
+	//! \brief Called when an application is activated (aka switched to).
+	//!
+	//! Perform any necessary video initialization here.
 	virtual void OnActivate() = 0;
+
+	//! \brief Called when an application is deactivated (aka switched from).
+	//!
+	//! Perform any necessary cleanups here.
 	virtual void OnDeactivate() = 0;
 
-	// Called after VBlank, intended for video and key updates (graphics loading if necessary)
+	//! \brief Called after VBlank, intended for video and key updates (graphics loading if necessary)
 	virtual void OnVBlank() = 0;
 
-	// Called after all VBlank processing is done, even for non-active apps
+	//! \brief Called after all VBlank processing is done, even for non-active apps.
 	virtual void OnBgProcess() = 0;
 };
 
-#undef __IFACEVER
+/** @} */
 
-__COOPGUI_NAMESPACE_END
+}
+}
+
+#undef __IFACEVER

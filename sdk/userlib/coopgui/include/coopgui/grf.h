@@ -1,11 +1,19 @@
 #pragma once
 
-__COOPGUI_NAMESPACE_BEGIN
+namespace FeOS
+{
+namespace UI
+{
+
+/** @addtogroup coopgui Cooperative GUI
+ *  @{
+ */
 
 //-----------------------------------------------------------------------
 // GRF API
 //-----------------------------------------------------------------------
 
+//! \brief GRF header. Read <a href="http://www.coranac.com/man/grit/html/grit.htm#ssec-info-grf">the Grit documentation</a> for more details.
 struct GrfHeader
 {
 	u8  gfxAttr, mapAttr, mmapAttr, palAttr;
@@ -14,13 +22,17 @@ struct GrfHeader
 	u32 gfxWidth, gfxHeight;
 };
 
+//! \brief GRF graphics object. Read <a href="http://www.coranac.com/man/grit/html/grit.htm#ssec-info-grf">the Grit documentation</a> for more details.
 struct GrfFile
 {
-	GrfHeader hdr;
+	GrfHeader hdr; //!< GRF header.
 	memchunk_t gfxData, mapData, mtilData, mmapData, palData;
 
 	inline GrfFile() : gfxData(nullptr), mapData(nullptr), mtilData(nullptr), mmapData(nullptr), palData(nullptr) { }
 	~GrfFile();
 };
 
-__COOPGUI_NAMESPACE_END
+/** @} */
+
+}
+}

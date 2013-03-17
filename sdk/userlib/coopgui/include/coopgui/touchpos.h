@@ -1,22 +1,32 @@
 #pragma once
 
-__COOPGUI_NAMESPACE_BEGIN
+namespace FeOS
+{
+namespace UI
+{
 
-// Touch position wrapper class
+/** @addtogroup coopgui Cooperative GUI
+ *  @{
+ */
+
+//! \brief Touch position wrapper class
 class TouchPos : public touchPosition
 {
 public:
+	//! \brief Constructor that automatically reads the stylus position.
 	inline TouchPos()
 	{
 		touchRead(this);
 	}
 
+	//! \brief Constructor that receives the x and y positions.
 	inline TouchPos(int x, int y)
 	{
 		px = x;
 		py = y;
 	}
 
+	//! \brief Determines whether the position is inside the specified coordinate box.
 	inline bool InRegion(int x, int y, int w, int h) const
 	{
 		int x2 = x + w;
@@ -25,4 +35,7 @@ public:
 	}
 };
 
-__COOPGUI_NAMESPACE_END
+/** @} */
+
+}
+}

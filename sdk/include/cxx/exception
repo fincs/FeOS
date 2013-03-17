@@ -26,7 +26,7 @@
 // <http://www.gnu.org/licenses/>.
 
 /** @file exception
- *  This is a Standard C++ Library header.
+ *  @brief Provides C++ exception handling.
  */
 
 #ifndef __EXCEPTION__
@@ -44,8 +44,7 @@ extern "C++" {
 namespace std
 {
   /**
-   * @defgroup exceptions Exceptions
-   * @ingroup diagnostics
+   * @defgroup cpp_exceptions C++ Exceptions
    *
    * Classes and functions for reporting errors via exception classes.
    * @{

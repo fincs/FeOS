@@ -1,7 +1,15 @@
 #pragma once
 
-__COOPGUI_NAMESPACE_BEGIN
+namespace FeOS
+{
+namespace UI
+{
 
+/** @addtogroup coopgui Cooperative GUI
+ *  @{
+ */
+
+//! \brief Generic resource smart pointer datatype.
 template <typename T>
 class ResPtr
 {
@@ -46,4 +54,7 @@ public:
 	inline operator T* () { return ptr; }
 };
 
-__COOPGUI_NAMESPACE_END
+/** @} */
+
+}
+}
