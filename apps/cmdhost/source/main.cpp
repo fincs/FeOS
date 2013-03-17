@@ -52,6 +52,7 @@ class ConsoleHostApp : public CApplication
 	int blinkTimer;
 	static stream_t hostStreamSt;
 	FILE *fwritehook, *freadhook;
+	bool bIsInteractive, bFinished;
 
 	int bgKeybd, bgBmp;
 	color_t* bmpBuf;
@@ -71,7 +72,7 @@ class ConsoleHostApp : public CApplication
 	}
 
 public:
-	ConsoleHostApp() : blinkTimer(0)
+	ConsoleHostApp() : blinkTimer(0), bFinished(false)
 	{
 		// Set the title of our application
 		SetTitle("Command Prompt");
@@ -81,23 +82,6 @@ public:
 
 		// Set the icon
 		SetIcon((color_t*)iconBitmap);
-
-		fwritehook = FeOS_OpenStream(&hostStreamSt, this);
-		freadhook = FeOS_OpenStream(&hostStreamSt, this);
-		setvbuf(fwritehook, NULL, _IONBF, 0);
-		setvbuf(freadhook, NULL, _IOLBF, 256);
-
-		FILE *fprevhook[3];
-		fprevhook[0] = FeOS_SetStdin(freadhook);
-		fprevhook[1] = FeOS_SetStdout(fwritehook);
-		fprevhook[2] = FeOS_SetStderr(fwritehook);
-
-		static const char* argv[] = { "cmd", nullptr };
-		hChildThread = FeOS_CreateProcess(1, argv);
-
-		FeOS_SetStdin(fprevhook[0]);
-		FeOS_SetStdout(fprevhook[1]);
-		FeOS_SetStderr(fprevhook[2]);
 	}
 
 	~ConsoleHostApp()
@@ -107,12 +91,53 @@ public:
 		fclose(fwritehook);
 	}
 
-	bool Initialize()
+	bool Initialize(int argc, const char* argv[])
 	{
 		oKbd = g_guiManager->CreateKeyboard();
 		if (!oKbd)
 			return false;
-		return true;
+
+		if (argc == 0)
+		{
+			static const char* stock_argv[] = { "cmd", nullptr };
+			bIsInteractive = true;
+			argc = 1;
+			argv = stock_argv;
+		} else
+		{
+			bIsInteractive = false;
+
+			const char* mainFile = argv[0];
+			int mFlen = strlen(mainFile);
+			if (mFlen > 4 && stricmp(mainFile + mFlen - 4, ".cmd") == 0)
+			{
+				argc ++;
+				argv --;
+				argv[0] = "cmd";
+			}
+		}
+
+		fwritehook = FeOS_OpenStream(&hostStreamSt, this);
+		if (!fwritehook) return false;
+
+		freadhook = FeOS_OpenStream(&hostStreamSt, this);
+		if (!freadhook) return false;
+
+		setvbuf(fwritehook, NULL, _IONBF, 0);
+		setvbuf(freadhook, NULL, _IOLBF, 256);
+
+		FILE *fprevhook[3];
+		fprevhook[0] = FeOS_SetStdin(freadhook);
+		fprevhook[1] = FeOS_SetStdout(fwritehook);
+		fprevhook[2] = FeOS_SetStderr(fwritehook);
+		
+		hChildThread = FeOS_CreateProcess(argc, argv);
+
+		FeOS_SetStdin(fprevhook[0]);
+		FeOS_SetStdout(fprevhook[1]);
+		FeOS_SetStderr(fprevhook[2]);
+
+		return hChildThread != nullptr;
 	}
 
 	void OnActivate()
@@ -168,13 +193,33 @@ public:
 
 	void OnVBlank()
 	{
-		if (!FeOS_IsThreadActive(hChildThread))
+		if (!FeOS_IsThreadActive(hChildThread) && !bFinished) do
+		{
+			bFinished = true;
+
+			int rc = FeOS_GetThreadRC(hChildThread);
+			if (rc != 0)
+			{
+				fprintf(fwritehook, "\nThe application exited with a\nfailure code of %d.\nPress START to close...\n", rc);
+				break;
+			}
+
+			if (bIsInteractive)
+			{
+				Close();
+				return;
+			}
+
+			fprintf(fwritehook, "\nThe application just exited.\nPress START to close...\n");
+		} while(0);
+
+		word_t kDown = keysDown();
+
+		if (bFinished && kDown & KEY_START)
 		{
 			Close();
 			return;
 		}
-
-		word_t kDown = keysDown();
 
 		bool bIsReading = oKbd->InSyncRead();
 
@@ -215,12 +260,12 @@ stream_t ConsoleHostApp::hostStreamSt =
 	NULL
 };
 
-int main()
+int main(int argc, const char* argv[])
 {
 	g_guiManager = GetGuiManagerChecked();
 
 	ConsoleHostApp app;
-	if (!app.Initialize())
+	if (!app.Initialize(argc - 1, argv + 1))
 		return 0;
 	g_guiManager->RunApplication(&app);
 
