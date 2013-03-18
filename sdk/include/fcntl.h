@@ -43,12 +43,14 @@ ssize_t read(int, void*, size_t); //!< Reads data using a file descriptor.
 ssize_t write(int, const void*, size_t); //!< Writes data using a file descriptor.
 off_t lseek(int, off_t, int); //!< Changes the position of a file descriptor.
 
-static inline off_t tell(int fd) //!< Retrieves the position of a file descriptor.
+//! \brief Retrieves the position of a file descriptor.
+static inline off_t tell(int fd)
 {
 	return lseek(fd, 0, SEEK_CUR);
 }
 
-static inline int creat(const char* filename, mode_t mode) //!< Creates a file.
+//! \brief Creates a file.
+static inline int creat(const char* filename, mode_t mode)
 {
 	return open(filename, O_CREAT | O_WRONLY | O_TRUNC, mode);
 }

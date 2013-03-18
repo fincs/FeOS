@@ -53,6 +53,7 @@ extern "C"
 #define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
 
 //! \brief File/directory status structure.
+//! \headerfile stat.h <sys/stat.h>
 struct stat 
 {
 	dev_t   st_dev;

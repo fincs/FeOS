@@ -1,9 +1,9 @@
  _______________________________
 /                               \
-| FeOS Software Development Kit | v0.0-prerelease
+| FeOS Software Development Kit | v0.1-alpha Developer Preview
 \_______________________________/
 
-Copydinner (cd) fincs 2010-12, All Meals Reserved
+Copydinner (cd) fincs 2010-13, All Meals Reserved
 
 Introduction
 ============

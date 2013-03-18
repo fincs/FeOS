@@ -19,8 +19,8 @@ extern "C"
 	\mainpage FeOS SDK Documentation
 
 	\section intro Introduction
-	Welcome to the FeOS SDK Reference Documentation. Here you will find
-	information on how to develop FeOS applications.
+	Welcome to the official FeOS SDK Documentation. Here you will find information
+	(hopefully) on how to develop FeOS software.
 
 	\section contents Contents
 	- \ref templates
@@ -41,15 +41,16 @@ extern "C"
 	- \ref crt_cpp "C++ facilities and runtime library"
 
 	\subsection api FeOS API
-	- \ref api_base "FeOS Base Routines"
+	- \ref api_base "Core FeOS API"
 	- FeOS libnds-compatible DS hardware access API
 	  - \ref api_ds "Basic functions"
+	  - \ref api_math "Math functions"
 	  - \ref api_dsbg "Background functions"
 	  - \ref api_dsspr "Sprite functions"
 
 	\subsection userlibs System Libraries
 	- \ref multifeos.h "MultiFeOS (cooperative multitasking)"
-	- \ref feoswifi "FeOSWiFi (dswifi for FeOS)"
+	- \ref feoswifi "FeOSWifi (dswifi for FeOS)"
 	- \ref feos3d.h "FeOS3D (libnds videoGL for FeOS)"
 	- \ref far.h "libfar (FeOS ARchives)"
 	- \ref itcm.h "libitcm (ITCM memory allocation)"
