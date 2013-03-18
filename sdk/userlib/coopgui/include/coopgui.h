@@ -10,6 +10,9 @@
 
 /** @addtogroup coopgui Cooperative GUI
  *  @brief FeOS Cooperative GUI API.
+ *  @code
+ *  #include <coopgui.h>
+ *  @endcode
  *  @{
  */
 

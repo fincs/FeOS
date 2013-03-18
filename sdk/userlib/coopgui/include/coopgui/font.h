@@ -15,6 +15,7 @@ namespace UI
 //-----------------------------------------------------------------------
 
 //! \brief Font glyph data structure.
+//! \headerfile coopgui.h <coopgui.h>
 typedef struct
 {
 	byte_t width, height;
@@ -29,6 +30,7 @@ __ENUM_END(PrintTextFlags);
 #endif
 
 //! \brief 16-bit drawing surface data structure.
+//! \headerfile coopgui.h <coopgui.h>
 typedef struct
 {
 	//! 16-bit buffer.
@@ -37,6 +39,7 @@ typedef struct
 } surface_t;
 
 //! \brief Font interface.
+//! \headerfile coopgui.h <coopgui.h>
 struct IFont
 {
 	virtual void Dispose() = 0; //!< Releases the object.

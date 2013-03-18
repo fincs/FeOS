@@ -11,9 +11,17 @@ extern "C"
 {
 #endif
 
-int* FeOS_GetErrnoPtr();
+/** @file errno.h
+ *  \brief C standard library error handling
+ */
 
-#define errno (*FeOS_GetErrnoPtr())
+/** @addtogroup crt_misc Misc utilities
+ *  @{
+ */
+
+int* FeOS_GetErrnoPtr(); //!< Get the pointer to the errno variable
+
+#define errno (*FeOS_GetErrnoPtr()) //!< Error variable
 
 #define	EPERM 1		/* Not super-user */
 #define	ENOENT 2	/* No such file or directory */
@@ -141,6 +149,8 @@ int* FeOS_GetErrnoPtr();
 #define EWOULDBLOCK EAGAIN	/* Operation would block */
 
 #define __ELASTERROR 2000	/* Users can add values starting here */
+
+/** @} */
 
 #ifdef __cplusplus
 }

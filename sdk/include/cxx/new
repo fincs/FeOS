@@ -26,7 +26,7 @@
 // <http://www.gnu.org/licenses/>.
 
 /** @file new
- *  This is a Standard C++ Library header.
+ *  \brief C++ memory management.
  *
  *  The header @c new defines several functions to manage dynamic memory and
  *  handling memory allocation errors; see
@@ -53,6 +53,11 @@ extern "C++" {
 
 namespace std 
 {
+  /**
+   * @addtogroup crt_cpp C++ facilities and runtime library
+   * @{
+   */
+  
   /**
    *  @brief  Exception possibly thrown by @c new.
    *  @ingroup exceptions
@@ -113,6 +118,7 @@ inline void* operator new[](std::size_t, void* __p) throw() { return __p; }
 inline void  operator delete  (void*, void*) throw() { }
 inline void  operator delete[](void*, void*) throw() { }
 //@}
+// @}
 } // extern "C++"
 
 #ifdef BUILD_FEOSCXX

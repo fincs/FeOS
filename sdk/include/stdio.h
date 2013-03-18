@@ -20,6 +20,14 @@ extern "C"
 
 /** @addtogroup crt_io Input/Output
  *  @brief Input/Output API, mixture of C standard library and POSIX-like elements.
+ *  @code
+ *  #include <stdio.h>
+ *  #include <dirent.h>
+ *  #include <fcntl.h>
+ *  #include <unistd.h>
+ *  #include <sys/stat.h>
+ *  #include <sys/types.h>
+ *  @endcode
  *  @{
  */
 

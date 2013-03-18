@@ -25,7 +25,6 @@ static inline constexpr color_t MakeColor(int r, int g, int b)
 
 namespace Colors
 {
-
 	/** @addtogroup coopgui Cooperative GUI
 	 *  @{
 	 */

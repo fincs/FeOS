@@ -14,6 +14,7 @@ namespace UI
 //-----------------------------------------------------------------------
 
 //! \brief Application interface implementation base class.
+//! \headerfile coopgui.h <coopgui.h>
 template <typename AppInterface>
 class CApplicationEx : public AppInterface
 {

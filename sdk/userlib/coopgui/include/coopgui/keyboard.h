@@ -15,6 +15,7 @@ namespace UI
 //-----------------------------------------------------------------------
 
 //! \brief Keyboard interface.
+//! \headerfile coopgui.h <coopgui.h>
 struct IKeyboard
 {
 	virtual void Dispose() = 0; //!< Releases the object.

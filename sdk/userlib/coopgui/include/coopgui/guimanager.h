@@ -15,6 +15,7 @@ namespace UI
 //-----------------------------------------------------------------------
 
 //! \brief GUI manager interface
+//! \headerfile coopgui.h <coopgui.h>
 struct IGuiManager
 {
 	//! \brief Retrieves the interface version the GUI manager implements.

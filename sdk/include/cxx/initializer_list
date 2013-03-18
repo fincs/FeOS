@@ -24,7 +24,7 @@
 // <http://www.gnu.org/licenses/>.
 
 /** @file initializer_list
- *  This is a Standard C++ Library header.
+ *  \brief C++11 initializer list support.
  */
 
 #ifndef _INITIALIZER_LIST
@@ -34,7 +34,12 @@
 
 namespace std
 {
-  /// initializer_list
+  /**
+   * @addtogroup crt_cpp C++ facilities and runtime library
+   * @{
+   */
+  
+  //! C++11 initializer list
   template<class _E>
     class initializer_list
     {
@@ -90,6 +95,8 @@ namespace std
     constexpr const _Tp*
     end(initializer_list<_Tp> __ils) noexcept
     { return __ils.end(); }
+  
+  // @}
 }
 
 #endif // _INITIALIZER_LIST

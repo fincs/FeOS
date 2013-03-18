@@ -6,6 +6,14 @@
 
 #pragma once
 
+/** @file iso646.h
+ *  \brief Alternate keywords for certain operators
+ */
+
+/** @addtogroup crt_misc Misc utilities
+ *  @{
+ */
+
 #define and    &&
 #define and_eq &=
 #define bitand &
@@ -17,3 +25,5 @@
 #define or_eq  |=
 #define xor    ^
 #define xor_eq ^=
+
+/** @} */

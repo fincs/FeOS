@@ -44,9 +44,15 @@ extern "C++" {
 namespace std
 {
   /**
-   * @defgroup cpp_exceptions C++ Exceptions
-   *
-   * Classes and functions for reporting errors via exception classes.
+   * @addtogroup crt_cpp C++ facilities and runtime library
+   * \brief C++ language runtime classes and functions.
+   * \code
+   * #include <exception>
+   * #include <initializer_list>
+   * #include <new>
+   * #include <typeinfo>
+   * #include <backtrace.h>
+   * \endcode
    * @{
    */
 

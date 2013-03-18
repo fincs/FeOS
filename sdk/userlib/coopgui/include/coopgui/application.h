@@ -30,6 +30,7 @@ __ENUM_END(AppFlags);
 #endif
 
 //! \brief Application info structure
+//! \headerfile coopgui.h <coopgui.h>
 struct AppInfo
 {
 	int InterfaceVersion; //!< Specifies the interface version
@@ -50,6 +51,7 @@ typedef void* AppCookie;
 #endif
 
 //! Application interface
+//! \headerfile coopgui.h <coopgui.h>
 struct IApplication
 {
 	__IFACEVER(1);

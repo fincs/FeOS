@@ -12,7 +12,7 @@ extern "C"
 {
 #endif
 
-/** @file types.h
+/** @file stat.h
  *  \brief More POSIX-like misc functions
  */
 

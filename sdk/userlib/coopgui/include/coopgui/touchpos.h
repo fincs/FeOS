@@ -10,6 +10,7 @@ namespace UI
  */
 
 //! \brief Touch position wrapper class
+//! \headerfile coopgui.h <coopgui.h>
 class TouchPos : public touchPosition
 {
 public:

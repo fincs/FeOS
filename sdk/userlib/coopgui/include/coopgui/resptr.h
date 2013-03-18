@@ -10,6 +10,7 @@ namespace UI
  */
 
 //! \brief Generic resource smart pointer datatype.
+//! \headerfile coopgui.h <coopgui.h>
 template <typename T>
 class ResPtr
 {

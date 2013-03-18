@@ -29,7 +29,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file feos3d.h
-	\brief openGL (ish) interface to DS 3D hardware.
+	\brief openGL(ish) interface to the DS 3D hardware. Based on libnds' videoGL module.
 */
 
 
@@ -71,13 +71,16 @@
 	(must be power of two and must be the same as LUT resolution)
 	in other words dont change unless you also change your LUTs
 ---------------------------------------------------------------------------------*/
+#ifndef DOXYGEN
 #define LUT_SIZE (1<<15)
 #define LUT_MASK ((1<<15) - 1)
+#endif
 
 ////////////////////////////////////////////////////////////
 // Misc. constants
 ////////////////////////////////////////////////////////////
 
+//! \brief Maximum allowed number of textures
 #define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
 
 
@@ -141,8 +144,8 @@ typedef struct GLvector {
 
 //////////////////////////////////////////////////////////////////////
 
-#define GL_FALSE     0
-#define GL_TRUE      1
+#define GL_FALSE     0 //!< True value
+#define GL_TRUE      1 //!< False value
 
 /*! \brief Enums selecting polygon draw mode<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A><BR>
@@ -367,12 +370,15 @@ typedef struct gl_hidden_globals {
 	uint8 isActive;					// Has this been called before?
 } gl_hidden_globals;
 
+#ifndef DOXYGEN
 
 // Pointer to global data for videoGL
 extern gl_hidden_globals glGlobalData;
 
 // Pointer to global data for videoGL
 static gl_hidden_globals* glGlob = &glGlobalData;
+
+#endif
 
 //---------------------------------------------------------------------------------
 //Fifo commands
@@ -475,7 +481,7 @@ void glTexParameter(int target, int param);
 /*! \brief Returns the active texture parameter (constructed from internal call to glTexParameter) */
 u32 glGetTexParameter(void);
 
-/* \brief glGetColorTableParameterEXT retrieves information pertaining to the currently bound texture's palette
+/*! \brief glGetColorTableParameterEXT retrieves information pertaining to the currently bound texture's palette
 \param target ignored, only here for OpenGL compatibility
 \param pname a parameter of type GL_TEXTURE_PALETTE_PARAM_ENUM, used to read a specific attribute into params
 \param params the destination for the attribute to read into */
@@ -516,14 +522,18 @@ void glTexCoord2f32(int u, int v);
 \param color the color to set for that material property */
 void glMaterialf(GL_MATERIALS_ENUM mode, rgb color);
 
+//! \brief Deinitializes feos3d, freeing all memory used by the library. (FeOS specific)
+void glDeinit(void);
+
+#ifndef DOXYGEN
+
 // This handles initialization of the GL state; this is called from glInit to keep globals synced between compilation units
 void glInit_C(void);
 
-// (fincs-addition) This frees all memory used by the library
-void glDeinit(void);
-
 // This returns a pointer to the globals for videoGL
 gl_hidden_globals* glGetGlobals();
+
+#endif
 
 
 #ifdef __cplusplus
@@ -646,8 +656,10 @@ GL_STATIC_INL
 	MATRIX_TRANSLATE = v->z;
 }
 
+#ifndef DOXYGEN
 // map old name to new name
 #define glTranslate3f32 glTranslatef32
+#endif
 
 GL_STATIC_INL
 /*! \fn  void glTranslatef32(int x, int y, int z)

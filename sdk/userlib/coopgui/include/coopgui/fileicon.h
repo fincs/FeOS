@@ -11,6 +11,7 @@ namespace UI
  */
 
 //! \brief File icon interface.
+//! \headerfile coopgui.h <coopgui.h>
 struct IFileIcon
 {
 	virtual void Dispose() = 0; //!< Releases the object.
