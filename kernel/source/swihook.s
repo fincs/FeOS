@@ -67,7 +67,7 @@ __SVCTable:
 	.word _SetAddressHandler
 
 	@ Kernel functions (0x1Z)
-	.word FeOS_DebugPrint
+	.word 0
 	.word FeOS_SetSuspendMode
 #ifdef DEBUG
 	.word __sassert
@@ -76,8 +76,8 @@ __SVCTable:
 #endif
 	writehook conwrite
 	writehook conerr
-	.word __FeOS_SuspendIRQ_t
-	.word __FeOS_RestoreIRQ_t
+	.word 0
+	.word 0
 	.word __FeOS_DrainWriteBuffer
 	.word __FeOS_WaitForMemAddr
 	.word _TimerWrite
@@ -161,22 +161,6 @@ __FeOS_IRQPoll:
 	strb r3, [r12, #0x208]
 	
 	@ return
-	bx lr
-
-.align 2
-__FeOS_SuspendIRQ_t:
-	mrs r1, cpsr
-	and r0, r1, #0x80
-	orr r1, #0x80
-	msr cpsr, r1
-	bx lr
-
-.align 2
-__FeOS_RestoreIRQ_t:
-	mrs r1, cpsr
-	bic r0, #0x80
-	orr r1, r0
-	msr cpsr, r1
 	bx lr
 
 .align 2

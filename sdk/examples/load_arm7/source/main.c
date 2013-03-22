@@ -10,7 +10,7 @@ int main()
 	if (arm7_inst)
 	{
 		int i;
-		for (i = 0; i < 60; i ++) FeOS_WaitForVBlank();
+		for (i = 0; i < 60; i ++) swiWaitForVBlank();
 		FeOS_FreeARM7(arm7_inst, fifoCh);
 	}
 	return 0;

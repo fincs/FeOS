@@ -10,11 +10,6 @@
 #include <malloc.h>
 #include <sys/statvfs.h>
 
-void FeOS_swi_DebugPrint(const char*);
-
-instance_t FeOS_swi_LoadModule_ARM7(const char*, int*);
-void FeOS_swi_FreeModule_ARM7(instance_t, int);
-
 void* FeOS_FindSymbol(instance_t hinst, const char* sym)
 {
 	CHK_HINST(hinst);
@@ -140,19 +135,13 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_EnumModules),
 	ADD_FUNC(FeOS_GetModule),
 	ADD_FUNC(FeOS_GetModuleName),
-	ADD_FUNC_ALIAS(FeOS_swi_LoadModule_ARM7, FeOS_LoadARM7),
-	ADD_FUNC_ALIAS(FeOS_swi_FreeModule_ARM7, FeOS_FreeARM7),
 	ADD_FUNC(FeOS_Execute),
-	ADD_FUNC(FeOS_WaitForVBlank),
-	ADD_FUNC_ALIAS(FeOS_swi_DebugPrint, FeOS_DebugPrint),
-	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlush, FeOS_DataCacheFlush),
-	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlushAll, FeOS_DataCacheFlushAll),
-	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidate, FeOS_InstrCacheInvalidate),
-	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidateAll, FeOS_InstrCacheInvalidateAll),
+	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlush, DC_FlushRange),
+	ADD_FUNC_ALIAS(FeOS_swi_DataCacheFlushAll, DC_FlushAll),
+	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidate, IC_InvalidateRange),
+	ADD_FUNC_ALIAS(FeOS_swi_InstrCacheInvalidateAll, IC_InvalidateAll),
 	ADD_FUNC_ALIAS(FeOS_swi_DrainWriteBuffer, FeOS_DrainWriteBuffer),
 	ADD_FUNC_ALIAS(FeOS_swi_WaitForMemAddr, FeOS_WaitForMemAddr),
-	ADD_FUNC_ALIAS(FeOS_swi_SuspendIRQ_t, FeOS_SuspendIRQ_t),
-	ADD_FUNC_ALIAS(FeOS_swi_RestoreIRQ_t, FeOS_RestoreIRQ_t),
 	ADD_FUNC_ALIAS(FeOS_swi_SetSuspendMode, FeOS_SetSuspendMode),
 	ADD_FUNC_ALIAS(FeOS_ModuleExit, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),

@@ -20,8 +20,8 @@ int main()
 	printf("Press A to continue\n");
 	for (;;)
 	{
-		FeOS_WaitForVBlank();
-		if (FeOS_GetKeysDown() & KEY_A)
+		swiWaitForVBlank();
+		if (keysDown() & KEY_A)
 			break;
 	}
 
@@ -30,19 +30,19 @@ int main()
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);
 
-	FeOS_SetInterrupt(IRQ_HBLANK, hblank);
-	FeOS_IrqEnable(IRQ_HBLANK);
+	irqSet(IRQ_HBLANK, hblank);
+	irqEnable(IRQ_HBLANK);
 
-	for(;;)
+	for (;;)
 	{
-		FeOS_WaitForVBlank();
+		swiWaitForVBlank();
 		count ++;
-		if (FeOS_GetKeysDown() & KEY_A)
+		if (keysDown() & KEY_A)
 			break;
 	}
 
-	FeOS_IrqDisable(IRQ_HBLANK);
-	FeOS_SetInterrupt(IRQ_HBLANK, NULL);
+	irqDisable(IRQ_HBLANK);
+	irqSet(IRQ_HBLANK, NULL);
 
 	FeOS_ConsoleMode();
 	printf("End of direct mode demo\n");

@@ -44,35 +44,8 @@ typedef volatile uint32 vuint32;
 typedef volatile int32 vint32;
 
 // libnds compatibility defines
-#define DC_FlushRange      FeOS_DataCacheFlush
-#define DC_FlushAll        FeOS_DataCacheFlushAll
-#define IC_InvalidateRange FeOS_InstrCacheInvalidate
-#define IC_InvalidateAll   FeOS_InstrCacheInvalidateAll
-#define scanKeys           FeOS_KeysUpdate
-#define keysDown           FeOS_GetKeysDown
-#define keysHeld           FeOS_GetKeysHeld
-#define keysUp             FeOS_GetKeysUp
-#define keysDownRepeat     FeOS_GetKeysDownRepeat
-#define keysSetRepeat      FeOS_SetKeyRepeat
-#define irqSet             FeOS_SetInterrupt
-#define irqEnable          FeOS_IrqEnable
-#define irqDisable         FeOS_IrqDisable
-#define swiWaitForVBlank   FeOS_WaitForVBlank
-#define timerTick          FeOS_TimerTick
-#define timerStop          FeOS_TimerStop
-#define fifoSetDatamsgHandler  FeOS_FifoSetDatamsgHandler
-#define fifoSetValue32Handler  FeOS_FifoSetValue32Handler
-#define fifoSetAddressHandler  FeOS_FifoSetAddressHandler
-#define fifoSendAddress        FeOS_FifoSendAddress
-#define fifoSendValue32        FeOS_FifoSendValue32
-#define fifoSendDatamsg        FeOS_FifoSendDatamsg
-#define fifoCheckAddress       FeOS_FifoCheckAddress
-#define fifoCheckValue32       FeOS_FifoCheckValue32
-#define fifoCheckDatamsg       FeOS_FifoCheckDatamsg
-#define fifoCheckDatamsgLength FeOS_FifoCheckDatamsgLength
-#define fifoGetAddress         FeOS_FifoGetAddress
-#define fifoGetValue32         FeOS_FifoGetValue32
-#define fifoGetDatamsg         FeOS_FifoGetDatamsg
+#define timerTick FeOS_TimerTick
+#define timerStop FeOS_TimerStop
 
 enum
 {
@@ -344,35 +317,38 @@ enum
 	POWER_ALL       = PM_ARM9_DIRECT | POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX // Power everything.
 };
 
-keys_t FeOS_GetKeysDown();
-keys_t FeOS_GetKeysHeld();
-keys_t FeOS_GetKeysUp();
-keys_t FeOS_GetKeysDownRepeat();
-void FeOS_SetKeyRepeat(byte_t, byte_t);
+keys_t keysDown();
+keys_t keysHeld();
+keys_t keysUp();
+keys_t keysDownRepeat();
+void keysSetRepeat(byte_t, byte_t);
 void FeOS_GetStylusPos(styluspos_t*);
-void FeOS_KeysUpdate();
+void scanKeys();
 
 // libnds-compat stylus access
 typedef struct { int px, py; } touchPosition;
 static inline void touchRead(touchPosition* tp)
 {
-	styluspos_t sp;
-	FeOS_GetStylusPos(&sp);
-	tp->px = sp.x;
-	tp->py = sp.y;
+	FeOS_GetStylusPos((styluspos_t*) tp);
 }
 
 #define DEFAULT_IRQFUNC ((irqWaitFunc_t)0)
 #define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
 typedef void (*irqWaitFunc_t)(word_t);
 
-fp_t FeOS_SetInterrupt(word_t, fp_t);
+fp_t irqSet(word_t, fp_t);
 word_t FeOS_CheckPendingIRQs();
 void FeOS_WaitForIRQ(word_t);
 irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
-void FeOS_IrqEnable(word_t);
-void FeOS_IrqDisable(word_t);
+void irqEnable(word_t);
+void irqDisable(word_t);
 word_t FeOS_NextIRQ();
+
+//! \brief Waits for the next VBlank to occur.
+static inline void swiWaitForVBlank()
+{
+	FeOS_WaitForIRQ(IRQ_VBLANK);
+}
 
 void FeOS_TimerWrite(int, word_t);
 hword_t FeOS_TimerTick(int);

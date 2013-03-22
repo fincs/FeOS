@@ -76,50 +76,43 @@ void FeOS_ExecStatusRelease(execstat_t); //!< (Low-level) Decreases the referenc
 void FeOS_SetCurExecStatus(execstat_t); //!< (Low-level) Sets the current execution status.
 execstat_t FeOS_GetCurExecStatus(); //!< (Low-level) Gets the current execution status.
 
-//! \brief Loads an ARM7-side module. Full path should be supplied. A FIFO channel number is returned through the `int*` parameter.
-instance_t FeOS_LoadARM7(const char*, int*);
-//! \brief Unloads an ARM7-side module. The FIFO channel number must also be passed.
-void FeOS_FreeARM7(instance_t, int);
-
 //! \brief Executes the specified argc and argv.
 int FeOS_Execute(int, const char*[]);
 
-//! \deprecated \brief Simple debug print.
-void FeOS_DebugPrint(const char*);
-//! \brief Waits for the next VBlank to occur. Consider using the alternate libnds name swiWaitForVBlank.
-void FeOS_WaitForVBlank();
-
-//! \brief Flushes a range of memory in the data cache. Consider using the alternate libnds name DC_FlushRange.
-void FeOS_DataCacheFlush(const void*, word_t);
-//! \brief Flushes the data cache. Consider using the alternate libnds name DC_FlushAll.
-void FeOS_DataCacheFlushAll();
-//! \brief Invalidates a range of memory in the instruction cache. Consider using the alternate libnds name IC_InvalidateRange.
-void FeOS_InstrCacheInvalidate(const void*, word_t);
-//! \brief Invalidates the instruction cache. Consider using the alternate libnds name IC_InvalidateAll.
-void FeOS_InstrCacheInvalidateAll();
+//! \brief Flushes a range of memory in the data cache.
+void DC_FlushRange(const void*, word_t);
+//! \brief Flushes the data cache.
+void DC_FlushAll();
+//! \brief Invalidates a range of memory in the instruction cache.
+void IC_InvalidateRange(const void*, word_t);
+//! \brief Invalidates the instruction cache.
+void IC_InvalidateAll();
 
 //! \brief Extracts the exception index table of a module. The number of entries is passed back through the `int*` parameter.
 void* FeOS_GetModuleExidxTbl(instance_t, int*);
 //! \brief Gets the module that a certain address belongs to.
 instance_t FeOS_ModuleFromAddress(void*);
 
-bool FeOS_FifoSendAddress(int, void*);
-bool FeOS_FifoSendValue32(int, word_t);
-bool FeOS_FifoSendDatamsg(int, word_t, void*);
-bool FeOS_FifoCheckAddress(int);
-bool FeOS_FifoCheckValue32(int);
-bool FeOS_FifoCheckDatamsg(int);
-int FeOS_FifoCheckDatamsgLength(int);
-void* FeOS_FifoGetAddress(int);
-word_t FeOS_FifoGetValue32(int);
-int FeOS_FifoGetDatamsg(int, word_t, void*);
-void FeOS_FifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
-void FeOS_FifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
-void FeOS_FifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
+//! \brief Loads an ARM7-side module. Full path should be supplied. A FIFO channel number is returned through the `int*` parameter.
+instance_t FeOS_LoadARM7(const char*, int*);
+//! \brief Unloads an ARM7-side module. The FIFO channel number must also be passed.
+void FeOS_FreeARM7(instance_t, int);
+
+bool fifoSendAddress(int, void*);
+bool fifoSendValue32(int, word_t);
+bool fifoSendDatamsg(int, word_t, void*);
+bool fifoCheckAddress(int);
+bool fifoCheckValue32(int);
+bool fifoCheckDatamsg(int);
+int fifoCheckDatamsgLength(int);
+void* fifoGetAddress(int);
+word_t fifoGetValue32(int);
+int fifoGetDatamsg(int, word_t, void*);
+void fifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
+void fifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
+void fifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
 
 // Misc functions
-int FeOS_SuspendIRQ_t();
-void FeOS_RestoreIRQ_t(int);
 void FeOS_DrainWriteBuffer();
 void FeOS_WaitForMemAddr(volatile byte_t*, byte_t);
 

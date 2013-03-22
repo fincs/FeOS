@@ -403,8 +403,3 @@ int main()
 
 	for(;;) FeOS_WaitForVBlank();
 }
-
-void FeOS_DebugPrint(const char* text)
-{
-	fputs(text, stdout);
-}

@@ -23,20 +23,20 @@ void PrintStatus(keys_t keys, const char* verb)
 int main()
 {
 	printf("Button test (START=exit)\n");
-	for(;;)
+	for (;;)
 	{
-		FeOS_WaitForVBlank();
-		PrintStatus(FeOS_GetKeysDown(), "press");
-		PrintStatus(FeOS_GetKeysUp(), "releas");
+		swiWaitForVBlank();
+		PrintStatus(keysDown(), "press");
+		PrintStatus(keysUp(), "releas");
 
-		if(FeOS_GetKeysHeld() & KEY_TOUCH)
+		if(keysHeld() & KEY_TOUCH)
 		{
-			styluspos_t st;
-			FeOS_GetStylusPos(&st);
-			printf("Stylus: (%d, %d)\n", st.x, st.y);
+			touchPosition tp;
+			touchRead(&tp);
+			printf("Stylus: (%d, %d)\n", tp.px, tp.py);
 		}
 
-		if(FeOS_GetKeysDown() & KEY_START) break;
+		if(keysDown() & KEY_START) break;
 	}
 	return 0;
 }

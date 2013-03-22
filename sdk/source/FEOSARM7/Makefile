@@ -3,19 +3,21 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_FifoSendAddress \
-FeOS_FifoSendValue32 \
-FeOS_FifoSendDatamsg \
-FeOS_FifoCheckAddress \
-FeOS_FifoCheckValue32 \
-FeOS_FifoCheckDatamsg \
-FeOS_FifoCheckDatamsgLength \
-FeOS_FifoGetAddress \
-FeOS_FifoGetValue32 \
-FeOS_FifoGetDatamsg \
-FeOS_FifoSetDatamsgHandler \
-FeOS_FifoSetValue32Handler \
-FeOS_FifoSetAddressHandler
+FeOS_LoadARM7 \
+FeOS_FreeARM7 \
+fifoSendAddress \
+fifoSendValue32 \
+fifoSendDatamsg \
+fifoCheckAddress \
+fifoCheckValue32 \
+fifoCheckDatamsg \
+fifoCheckDatamsgLength \
+fifoGetAddress \
+fifoGetValue32 \
+fifoGetDatamsg \
+fifoSetDatamsgHandler \
+fifoSetValue32Handler \
+fifoSetAddressHandler
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

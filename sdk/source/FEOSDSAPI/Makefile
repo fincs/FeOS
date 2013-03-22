@@ -3,20 +3,20 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-FeOS_GetKeysDown \
-FeOS_GetKeysHeld \
-FeOS_GetKeysUp \
-FeOS_GetKeysDownRepeat \
-FeOS_SetKeyRepeat \
-FeOS_KeysUpdate \
+keysDown \
+keysHeld \
+keysUp \
+keysDownRepeat \
+keysSetRepeat \
+scanKeys \
 FeOS_GetStylusPos \
-FeOS_SetInterrupt \
+irqSet \
 FeOS_CheckPendingIRQs \
 FeOS_WaitForIRQ \
 FeOS_SetIRQWaitFunc \
 FeOS_NextIRQ \
-FeOS_IrqDisable \
-FeOS_IrqEnable \
+irqDisable \
+irqEnable \
 FeOS_ConsoleMode \
 FeOS_DirectMode \
 FeOS_TimerWrite \

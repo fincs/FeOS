@@ -12,13 +12,13 @@ void vbl()
 
 int main()
 {
-	oldFunc = FeOS_SetInterrupt(IRQ_VBLANK, vbl);
-	for(;;)
+	oldFunc = irqSet(IRQ_VBLANK, vbl);
+	for (;;)
 	{
-		FeOS_WaitForVBlank();
-		if (FeOS_GetKeysDown() & KEY_START)
+		swiWaitForVBlank();
+		if (keysDown() & KEY_START)
 			break;
 	}
-	FeOS_SetInterrupt(IRQ_VBLANK, oldFunc);
+	irqSet(IRQ_VBLANK, oldFunc);
 	return 0;
 }
