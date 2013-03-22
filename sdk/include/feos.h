@@ -42,7 +42,7 @@ extern "C"
 
 	\subsection api FeOS API
 	- \ref api_base "Core FeOS API"
-	- FeOS libnds-compatible DS hardware access API
+	- **FeOS libnds-compatible DS hardware access API**
 	  - \ref api_ds "Basic functions"
 	  - \ref api_math "Math functions"
 	  - \ref api_dsbg "Background functions"

@@ -98,31 +98,55 @@ instance_t FeOS_LoadARM7(const char*, int*);
 //! \brief Unloads an ARM7-side module. The FIFO channel number must also be passed.
 void FeOS_FreeARM7(instance_t, int);
 
+//! \brief Sends a main RAM address to the ARM7 using a specified FIFO channel.
 bool fifoSendAddress(int, void*);
+//! \brief Sends a 32-bit value to the ARM7 using a specified FIFO channel.
 bool fifoSendValue32(int, word_t);
+//! \brief Sends a variable-size data message to the ARM7 using a specified FIFO channel.
 bool fifoSendDatamsg(int, word_t, void*);
+//! \brief Checks whether a certain FIFO channel has a main RAM address in the queue.
 bool fifoCheckAddress(int);
+//! \brief Checks whether a certain FIFO channel has a 32-bit value in the queue.
 bool fifoCheckValue32(int);
+//! \brief Checks whether a certain FIFO channel has a data message in the queue.
 bool fifoCheckDatamsg(int);
+//! \brief Checks the size of the data message in a certain FIFO channel's queue. -1 is returned when there is no message.
 int fifoCheckDatamsgLength(int);
+//! \brief Retrieves the main RAM address in the specified FIFO channel's queue.
 void* fifoGetAddress(int);
+//! \brief Retrieves the 32-bit value in the specified FIFO channel's queue.
 word_t fifoGetValue32(int);
+//! \brief Retrieves the variable-size data message in the specified FIFO channel's queue.
 int fifoGetDatamsg(int, word_t, void*);
+//! \brief Sets a handler for automatically receiving data messages from a certain FIFO channel.
 void fifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
+//! \brief Sets a handler for automatically receiving 32-bit values from a certain FIFO channel.
 void fifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
+//! \brief Sets a handler for automatically receiving main RAM addresses from a certain FIFO channel.
 void fifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
 
 // Misc functions
+
+//! \brief Drains the CPU's writte buffer.
 void FeOS_DrainWriteBuffer();
+//! \brief Waits for a certain memory addresses to hold a certain value.
 void FeOS_WaitForMemAddr(volatile byte_t*, byte_t);
 
+//! \brief Auto-update modes.
 enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
+//! \brief Turns on or off a certain auto-update mode.
+//!
+//! Auto-updates is a mechanism that automatically issues calls to scanKeys(), bgUpdate() and oamUpdate()
+//! at each VBlank. They are always on in console mode, so this function only has effect in direct mode.
 void FeOS_SetAutoUpdate(int which, bool enable);
+//! \brief Retrieves whether a certain auto-update mode is on.
 bool FeOS_GetAutoUpdate(int which);
 
+//! \brief Suspend modes.
 enum { SuspendMode_Get = -1, SuspendMode_Disable = 0, SuspendMode_Normal, SuspendMode_Headphones };
+//! \brief Changes FeOS' behaviour when the lid is closed.
 int FeOS_SetSuspendMode(int mode);
-
+//! \brief Retrieves the current lid closing behaviour.
 #define FeOS_GetSuspendMode() FeOS_SetSuspendMode(SuspendMode_Get)
 
 //! \headerfile feos.h <feos.h>
@@ -137,13 +161,19 @@ typedef struct
 	dword_t total, free, used;
 } usagestats64_t;
 
+//! \deprecated \brief Returns disk space stats.
 bool FeOS_GetDiskStats(usagestats_t*) FEOS_DEPRECATED;
+//! \brief Returns disk space stats.
 bool FeOS_GetDiskStats64(usagestats64_t*);
+//! \brief Returns RAM stats.
 void FeOS_GetMemStats(usagestats_t*);
 
+//! \cond
 #define memBarrier() asm volatile("":::"memory")
 #define barrierAccess(x) do { memBarrier(); (x); memBarrier(); } while(0)
+//! \endcond
 
+//! \brief Returns the number of 59.8261 Hz (VBlank) cycles passed since FeOS was booted.
 int FeOS_GetTickCount();
 
 /** @} */
