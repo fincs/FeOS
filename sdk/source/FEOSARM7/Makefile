@@ -17,7 +17,8 @@ fifoGetValue32 \
 fifoGetDatamsg \
 fifoSetDatamsgHandler \
 fifoSetValue32Handler \
-fifoSetAddressHandler
+fifoSetAddressHandler \
+fifoGetRetValue32
 
 SFILES := $(addsuffix .s, $(FUNCS))
 

@@ -447,3 +447,19 @@ word_t FeOS_NextIRQ()
 	}
 	return flags;
 }
+
+#ifdef ARM9
+word_t FeOS_FifoGetRetValue32(int ch)
+{
+	static volatile byte_t counters[FIFO_PROG_CH_NUM];
+	bool FeOS_swi_FifoCheckValue32(int);
+	word_t FeOS_swi_FifoGetValue32(int);
+
+	volatile byte_t* pCounter = counters + ch - FIFO_PROG_CH;
+	byte_t thisVal = ++*pCounter;
+	while (*pCounter != thisVal || !FeOS_swi_FifoCheckValue32(ch))
+		FeOS_WaitForIRQ(~0);
+	--*pCounter;
+	return FeOS_swi_FifoGetValue32(ch);
+}
+#endif

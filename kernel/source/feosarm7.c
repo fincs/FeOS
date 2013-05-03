@@ -14,6 +14,8 @@ void* FeOS_swi_FifoGetAddress(int);
 word_t FeOS_swi_FifoGetValue32(int);
 int FeOS_swi_FifoGetDatamsg(int, word_t, void*);
 
+word_t FeOS_FifoGetRetValue32(int);
+
 #define ADD_FUNC2(fn) ADD_FUNC_ALIAS(FeOS_swi_Fifo##fn, fifo##fn)
 
 BEGIN_TABLE(FEOSARM7)
@@ -31,7 +33,8 @@ BEGIN_TABLE(FEOSARM7)
 	ADD_FUNC2(GetDatamsg),
 	ADD_FUNC_ALIAS(FeOS_FifoSetDatamsgHandler, fifoSetDatamsgHandler),
 	ADD_FUNC_ALIAS(FeOS_FifoSetValue32Handler, fifoSetValue32Handler),
-	ADD_FUNC_ALIAS(FeOS_FifoSetAddressHandler, fifoSetAddressHandler)
+	ADD_FUNC_ALIAS(FeOS_FifoSetAddressHandler, fifoSetAddressHandler),
+	ADD_FUNC_ALIAS(FeOS_FifoGetRetValue32, fifoGetRetValue32),
 END_TABLE(FEOSARM7)
 
 MAKE_FAKEMODULE(FEOSARM7)

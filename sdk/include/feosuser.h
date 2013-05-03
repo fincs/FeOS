@@ -124,6 +124,8 @@ void fifoSetDatamsgHandler(int, FifoDatamsgHandlerFunc, void*);
 void fifoSetValue32Handler(int, FifoValue32HandlerFunc, void*);
 //! \brief Sets a handler for automatically receiving main RAM addresses from a certain FIFO channel.
 void fifoSetAddressHandler(int, FifoAddressHandlerFunc, void*);
+//! \brief Waits for a 32-bit value to be received through the FIFO channel and returns it in a reentrant-safe way.
+word_t fifoGetRetValue32(int);
 
 // Misc functions
 
