@@ -51,6 +51,7 @@ enum SGIP_TCP_STATE {
 #define SGIP_TCP_FLAG_PSH	8
 #define SGIP_TCP_FLAG_ACK	16
 #define SGIP_TCP_FLAG_URG	32
+#define SGIP_TCP_FLAG_NODELAY 64
 
 typedef struct SGIP_HEADER_TCP {
 	unsigned short srcport,destport;

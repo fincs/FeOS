@@ -863,7 +863,7 @@ int sgIP_TCP_Send(sgIP_Record_TCP * rec, const char * datatosend, int datalength
    j=rec->buf_tx_out-rec->buf_tx_in;
    if(j<0) j+=SGIP_TCP_TRANSMITBUFFERLENGTH;
    j+=(int)(rec->sequence-rec->sequence_next);
-   if(j>SGIP_TCP_TRANSMIT_IMMTHRESH && rec->tcpstate==SGIP_TCP_STATE_ESTABLISHED) {
+   if(((flags & SGIP_TCP_FLAG_NODELAY) || j>SGIP_TCP_TRANSMIT_IMMTHRESH) && rec->tcpstate==SGIP_TCP_STATE_ESTABLISHED) {
       j=(int)(rec->sequence_next-rec->sequence);
       if(j<1000) { // arbitrary constant.
          j=rec->buf_tx_out-rec->buf_tx_in;

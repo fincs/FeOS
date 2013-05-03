@@ -246,13 +246,14 @@ int send(int socket, const void * data, int sendlength, int flags) {
    socket--;
 
    if(!(socketlist[socket].flags&SGIP_SOCKET_FLAG_VALID)) { SGIP_INTR_UNPROTECT(); return SGIP_ERROR(EINVAL); }
+   if(socketlist[socket].flags&SGIP_SOCKET_FLAG_NODELAY) { flags |= SGIP_TCP_FLAG_NODELAY; }
 
    if((socketlist[socket].flags&SGIP_SOCKET_FLAG_TYPEMASK)==SGIP_SOCKET_FLAG_TYPE_TCP) {
        do {
            retval=sgIP_TCP_Send((sgIP_Record_TCP *)socketlist[socket].conn_ptr,data,sendlength,flags);
            if(retval!=-1) break;
            if(errno!=EWOULDBLOCK) break;
-           if(socketlist[socket].flags&SGIP_SOCKET_FLAG_NONBLOCKING) break;
+           if((flags & MSG_DONTWAIT) || (socketlist[socket].flags&SGIP_SOCKET_FLAG_NONBLOCKING)) break;
            SGIP_INTR_UNPROTECT();
            SGIP_WAITEVENT();
            SGIP_INTR_REPROTECT();
@@ -272,7 +273,7 @@ int recv(int socket, void * data, int recvlength, int flags) {
          retval=sgIP_TCP_Recv((sgIP_Record_TCP *)socketlist[socket].conn_ptr,data,recvlength,flags);
          if(retval!=-1) break;
          if(errno!=EWOULDBLOCK) break;
-         if(socketlist[socket].flags&SGIP_SOCKET_FLAG_NONBLOCKING) break;
+         if((flags & MSG_DONTWAIT) || (socketlist[socket].flags&SGIP_SOCKET_FLAG_NONBLOCKING)) break;
          SGIP_INTR_UNPROTECT();
          SGIP_WAITEVENT();
          SGIP_INTR_REPROTECT();
@@ -422,10 +423,37 @@ int ioctl(int socket, long cmd, void * arg) {
 }
 
 int setsockopt(int socket, int level, int option_name, const void * data, int data_len) {
-   return 0;
+	if(socket<1 || socket>SGIP_SOCKET_MAXSOCKETS) return SGIP_ERROR(EBADF);
+	socket--;
+	int retval=0;
+	SGIP_INTR_PROTECT();
+	if(!(socketlist[socket].flags&SGIP_SOCKET_FLAG_VALID) || !data || data_len != sizeof(int)) { SGIP_INTR_UNPROTECT(); return SGIP_ERROR(EINVAL); }
+	switch(level) {
+	case IPPROTO_TCP:
+		if((socketlist[socket].flags&SGIP_SOCKET_FLAG_TYPEMASK)!=SGIP_SOCKET_FLAG_TYPE_TCP) {
+			retval=SGIP_ERROR(EINVAL);
+			break;
+		}
+		switch (option_name) {
+		case TCP_NODELAY:
+			if (*(int*)data) {
+				socketlist[socket].flags |= SGIP_SOCKET_FLAG_NODELAY;
+			} else {
+				socketlist[socket].flags &= ~SGIP_SOCKET_FLAG_NODELAY;
+			}
+			break;
+		default:
+			retval=SGIP_ERROR(EINVAL);
+		}
+	default:
+		retval=SGIP_ERROR(EINVAL);
+	}
+	SGIP_INTR_UNPROTECT();
+	return retval;
 } 
+
 int getsockopt(int socket, int level, int option_name, void * data, int * data_len) {
-   return 0;
+	return 0;
 }
 
 int getpeername(int socket, struct sockaddr *addr, int * addr_len) {

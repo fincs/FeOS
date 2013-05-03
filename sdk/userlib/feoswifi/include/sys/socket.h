@@ -95,6 +95,7 @@ typedef	struct _types_fd_set {
 #define MSG_EOR			0x04000000
 #define MSG_DONTROUTE	0x02000000
 #define MSG_CTRUNC		0x01000000
+#define MSG_DONTWAIT	0x00800000
 
 // shutdown() flags:
 #define SHUT_RD			1
@@ -128,6 +129,10 @@ typedef	struct _types_fd_set {
 #define SO_RCVTIMEO  0x1006    /* receive timeout */
 #define  SO_ERROR  0x1007    /* get error status and clear */
 #define  SO_TYPE    0x1008    /* get socket type */
+
+// For set/getsockopt()
+#define IPPROTO_TCP 0
+#define TCP_NODELAY 0
 
 struct sockaddr {
 	unsigned short		sa_family;
