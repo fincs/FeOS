@@ -1,7 +1,59 @@
 /*! \page coopguidev The Cooperative GUI system
 
-Stuff stuff stuff. Stuff stuff stuff.
+The cooperative GUI system (coop GUI for short) allows you to develop graphical
+multi-tasking applications. The system works through the C++
+\ref coopgui "coop GUI API".
 
-More stuff.
+The core of a coop GUI app is an application object. Even though only one app
+object can be active at a time in order to display graphics and process user input,
+all of them can have a background processing routine that is called at each frame.
+Applications can be minimized and restored. The `coopguiapp` template should be
+used in order to start developing a coop GUI application.
+
+Application objects have the following methods (all of which are optional to implement)
+which are called by the system on certain events:
+
+- `OnActivate()` -- called when the application object is activated. Video hardware
+  initialization should be done here.
+- `OnVBlank()` -- called at each frame when an application object is active. Video updates
+  and logic updates should be done here, in that order.
+- `OnDeactivate()` -- called when the application object is deactivated (aka minimized).
+  Normally it is not necessary to do anything here (video hardware cleanup is done
+  automatically by the system), but sometimes it is needed for e.g. glDeinit().
+- `OnBgProcess()` -- called at each frame for all application objects, after the currently
+  active application's `OnVBlank()` logic is executed. This function is used as the name
+  implies for background processing such as music streaming.
+
+Application objects normally inherit from \link FeOS::UI::CApplicationEx CApplication \endlink,
+which automatically implements all the internal boilerplate and also supplies many useful methods.
+
+The coop GUI system exposes several utilities through the \link FeOS::UI::IGuiManager GUI manager \endlink
+interface, such as bitmap fonts, <a href="http://www.coranac.com/man/grit/html/grit.htm#ssec-info-grf">GRF</a>
+loading, filetypes (including support for opening arbitrary files, retrieving filetype icons
+and descriptions) as well as a standard keyboard interface. The application template by default
+stores a pointer to the GUI manager object in the `g_guiManager` global variable.
+
+Coop GUI applications have a manifest that is used by the system to determine information.
+about the application. Said manifest has the following keys:
+
+- `Title` -- Human-readable title that will be shown by the system.
+- `Description` -- Short description about the application.
+- `Icon` -- Icon filename to use (64x64 16-bit GRF).
+- `Command` -- Command to execute when the user requests launching the application.
+- `FileType-Icon` -- (Optional) Icon to use for the filetype associated to the application (16x16 16-bit GRF).
+- `FileType-Command` -- (Optional) Command to be used when a file is opened with the application.
+  `%` is replaced with the quoted full path of the file to open.
+
+If an application registers a filetype, it also needs to install a `.cfg` file to `/data/FeOS/gui/ftypes/`
+which associates file extensions to filetypes. The syntax for a line is as follows:
+
+	file-ext=app-name, description
+
+where:
+
+- `file-ext` stands for the file extension (without the `.`).
+- `app-name` stands for the name of the application to associate the file extension with. This is
+  the installed application manifest name (but without the extension).
+- `description` is a short description for this kind of file.
 
 */

@@ -47,7 +47,7 @@ MULTIFEOS_API void FeOS_FreeThread(thread_t hThread);
 MULTIFEOS_API void FeOS_SetThreadPrio(thread_t hThread, int prio);
 //! \brief Gets the exit code of a thread.
 MULTIFEOS_API int FeOS_GetThreadRC(thread_t hThread);
-//! \brief Waits for a thread to finish executing.
+//! \brief Waits for a thread to finish executing. The thread is additionally freed.
 MULTIFEOS_API int FeOS_ThreadJoin();
 
 //! \brief Asynchronously runs a command.

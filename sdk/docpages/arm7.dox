@@ -1,7 +1,77 @@
 /*! \page arm7 ARM7 module programming
 
-Stuff stuff stuff. Stuff stuff stuff.
+FeOS supports loading ARM7 modules, such as for sound code. In order to create
+an ARM7 module use the `arm7module` template.
 
-More stuff.
+\warning FeOS ARM7 module building REQUIRES libnds headers to be present at
+`<devkitPro-dir>/libnds/include`. Otherwise it will NOT work.
+
+ARM7 modules have two main functions, `arm7_main()` and `arm7_fini()`. These
+functions are called respectively when the module is loaded and unloaded.
+
+    int arm7_main(int fifoCh);
+	void arm7_fini();
+
+`arm7_main()` should initialize whatever hardware is necessary and also register
+IRQ/FIFO callbacks. The `fifoCh` parameter receives the FIFO channel the module
+is assigned (it should be saved in a global variable for later use). This function
+should NOT enter a "main" IRQ waiting loop, otherwise the system (including the
+ARM9) will become hung. Instead, callbacks should be used.
+
+`arm7_fini()` should deinitialize the used hardware and unregister all callbacks.
+
+\warning The DS ARM7 has an extremely limited environment. There are only ca.
+50 KB of free ARM7 RAM and no memory protection, so code should be as small
+and careful as possible.
+
+The following non-inline libnds/system functions are available:
+
+	swiWaitForVBlank
+	irqSet
+	irqClear
+	irqEnable
+	irqDisable
+	writePowerManagement
+	timerStart
+	timerPause
+	timerStop
+	timerElapsed
+	micSetAmp
+	micReadData8
+	micReadData12
+	fifoSendAddress
+	fifoSendValue32
+	fifoSendDatamsg
+	fifoSetAddressHandler
+	fifoSetValue32Handler
+	fifoSetDatamsgHandler
+	fifoCheckAddress
+	fifoCheckValue32
+	fifoCheckDatamsg
+	fifoGetAddress
+	fifoGetValue32
+	fifoGetDatamsg
+	swiDelay
+	swiIntrWait
+	memcpy
+	memcmp
+	memset
+	strcpy
+	strcmp
+	strncpy
+	strncmp
+	malloc
+	free
+
+By #including feos.h you can access cooperative non-interrupting version of
+several callback registering functions (recommended):
+
+	coopFifoSetDatamsgHandler
+	coopFifoSetValue32Handler
+	coopFifoSetAddressHandler
+	coopIrqSet
+	coopIrqCheck (similar to FeOS_CheckPendingIRQs)
+	coopIrqNext (similar to FeOS_NextIRQ)
+	coopTimerStart
 
 */

@@ -1,7 +1,16 @@
 /*! \page templates Project templates
 
-Stuff stuff stuff. Stuff stuff stuff.
+The FeOS SDK contains project templates, which are found at `<SDK-Dir>/templates`.
+In order to create a project, you need to make a copy of a project template. These
+are the available templates:
 
-More stuff.
+- `consoleapp` -- Console mode application.
+- `directmodeapp` -- \ref directmode "Direct mode" application.
+- `coopguiapp` -- \ref coopguidev "Cooperative GUI" application.
+- `sharedlib` -- Shared (dynamically linked) library.
+- `staticlib` -- Statically-linked library.
+- `arm7module` -- \ref arm7 "Loadable ARM7 module" (requires libnds headers).
+
+The build system is explained in \ref buildsys.
 
 */

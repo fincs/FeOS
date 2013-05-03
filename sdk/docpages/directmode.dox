@@ -1,7 +1,47 @@
 /*! \page directmode Direct mode applications
 
-Stuff stuff stuff. Stuff stuff stuff.
+By default FeOS applications run either in console mode (which is a sandbox that
+emulates a text-mode console and a keyboard and blocks all direct access to the DS
+hardware) or under the \ref coopguidev "cooperative GUI system". However several
+kinds of applications such as games or demos require owning exclusive rights to
+the DS hardware and high performance. FeOS Direct Mode allows you to easily develop
+these kinds of applications. For that you use a \ref api_ds "libnds-compatible API"
+for hardware access. The skeleton of a direct mode application looks like this:
 
-More stuff.
+\code
+#include <feos.h>
+
+int main()
+{
+	// Switch to Direct mode
+	FeOS_DirectMode();
+	
+	// Video initialization...
+	
+	// Main loop...
+	for (;;)
+	{
+		// VBlank sync
+		swiWaitForVBlank();
+		
+		// Graphics updating...
+		
+		// Game/application logic...
+	}
+
+	// Switch back to Console mode
+	FeOS_ConsoleMode();
+	return 0;
+}
+\endcode
+
+Apart from the different header file and the need to switch into/from Direct Mode,
+this is identical to classic-style libnds application development. Make sure you
+provide a way to exit the application (and thus break from the main loop) or else
+the user will be forced to reset the DS.
+
+Game assets such as graphics are best loaded from \ref far.h "an embedded filesystem".
+However it is also possible to statically link in `.bin` files through putting them
+in the project `data` folder, in a similar fashion to libnds applications.
 
 */

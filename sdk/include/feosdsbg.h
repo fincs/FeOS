@@ -130,7 +130,7 @@ void bgSetScale(int id, int sx, int sy);
 //!    **Bitmap backgrounds**: 16K offset into background GFX RAM where the bitmap will be read from.
 //! \param tileBase
 //!    **Non-bitmap backgrounds**: 16K offset into background GFX RAM where the tile graphics will be read from.<br>
-//!    **Bitmap backgrounds**: this parameter is unused.
+//!    **Bitmap backgrounds**: this parameter is unused and should be zero.
 //! \returns The background ID.
 int bgInit(int layer, word_t type, word_t size, int mapBase, int tileBase);
 
@@ -143,7 +143,7 @@ int bgInit(int layer, word_t type, word_t size, int mapBase, int tileBase);
 //!    **Bitmap backgrounds**: 16K offset into background GFX RAM where the bitmap will be read from.
 //! \param tileBase
 //!    **Non-bitmap backgrounds**: 16K offset into background GFX RAM where the tile graphics will be read from.<br>
-//!    **Bitmap backgrounds**: this parameter is unused.
+//!    **Bitmap backgrounds**: this parameter is unused and should be zero.
 //! \returns The background ID.
 int bgInitSub(int layer, word_t type, word_t size, int mapBase, int tileBase);
 
