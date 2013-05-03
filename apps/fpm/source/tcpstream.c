@@ -24,8 +24,8 @@ FILE* fopentcp(struct sockaddr_in* addr)
 {
 	if (!addr) return NULL;
 	stream_data* d = (stream_data*) malloc(sizeof(stream_data));
-	d->addr = addr;
 	if (!d) return NULL;
+	d->addr = addr;
 	FILE* f = FeOS_OpenStream(&stream_st, d);
 	if (!f)
 	{

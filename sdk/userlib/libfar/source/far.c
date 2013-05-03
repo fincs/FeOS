@@ -151,7 +151,7 @@ far_t FAR_OpenArchive(const char* path)
 	FILE* f = fopen(path, "rb");
 	if (!f) return NULL;
 	FARobj_t* x = new_F();
-	if (!x) return NULL;
+	if (!x) { fclose(f); return NULL; }
 	x->vt = &FILE_iface;
 	x->vt_obj = f;
 	return FAR_OpenCommon(x);
