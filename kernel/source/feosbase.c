@@ -30,6 +30,8 @@ void FeOS_swi_RestoreIRQ_t(int);
 void FeOS_swi_DrainWriteBuffer();
 void FeOS_swi_WaitForMemAddr(volatile byte_t*, byte_t);
 
+void FeOS_swi_SetExcptHandler(void*);
+
 // Execution status functions
 
 typedef void* execstat_t;
@@ -281,6 +283,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(FeOS_swi_DrainWriteBuffer, FeOS_DrainWriteBuffer),
 	ADD_FUNC_ALIAS(FeOS_swi_WaitForMemAddr, FeOS_WaitForMemAddr),
 	ADD_FUNC_ALIAS(FeOS_swi_SetSuspendMode, FeOS_SetSuspendMode),
+	ADD_FUNC_ALIAS(FeOS_swi_SetExcptHandler, FeOS_SetExcptHandler),
 	ADD_FUNC_ALIAS(FeOS_ModuleExit, exit),
 	ADD_FUNC_ALIAS(__errno, FeOS_GetErrnoPtr),
 	ADD_FUNC(FeOS_GetModuleExidxTbl),

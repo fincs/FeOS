@@ -62,7 +62,7 @@ __SVCTable:
 	.word irqDisable
 	.word InitConMode
 	.word InitFreeMode
-	.word 0 @_SetDatamsgHandler
+	.word __SetExcptHandler
 	.word _SetValue32Handler
 	.word _SetAddressHandler
 
@@ -360,7 +360,7 @@ swiimp IrqEnable 0x09
 swiimp IrqDisable 0x0A
 swiimp ConsoleMode 0x0B
 swiimp DirectMode 0x0C
-@swiimp SetDatamsgHandler 0x0D
+swiimp SetExcptHandler 0x0D
 swiimp SetValue32Handler 0x0E
 swiimp SetAddressHandler 0x0F
 
