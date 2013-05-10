@@ -1,5 +1,6 @@
 #include "feos.h"
 #include "fxe.h"
+#include "feosfifo.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -122,6 +123,143 @@ int FeOS_GetVersion()
 	return FEOS_VERSION_PACK;
 }
 
+static systeminfo_t sysInfo =
+{
+	FEOS_VERSION_PACK,
+	FEOS_VERSION_TEXT,
+#ifndef DEBUG
+	0,
+#else
+	SYSTEM_FLAGS_DEBUG,
+#endif
+	SYSTEM_TYPE_DS,
+	NULL,
+	SYSTEM_MODE_DS,
+	NULL,
+};
+
+void FeOS_InitSystemInfo()
+{
+	extern bool __dsimode;
+
+#define SYSTYPE sysInfo.systemType
+#define SYSFLAGS sysInfo.systemFlags
+
+	// DSi mode detection
+	if (__dsimode)
+	{
+		sysInfo.systemMode = SYSTEM_MODE_DSi;
+		sysInfo.systemType = SYSTEM_TYPE_DSi;
+	}
+
+	byte_t fw1D, fw2F, pm4;
+	// Retrieve some bits from ARM7
+	{
+		FeOSFifoMsg msg;
+		msg.type = FEOS_ARM7_GET_SYSTEM_INFO;
+
+		fifoSendDatamsg(FIFO_FEOS, sizeof(msg), (void*) &msg);
+		while (!fifoCheckValue32(FIFO_FEOS));
+
+		word_t ret = fifoGetValue32(FIFO_FEOS);
+		fw1D = ret;
+		fw2F = ret >> 8;
+		pm4 = ret >> 16;
+	}
+
+	// Detect system type
+	// Based on http://adshomebrewersdiary.blogspot.com.es/2012/01/telling-ds-models-apart.html
+
+	if (SYSTYPE == SYSTEM_TYPE_DS) do
+	{
+		if (swiIsDebugger())
+		{
+			SYSTYPE = SYSTEM_TYPE_DSDebug;
+			break;
+		}
+
+		if (pm4 & 0x80)
+		{
+			SYSTYPE = SYSTEM_TYPE_DSLite;
+			break;
+		}
+
+		if (fw1D != 0xFF && fw1D & 3)
+			SYSFLAGS |= SYSTEM_FLAGS_CHINESE;
+	} while(0);
+
+	if (SYSTYPE == SYSTEM_TYPE_DSLite) do
+	{
+		if (fw1D & 4)
+		{
+			SYSTYPE = SYSTEM_TYPE_DSi;
+			break;
+		}
+
+		if (fw1D & 3)
+			SYSFLAGS |= SYSTEM_FLAGS_CHINESE;
+	} while(0);
+
+	if (SYSTYPE == SYSTEM_TYPE_DSi) do
+	{
+		if (fw2F >= 0x18)
+		{
+			SYSTYPE = SYSTEM_TYPE_DSi_XL;
+			break;
+		}
+
+		// TODO: chinese DSi detection
+	} while(0);
+
+	if (SYSTYPE == SYSTEM_TYPE_DSi_XL) do
+	{
+		if (fw2F >= 0x1C)
+		{
+			SYSTYPE = SYSTEM_TYPE_3DS;
+			break;
+		}
+
+		// TODO: chinese DSi XL detection
+	} while(0);
+
+	// TODO: 3DS XL detection
+	// TODO: chinese 3DS XL detection (does that even exist??)
+
+	// Emulator detection
+	bool __isEmulator();
+	if (__isEmulator())
+		SYSFLAGS |= SYSTEM_FLAGS_EMULATOR;
+
+#undef SYSTYPE
+#undef SYSFLAGS
+
+	switch (sysInfo.systemType)
+	{
+#define _TEXT(_x,_y) case _x: sysInfo.systemTypeText = _y; break
+		_TEXT(SYSTEM_TYPE_DS, "Nintendo DS (Original)");
+		_TEXT(SYSTEM_TYPE_DSDebug, "Nintendo DS (Debug)");
+		_TEXT(SYSTEM_TYPE_DSLite, "Nintendo DS Lite");
+		_TEXT(SYSTEM_TYPE_DSi, "Nintendo DSi");
+		_TEXT(SYSTEM_TYPE_DSi_XL, "Nintendo DSi XL");
+		_TEXT(SYSTEM_TYPE_3DS, "Nintendo 3DS");
+		_TEXT(SYSTEM_TYPE_3DS_XL, "Nintendo 3DS XL");
+#undef _TEXT
+	}
+
+	switch (sysInfo.systemMode)
+	{
+#define _TEXT(_x,_y) case _x: sysInfo.systemModeText = _y; break
+		_TEXT(SYSTEM_MODE_DS, "Standard DS Mode (67.03 MHz)");
+		_TEXT(SYSTEM_MODE_DSi, "Enhanced DSi Mode (134.06 MHz)");
+#undef _TEXT
+	}
+}
+
+const systeminfo_t* FeOS_GetSystemInfo()
+{
+	return &sysInfo;
+}
+
 BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC_ALIAS(LoadModule, FeOS_LoadModule),
 	ADD_FUNC(FeOS_FindSymbol),
@@ -159,6 +297,7 @@ BEGIN_TABLE(FEOSBASE)
 	ADD_FUNC(FeOS_GetMemStats),
 	ADD_FUNC(FeOS_GetTickCount),
 	ADD_FUNC(FeOS_GetVersion),
+	ADD_FUNC(FeOS_GetSystemInfo),
 	ADD_FUNC(__aeabi_idiv),
 	ADD_FUNC(__aeabi_idivmod),
 	ADD_FUNC(__aeabi_uidiv),

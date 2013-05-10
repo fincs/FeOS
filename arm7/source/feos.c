@@ -70,6 +70,19 @@ void FeOSFifoHandler(int size, void* userdata)
 			irqEnable(IRQ_LID);
 			break;
 		}
+
+		case FEOS_ARM7_GET_SYSTEM_INFO:
+		{
+			byte_t fw1D, fw2F, pm4;
+
+			// Retrieve information we need
+			pm4 = readPowerManagement(4);
+			readFirmware(0x1D, &fw1D, 1);
+			readFirmware(0x2F, &fw2F, 1);
+
+			// Send it back to ARM9
+			fifoSendValue32(FIFO_FEOS, (int)fw1D | ((int)fw2F << 8) | ((int)pm4 << 16));
+		}
 	}
 }
 

@@ -59,8 +59,8 @@ extern "C"
 	- \ref sndlock.h "Sound locking library"
 */
 
-#include <feosver.h>
 #include <feosbase.h>
+#include <feosver.h>
 
 #ifndef ARM7
 #include <feoserror.h>

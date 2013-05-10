@@ -320,6 +320,19 @@ __getMode:
 	and r0, r0, #0x1F
 	bx  lr
 
+.align 2
+.global __isEmulator
+.type __isEmulator, %function
+__isEmulator: @ Only to be called once!
+	ldr r0, .Lmov_r0_1
+	mov r1, pc
+	str r0, [r1]
+	mov r0, #0
+	bx lr
+
+.Lmov_r0_1:
+	mov r0, #1
+
 .macro swiimp name num
 .align 2
 .global FeOS_swi_\name

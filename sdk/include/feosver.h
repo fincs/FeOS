@@ -31,8 +31,53 @@
 
 #if defined(FEOS) && !defined(ARM7)
 
+//! \brief System flags
+enum
+{
+	SYSTEM_FLAGS_EMULATOR = BIT(0), //!< Emulator
+	SYSTEM_FLAGS_CHINESE = BIT(1), //!< iQue
+	SYSTEM_FLAGS_DEBUG = BIT(2), //!< Debug kernel
+};
+
+//! \brief System type
+enum
+{
+	SYSTEM_TYPE_DS, //!< DS Phat
+	SYSTEM_TYPE_DSDebug, //!< DS Phat debug unit
+	SYSTEM_TYPE_DSLite, //!< DS Lite
+	SYSTEM_TYPE_DSi, //!< DSi
+	SYSTEM_TYPE_DSi_XL, //!< DSi XL
+	SYSTEM_TYPE_3DS, //!< 3DS
+	SYSTEM_TYPE_3DS_XL, //!< 3DS XL
+};
+
+//! \brief System operation mode
+enum
+{
+	SYSTEM_MODE_DS, //!< DS Mode
+	SYSTEM_MODE_DSi, //!< DSi Mode
+};
+
+//! \brief Holds information about the system
+typedef struct
+{
+	int osVersionPack; //!< FeOS version pack
+	const char* osVersionText; //!< FeOS version pack as human-readable text
+
+	unsigned int systemFlags; //!< System flags
+
+	int systemType; //!< System type
+	const char* systemTypeText; //!< System type, as human-readable text
+
+	int systemMode; //!< System operation mode
+	const char* systemModeText; //!< System operation mode, as human-readable text
+} systeminfo_t;
+
 //! \brief Gets the currently running FeOS version
 int FeOS_GetVersion();
+
+//! \brief Gets information about the system
+const systeminfo_t* FeOS_GetSystemInfo();
 
 //! \brief Determines whether the application is running under the specified FeOS version or later
 static inline int FeOS_VersionAtLeast(int minorVer, int majorVer)

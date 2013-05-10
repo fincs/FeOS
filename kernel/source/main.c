@@ -299,6 +299,7 @@ void chk_exit()
 }
 
 void FeOS_InitStreams();
+void FeOS_InitSystemInfo();
 
 void ExcptHandler_C();
 
@@ -339,6 +340,8 @@ int main()
 	FeOS_ModuleListInit();
 	FeOS_InitStreams();
 	installFeOSFIFO();
+
+	FeOS_InitSystemInfo();
 
 	iprintf(
 		"\n  FeOS kernel v" FEOS_VERSION_TEXT "\n"
