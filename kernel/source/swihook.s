@@ -11,7 +11,7 @@ __BIOS_SWI:
 .word 0xFFFF0008
 
 .global __SWIHandler
-.type __SWIHandler STT_FUNC
+.type __SWIHandler, %function
 __SWIHandler:
 	@ Redirect to the BIOS if the caller is not user mode
 	mrs r12, spsr
@@ -54,10 +54,10 @@ __SVCTable:
 	.word FreeModule_ARM7
 	.word keyboardUpdate
 	.word __FeOS_IRQPoll
-	.word FeOS_DataCacheFlush
-	.word FeOS_DataCacheFlushAll
-	.word FeOS_InstrCacheInvalidate
-	.word FeOS_InstrCacheInvalidateAll
+	.word DC_FlushRange
+	.word DC_FlushAll
+	.word IC_InvalidateRange
+	.word IC_InvalidateAll
 	.word irqEnable
 	.word irqDisable
 	.word InitConMode
@@ -136,14 +136,14 @@ __SVCTable:
 
 .align 2
 .global __ResetHandler
-.type __ResetHandler STT_FUNC
+.type __ResetHandler, %function
 __ResetHandler:
 	@ Huh??
 	@ Let the exception handler run
 	mrs r0, cpsr
 	bic r0, r0, #0xC0
 	msr cpsr, r0
-	.word 0xF7F000F0
+	.word 0xE7F000F0
 
 .align 2
 __FeOS_IRQPoll:
@@ -181,7 +181,7 @@ __FeOS_WaitForMemAddr:
 .text
 .align 2
 .global PrepareUserMode
-.type PrepareUserMode STT_FUNC
+.type PrepareUserMode, %function
 PrepareUserMode:
 	@ Copy ITCM MPU section to GBA ROM section
 	mrc p15, 0, r0, c6, c4, 0
@@ -210,7 +210,7 @@ AccessSettings2:
 
 .align 2
 .global UnblockIORegion
-.type UnblockIORegion STT_FUNC
+.type UnblockIORegion, %function
 UnblockIORegion:
 	ldr r0, AccessSettings2
 	mcr p15, 0, r0, c5, c0, 2 @ data
@@ -218,7 +218,7 @@ UnblockIORegion:
 
 .align 2
 .global BlockIORegion
-.type BlockIORegion STT_FUNC
+.type BlockIORegion, %function
 BlockIORegion:
 	ldr r0, AccessSettings
 	mcr p15, 0, r0, c5, c0, 2 @ data
@@ -226,7 +226,7 @@ BlockIORegion:
 
 .align 2
 .global FeOS_IRQPoll
-.type FeOS_IRQPoll STT_FUNC
+.type FeOS_IRQPoll, %function
 FeOS_IRQPoll:
 	mrs r0, cpsr
 	tst r0, #0xF
@@ -239,7 +239,7 @@ FeOS_IRQPoll:
 
 .align 2
 .global DoTheUserMode
-.type DoTheUserMode STT_FUNC
+.type DoTheUserMode, %function
 DoTheUserMode:
 	@ Switch to user mode
 	mrs r0, cpsr
@@ -250,14 +250,14 @@ DoTheUserMode:
 @ word_t __ARMSWP(word_t value, word_t* addr)
 .align 2
 .global __ARMSWP
-.type __ARMSWP STT_FUNC
+.type __ARMSWP, %function
 __ARMSWP:
 	swp r0, r0, [r1]
 	bx lr
 
 .align 2
 .global __getIRQStack
-.type __getIRQStack STT_FUNC
+.type __getIRQStack, %function
 __getIRQStack:
 	@ Switch to IRQ mode
 	mrs r1, cpsr
@@ -276,7 +276,7 @@ __getIRQStack:
 
 .align 2
 .global __getSWIStack
-.type __getSWIStack STT_FUNC
+.type __getSWIStack, %function
 __getSWIStack:
 	@ Switch to SWI mode
 	mrs r1, cpsr
@@ -295,7 +295,7 @@ __getSWIStack:
 
 .align 2
 .global __setSWIStack
-.type __setSWIStack STT_FUNC
+.type __setSWIStack, %function
 __setSWIStack:
 	@ Switch to SWI mode
 	mrs r1, cpsr
@@ -314,7 +314,7 @@ __setSWIStack:
 
 .align 2
 .global __getMode
-.type __getMode STT_FUNC
+.type __getMode, %function
 __getMode:
 	mrs r0, cpsr
 	and r0, r0, #0x1F
@@ -323,7 +323,7 @@ __getMode:
 .macro swiimp name num
 .align 2
 .global FeOS_swi_\name
-.type FeOS_swi_\name STT_FUNC
+.type FeOS_swi_\name, %function
 .thumb_func
 FeOS_swi_\name\():
 	swi \num

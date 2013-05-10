@@ -38,14 +38,15 @@ GAME_SUBTITLE2	:=	feos.mtheall.com
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s
 
+DEFINES		:=	-DFEOS
 ifeq ($(DEBUGVER),)
 COPTFLAG	:=	-O2
 LIBNDSLIB	:=	-lnds9
-DEFINES		:=	-DNDEBUG
+DEFINES		+=	-DNDEBUG
 else
 COPTFLAG	:=	-O0
 LIBNDSLIB	:=	-lnds9d
-DEFINES		:=	-DDEBUG
+DEFINES		+=	-DDEBUG
 endif
 
 CFLAGS	:=	-g -Wall $(COPTFLAG) -funwind-tables -save-temps\

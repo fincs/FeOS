@@ -384,23 +384,3 @@ void* FeOS_GetModuleExidxTbl(instance_t hInst, int* count)
 
 	return rh->exidx.table;
 }
-
-void FeOS_DataCacheFlush(const void* mem, size_t size)
-{
-	DC_FlushRange(mem, size);
-}
-
-void FeOS_DataCacheFlushAll()
-{
-	DC_FlushAll();
-}
-
-void FeOS_InstrCacheInvalidate(const void* mem, size_t size)
-{
-	IC_InvalidateRange(mem, size);
-}
-
-void FeOS_InstrCacheInvalidateAll()
-{
-	IC_InvalidateAll();
-}
