@@ -456,10 +456,30 @@ word_t FeOS_FifoGetRetValue32(int ch)
 	word_t FeOS_swi_FifoGetValue32(int);
 
 	volatile byte_t* pCounter = counters + ch - FIFO_PROG_CH;
-	byte_t thisVal = ++*pCounter;
-	while (*pCounter != thisVal || !FeOS_swi_FifoCheckValue32(ch))
+#define WAIT_COUNTER (*pCounter)
+
+	byte_t queuePos = WAIT_COUNTER++;
+	byte_t prevCnt = queuePos;
+
+	// Wait for previous calls to finish
+	while (queuePos)
+	{
+		byte_t curCnt = WAIT_COUNTER;
+		if (curCnt < prevCnt)
+			// Decrement queue position
+			queuePos -= prevCnt - curCnt;
+		prevCnt = curCnt;
 		FeOS_WaitForIRQ(~0);
-	--*pCounter;
+	}
+
+	// Wait for the return value
+	while (!FeOS_swi_FifoCheckValue32(ch))
+		FeOS_WaitForIRQ(~0);
+
+	// Return
+	WAIT_COUNTER --;
 	return FeOS_swi_FifoGetValue32(ch);
+
+#undef WAIT_COUNTER
 }
 #endif
