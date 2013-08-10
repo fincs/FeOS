@@ -1,4 +1,5 @@
 #include "feos.h"
+#include "thread.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -378,6 +379,7 @@ int main()
 #ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdClusterPtr = (vu32*) _FAT_getCwdClusterPtr("/");
 	KeInitDefaultExecStatus();
+	ThrInit();
 #endif
 	InstallThunks();
 #ifdef LIBFAT_FEOS_MULTICWD

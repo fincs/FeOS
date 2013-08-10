@@ -31,7 +31,6 @@ build/
 !/sdk/userlib/README.txt
 !/sdk/userlib/feoswifi/
 !/sdk/userlib/feos3d/
-!/sdk/userlib/multifeos/
 !/sdk/userlib/libfar/
 !/sdk/userlib/libitcm/
 !/sdk/userlib/md5/

@@ -375,23 +375,6 @@ void coop_swiIntrWaitCompat(word_t how, word_t what)
 }
 #endif
 
-#ifdef ARM9
-static irqWaitFunc_t irqWaitFunc = NULL;
-
-void DSWaitForIRQ(word_t mask)
-{
-	irqWaitFunc ? irqWaitFunc(mask) : DSWaitForIRQRaw(mask);
-}
-
-irqWaitFunc_t DSSetIRQWaitFunc(irqWaitFunc_t newFunc)
-{
-	irqWaitFunc_t oldFunc = irqWaitFunc;
-	if (newFunc != GET_IRQFUNC)
-		irqWaitFunc = newFunc;
-	return oldFunc;
-}
-#endif
-
 word_t DSWaitForNextIRQRaw()
 {
 	word_t flags = 0;

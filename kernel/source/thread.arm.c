@@ -1,20 +1,4 @@
-#include <multifeos.h>
-#include <setjmp.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-enum { THREAD_EXIT = BIT(0), THREAD_IRQWAIT = BIT(1), THREAD_EXECBITS = 3, THREAD_HIGHPRIO = BIT(2), THREAD_DETACHED = BIT(3) };
-
-typedef struct tag_threadSt
-{
-	jmp_buf ctx;
-	word_t* stack;
-	struct tag_threadSt* prev;
-	struct tag_threadSt* next;
-	execstat_t execStat;
-	word_t flags;
-	union { int rc; word_t irqMask; };
-} threadSt;
+#include "thread.h"
 
 threadSt _firstThread;
 
@@ -25,22 +9,18 @@ int threadsFinished = 0;
 
 #define inactiveThreadCount() (threadsWaiting + threadsFinished)
 
-void __attribute__((noreturn)) __newThread(void* param, threadEP_t entryPoint, word_t* stackPtr);
+void __attribute__((noreturn)) __enterThread(void* param, threadEP_t entryPoint, word_t* stackPtr);
 
-static irqWaitFunc_t oldIrqWaitFunc;
-static void _irqWaitYield(word_t mask);
 static threadSt* _irqWaitCheck();
 
-FEOSINIT void initFirstThread()
+void ThrInit()
 {
-	curThread->execStat = FeOS_GetCurExecStatus();
+	curThread->execStat = KeGetCurExecStatus();
 	curThread->prev = curThread;
 	curThread->next = curThread;
-	oldIrqWaitFunc = FeOS_SetIRQWaitFunc(_irqWaitYield);
-	FeOS_StayResident();
 }
 
-thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param)
+thread_t ThrCreate(word_t stackSize, threadEP_t entryPoint, void* param)
 {
 	// 32-bit align the stack size
 	stackSize += 3;
@@ -51,8 +31,8 @@ thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param)
 
 	threadSt* t = (threadSt*) (mem + stackSize);
 	t->stack = (word_t*) mem;
-	t->execStat = FeOS_GetCurExecStatus();
-	FeOS_ExecStatusAddRef(t->execStat);
+	t->execStat = KeGetCurExecStatus();
+	KeExecStatusAddRef(t->execStat);
 	t->flags = curThread->flags & THREAD_HIGHPRIO;
 
 	threadSt* insPoint;
@@ -75,20 +55,20 @@ thread_t FeOS_CreateThread(word_t stackSize, threadEP_t entryPoint, void* param)
 	nThreads ++;
 
 	if (!setjmp(thisThread->ctx))
-		__newThread(param, entryPoint, (word_t*) t);
+		__enterThread(param, entryPoint, (word_t*) t);
 
-	return (thread_t) t;
+	return t;
 }
 
 void _doYield(threadSt* t)
 {
 	curThread = t;
 
-	FeOS_SetCurExecStatus(curThread->execStat);
+	KeSetCurExecStatus(curThread->execStat);
 	longjmp(curThread->ctx, 1);
 }
 
-void FeOS_Yield()
+void ThrYield()
 {
 	threadSt* t = curThread;
 
@@ -113,7 +93,7 @@ void FeOS_Yield()
 		while ((t->flags & THREAD_DETACHED) && (t->flags & THREAD_EXIT))
 		{
 			threadSt* next = t->next;
-			FeOS_FreeThread(t);
+			ThrFree(t);
 			t = next;
 		}
 	} while (t->flags & THREAD_EXECBITS);
@@ -121,31 +101,30 @@ void FeOS_Yield()
 	_doYield(t);
 }
 
-thread_t FeOS_GetCurrentThread()
+thread_t ThrGetSelf()
 {
-	return (thread_t) curThread;
+	return curThread;
 }
 
-void FeOS_ExitThread(int rc)
+void ThrExit(int rc)
 {
 	if (curThread == &_firstThread) return;
 	curThread->flags |= THREAD_EXIT;
 	curThread->rc = rc;
 	threadsFinished ++;
-	FeOS_Yield();
+	ThrYield();
 }
 
-bool FeOS_IsThreadActive(thread_t hThread)
+bool ThrIsActive(thread_t hThread)
 {
-	return (((threadSt*)hThread)->flags & THREAD_EXIT) == 0;
+	return (hThread->flags & THREAD_EXIT) == 0;
 }
 
-void FeOS_FreeThread(thread_t hThread)
+void ThrFree(thread_t t)
 {
-	if (hThread == (thread_t) &_firstThread) return;
-	if (hThread == (thread_t) curThread) return;
+	if (t == &_firstThread) return;
+	if (t == curThread) return;
 
-	threadSt* t = (threadSt*) hThread;
 	if (t->flags & THREAD_IRQWAIT)
 		threadsWaiting --;
 	if (t->flags & THREAD_EXIT)
@@ -153,29 +132,28 @@ void FeOS_FreeThread(thread_t hThread)
 	t->prev->next = t->next;
 	t->next->prev = t->prev;
 	free(t->stack);
-	FeOS_ExecStatusRelease(t->execStat);
+	KeExecStatusRelease(t->execStat);
 	nThreads --;
 }
 
-int FeOS_ThreadJoin(thread_t hThread)
+int ThrJoin(thread_t hThread)
 {
 	int rc;
-	while (FeOS_IsThreadActive(hThread)) FeOS_Idle();
-	rc = FeOS_GetThreadRC(hThread);
-	FeOS_FreeThread(hThread);
+	while (ThrIsActive(hThread)) DSWaitForIRQ(~0);
+	rc = ThrGetExitCode(hThread);
+	ThrFree(hThread);
 	return rc;
 }
 
-void FeOS_SetThreadPrio(thread_t hThread, int prio)
+void ThrSetPriority(thread_t t, int prio)
 {
-	threadSt* t = (threadSt*) hThread;
 	word_t flag = (prio == PRIORITY_HIGH) ? THREAD_HIGHPRIO : 0;
 	if ((t->flags & flag) == flag) return;
 	t->flags &= ~THREAD_HIGHPRIO;
 	t->flags |= flag;
 
 	// Can't change position of the first thread
-	if (hThread == (thread_t) &_firstThread) return;
+	if (t == &_firstThread) return;
 
 	// Pull the thread out of the list
 	t->prev->next = t->next;
@@ -189,9 +167,9 @@ void FeOS_SetThreadPrio(thread_t hThread, int prio)
 	t->prev->next = t;
 }
 
-int FeOS_GetThreadRC(thread_t hThread)
+int ThrGetExitCode(thread_t hThread)
 {
-	return ((threadSt*)hThread)->rc;
+	return hThread->rc;
 }
 
 typedef struct
@@ -203,16 +181,17 @@ typedef struct
 static int _execAsyncEP(void* _param)
 {
 	execParams* params = (void*) _param;
-	FeOS_ExecStatusRelease(curThread->execStat);
-	curThread->execStat = FeOS_ExecStatusCreate();
-	if (!curThread->execStat) return -1;
-	FeOS_SetCurExecStatus(curThread->execStat);
-	int rc = FeOS_Execute(params->argc, params->argv);
+	execstat_t es = KeExecStatusCreate();
+	if (!es) return -4;
+	KeExecStatusRelease(curThread->execStat);
+	curThread->execStat = es;
+	KeSetCurExecStatus(curThread->execStat);
+	int rc = LdrExecuteArgv(params->argc, params->argv);
 	free(_param);
 	return rc;
 }
 
-thread_t FeOS_CreateProcess(int argc, const char* argv[])
+thread_t PsCreateFromArgv(int argc, const char* argv[])
 {
 	execParams* params = (execParams*) malloc(sizeof(execParams));
 	if (!params) return NULL;
@@ -220,7 +199,7 @@ thread_t FeOS_CreateProcess(int argc, const char* argv[])
 	params->argc = argc;
 	params->argv = argv;
 
-	thread_t t = FeOS_CreateThread(16*1024, _execAsyncEP, params);
+	thread_t t = ThrCreate(16*1024, _execAsyncEP, params);
 	if (!t)
 	{
 		free(params);
@@ -232,52 +211,54 @@ thread_t FeOS_CreateProcess(int argc, const char* argv[])
 
 static int _runAsyncEP(void* _param)
 {
-	FeOS_ExecStatusRelease(curThread->execStat);
-	curThread->execStat = FeOS_ExecStatusCreate();
+	execstat_t es = KeExecStatusCreate();
+	if (!es) return -4;
+	KeExecStatusRelease(curThread->execStat);
+	curThread->execStat = es;
 	if (!curThread->execStat) return -1;
-	FeOS_SetCurExecStatus(curThread->execStat);
+	KeSetCurExecStatus(curThread->execStat);
 	return system((const char*)_param);
 }
 
-thread_t FeOS_RunAsync(const char* command)
+thread_t PsCreateFromCmdLine(const char* command)
 {
-	return FeOS_CreateThread(16*1024, _runAsyncEP, (void*)command);
+	return ThrCreate(16*1024, _runAsyncEP, (void*)command);
 }
 
-void FeOS_DetachThread(thread_t hThread)
+void ThrDetach(thread_t t)
 {
-	if (hThread == &_firstThread || hThread == curThread)
+	if (t == &_firstThread || t == curThread)
 		return;
-	threadSt* t = (threadSt*) hThread;
 	t->flags |= THREAD_DETACHED;
 }
 
-int FeOS_RunInContext(thread_t hThread, threadEP_t func, void* param)
+int ThrRunInContext(thread_t t, threadEP_t func, void* param)
 {
-	threadSt* t = (threadSt*) hThread;
 	execstat_t oldSt = curThread->execStat;
 	curThread->execStat = t->execStat;
-	FeOS_SetCurExecStatus(curThread->execStat);
+	KeExecStatusAddRef(curThread->execStat);
+	KeSetCurExecStatus(curThread->execStat);
 	int rc = func(param);
 	curThread->execStat = oldSt;
-	FeOS_SetCurExecStatus(curThread->execStat);
+	KeSetCurExecStatus(curThread->execStat);
+	KeExecStatusRelease(curThread->execStat);
 	return rc;
 }
 
-void _irqWaitYield(word_t mask)
+void DSWaitForIRQ(word_t mask)
 {
 	threadsWaiting ++;
 	curThread->irqMask = mask;
 	curThread->flags |= THREAD_IRQWAIT;
-	FeOS_Yield();
+	ThrYield();
 }
 
-word_t FeOS_NextIRQYield()
+word_t DSWaitForNextIRQ()
 {
 	threadsWaiting ++;
 	curThread->irqMask = 0;
 	curThread->flags |= THREAD_IRQWAIT;
-	FeOS_Yield();
+	ThrYield();
 	return curThread->irqMask;
 }
 
@@ -299,7 +280,7 @@ threadSt* _irqWaitCheck()
 
 	// Get the interrupt mask. If all other threads are inactive (such as waiting for IRQs),
 	// we can then perform the wait for IRQ.
-	word_t mask = (inactiveThreadCount() == nThreads) ? FeOS_NextIRQ() : FeOS_CheckPendingIRQs();
+	word_t mask = (inactiveThreadCount() == nThreads) ? DSWaitForNextIRQRaw() : DSProcessIRQs();
 
 	if (!mask) // implies inactiveThreadCount() != nThreads
 		return NULL;

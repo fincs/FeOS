@@ -285,6 +285,14 @@ __isEmulator: @ Only to be called once!
 .Lmov_r0_1:
 	mov r0, #1
 
+.align 2
+.global __enterThread
+.type __enterThread, %function
+__enterThread: @ r0 - param, r1 - entrypoint, r2 - stack pointer
+	mov sp, r2
+	ldr lr, =ThrExit
+	bx r1
+
 .macro swiimp name num
 .align 2
 .global \name

@@ -70,12 +70,6 @@ void LdrEnumModules(ModuleEnumCallback, void*);
 //! \brief Decreases the reference count of the callers' module.
 #define LdrEndResidency() LdrUnlockModule(LdrGetSelf())
 
-execstat_t KeExecStatusCreate(); //!< (Low-level) Creates a new execution status object.
-void KeExecStatusAddRef(execstat_t); //!< (Low-level) Increases the reference count of an execstat object.
-void KeExecStatusRelease(execstat_t); //!< (Low-level) Decreases the reference count of an execstat object.
-void KeSetCurExecStatus(execstat_t); //!< (Low-level) Sets the current execution status.
-execstat_t KeGetCurExecStatus(); //!< (Low-level) Gets the current execution status.
-
 //! \brief Executes the specified argc and argv.
 int LdrExecuteArgv(int, const char*[]);
 

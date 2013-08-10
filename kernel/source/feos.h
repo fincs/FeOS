@@ -64,8 +64,6 @@ static inline bool AddressCheckMainRAM(const void* addr)
 #define E_INVALIDARG (-11)
 #define E_APPKILLED (-12)
 
-typedef void (*irqWaitFunc_t)(word_t);
-
 void DSRunFifoQueue();
 void DSFifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata);
 void DSFifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata);
@@ -76,6 +74,7 @@ word_t DSProcessIRQs();
 void DSWaitForIRQ(word_t mask);
 void DSWaitForIRQRaw(word_t mask);
 word_t DSWaitForNextIRQRaw();
+word_t DSWaitForNextIRQ();
 
 static inline void DSWaitForVBlank()
 {
@@ -86,9 +85,6 @@ static inline void DSWaitForVBlankRaw()
 {
 	DSWaitForIRQRaw(IRQ_VBLANK);
 }
-
-#define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF)
-irqWaitFunc_t DSSetIRQWaitFunc(irqWaitFunc_t newFunc);
 
 int __getMode();
 #define isUserMode() (__getMode() == 0x10)
@@ -130,6 +126,13 @@ typedef struct
 } executeStatus_t;
 
 extern executeStatus_t* curExecStatus;
+typedef executeStatus_t* execstat_t;
+
+execstat_t KeExecStatusCreate();
+void KeExecStatusAddRef(execstat_t hSt);
+void KeExecStatusRelease(execstat_t hSt);
+void KeSetCurExecStatus(execstat_t hSt);
+execstat_t KeGetCurExecStatus();
 
 #ifdef LIBFAT_FEOS_MULTICWD
 char* _getCwdBuf();

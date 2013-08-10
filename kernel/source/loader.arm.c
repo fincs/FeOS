@@ -527,6 +527,10 @@ void* LdrFindInTbl(const fxe_inmem_exports* exphdr, const char* name)
 			return exphdr->table[mid].addr;
 	}
 
+#ifdef DEBUG
+	iprintf("{DBG} Cannot resolve %s\n", name);
+#endif
+
 	return NULL;
 }
 

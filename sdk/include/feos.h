@@ -42,6 +42,7 @@ extern "C"
 
 	\subsection api FeOS API
 	- \ref api_base "Core FeOS API"
+	- \ref api_thr "FeOS Threading API"
 	- **FeOS libnds-compatible DS hardware access API**
 	  - \ref api_ds "Basic functions"
 	  - \ref api_math "Math functions"
@@ -49,7 +50,6 @@ extern "C"
 	  - \ref api_dsspr "Sprite functions"
 
 	\subsection userlibs System Libraries
-	- \ref multifeos.h "MultiFeOS (cooperative multitasking)"
 	- \ref feoswifi "FeOSWifi (dswifi for FeOS)"
 	- \ref feos3d.h "FeOS3D (libnds videoGL for FeOS)"
 	- \ref far.h "libfar (FeOS ARchives)"
@@ -67,6 +67,7 @@ extern "C"
 #include <feosuser.h>
 #include <feosmath.h>
 #include <feosdsapi.h>
+#include <feosthr.h>
 #include <feosdsspr.h>
 #include <feosdsbg.h>
 #else

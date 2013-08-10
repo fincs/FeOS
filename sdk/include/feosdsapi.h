@@ -401,13 +401,6 @@ static inline void swiWaitForVBlank()
 	DSWaitForIRQ(IRQ_VBLANK);
 }
 
-#define DEFAULT_IRQFUNC ((irqWaitFunc_t)0) //!< Internal macro not for public consumption.
-#define GET_IRQFUNC ((irqWaitFunc_t)0xFFFFFFFF) //!< Internal macro not for public consumption.
-typedef void (*irqWaitFunc_t)(word_t); //!< Internal data type not for public consumption.
-
-//! \brief Internal function not for public consumption.
-irqWaitFunc_t DSSetIRQWaitFunc(irqWaitFunc_t newFunc);
-
 //! \brief Writes a value into a timer register.
 void DSTimerWrite(int, word_t);
 //! \brief Reads a timer's counting value.

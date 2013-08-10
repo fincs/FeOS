@@ -13,7 +13,6 @@ DSGetSubOAM \
 DSLoadARM7 \
 DSModeShim \
 DSProcessIRQs \
-DSSetIRQWaitFunc \
 DSSetSuspendMode \
 DSTimerTick \
 DSTimerWrite \

@@ -1,6 +1,7 @@
 #include "feos.h"
 #include "loader.h"
 #include "feosfifo.h"
+#include "thread.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,14 +38,6 @@ void KeWaitForMemAddr(volatile byte_t*, byte_t);
 void KeSetExcptHandler(void*);
 
 // Execution status functions
-
-typedef void* execstat_t;
-
-execstat_t KeExecStatusCreate();
-void KeExecStatusAddRef(execstat_t hSt);
-void KeExecStatusRelease(execstat_t hSt);
-void KeSetCurExecStatus(execstat_t hSt);
-execstat_t KeGetCurExecStatus();
 
 typedef int (* systemfunc_t)(const char* command);
 
@@ -404,10 +397,6 @@ BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(KeDiv3232),
 	ADD_FUNC_(KeDiv6432),
 	ADD_FUNC_(KeDiv6464),
-	ADD_FUNC_(KeExecStatusAddRef),
-	ADD_FUNC_(KeExecStatusCreate),
-	ADD_FUNC_(KeExecStatusRelease),
-	ADD_FUNC_(KeGetCurExecStatus),
 	ADD_FUNC_(KeGetDiskStats),
 	ADD_ALIAS(KeGetErrnoPtr, __errno),
 	ADD_FUNC_(KeGetMemStats),
@@ -417,7 +406,6 @@ BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(KeMod3232),
 	ADD_FUNC_(KeMod6432),
 	ADD_FUNC_(KeMod6464),
-	ADD_FUNC_(KeSetCurExecStatus),
 	ADD_FUNC_(KeSetExcptHandler),
 	ADD_FUNC_(KeSqrt32),
 	ADD_FUNC_(KeSqrt64),
@@ -432,11 +420,24 @@ BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(LdrLoadModule),
 	ADD_FUNC_(LdrLockModule),
 	ADD_FUNC_(LdrResGetSize),
-	ADD_FUNC_(LdrResolveAddr),
 	ADD_FUNC_(LdrResRead),
 	ADD_FUNC_(LdrResSeek),
 	ADD_FUNC_(LdrResTell),
+	ADD_FUNC_(LdrResolveAddr),
 	ADD_FUNC_(LdrUnlockModule),
+	ADD_FUNC_(PsCreateFromArgv),
+	ADD_FUNC_(PsCreateFromCmdLine),
+	ADD_FUNC_(ThrCreate),
+	ADD_FUNC_(ThrDetach),
+	ADD_FUNC_(ThrGetSelf),
+	ADD_FUNC_(ThrExit),
+	ADD_FUNC_(ThrFree),
+	ADD_FUNC_(ThrGetExitCode),
+	ADD_FUNC_(ThrIsActive),
+	ADD_FUNC_(ThrJoin),
+	ADD_FUNC_(ThrRunInContext),
+	ADD_FUNC_(ThrSetPriority),
+	ADD_FUNC_(ThrYield),
 	ADD_FUNC_(__aeabi_idiv),
 	ADD_FUNC_(__aeabi_idivmod),
 	ADD_FUNC_(__aeabi_ldivmod),
@@ -605,14 +606,14 @@ execstat_t KeExecStatusCreate()
 
 void KeExecStatusAddRef(execstat_t hSt)
 {
-	if (hSt == (execstat_t) &defaultExecStatus) return;
-	((executeStatus_t*)hSt)->refcount ++;
+	if (hSt == &defaultExecStatus) return;
+	hSt->refcount ++;
 }
 
 void KeExecStatusRelease(execstat_t hSt)
 {
-	if (hSt == (execstat_t) &defaultExecStatus) return;
-	word_t r = --((executeStatus_t*)hSt)->refcount;
+	if (hSt == &defaultExecStatus) return;
+	word_t r = --hSt->refcount;
 	if (r == 0)
 		free(hSt);
 }
@@ -622,7 +623,7 @@ void KeSetCurExecStatus(execstat_t hSt)
 #ifdef LIBFAT_FEOS_MULTICWD
 	curExecStatus->cwdCluster = g_fatCwdCluster;
 #endif
-	curExecStatus = (executeStatus_t*) hSt;
+	curExecStatus = hSt;
 #ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdCluster = curExecStatus->cwdCluster;
 	_setCwdBuf(curExecStatus->cwdBuffer);
@@ -631,7 +632,7 @@ void KeSetCurExecStatus(execstat_t hSt)
 
 execstat_t KeGetCurExecStatus()
 {
-	return (execstat_t) curExecStatus;
+	return curExecStatus;
 }
 
 #define LdrCurModule curExecStatus->curModule
