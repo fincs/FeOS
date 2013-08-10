@@ -1,4 +1,4 @@
-FeOS v0.1-alpha
+FeOS v0.2-alpha
 ===============
 
 Introduction
