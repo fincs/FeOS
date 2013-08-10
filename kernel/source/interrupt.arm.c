@@ -366,15 +366,6 @@ void DSWaitForIRQRaw(word_t mask)
 	}
 }
 
-#ifdef ARM7
-void coop_swiIntrWaitCompat(word_t how, word_t what)
-{
-	word_t mask = coopIrqCheck();
-	if (mask & what) return;
-	coopIrqWait(what);
-}
-#endif
-
 word_t DSWaitForNextIRQRaw()
 {
 	word_t flags = 0;
@@ -419,5 +410,21 @@ word_t DSFifoGetRetValue32(int ch)
 	return fifoGetValue32(ch);
 
 #undef WAIT_COUNTER
+}
+
+void __real_swiIntrWait(word_t, word_t);
+void __wrap_swiIntrWait(word_t mode, word_t mask)
+{
+	if (isUserMode())
+		mode ? DSWaitForIRQRaw(mask) : DSWaitForNextIRQ(mask);
+	else
+		__real_swiIntrWait(mode, mask);
+}
+#endif
+
+#ifdef ARM7
+void coop_swiIntrWaitCompat(word_t how, word_t what)
+{
+	how ? coopIrqWait(what) : coopIrqNext(what);
 }
 #endif
