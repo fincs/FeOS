@@ -52,10 +52,10 @@ PsCreateFromArgv \
 PsCreateFromCmdLine \
 ThrCreate \
 ThrDetach \
-ThrGetSelf \
 ThrExit \
 ThrFree \
 ThrGetExitCode \
+ThrGetSelf \
 ThrIsActive \
 ThrJoin \
 ThrRunInContext \
