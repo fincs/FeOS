@@ -23,4 +23,7 @@ typedef unsigned int uint32_t; //!< Unsigned 32-bit integer
 typedef signed long long int64_t; //!< Signed 64-bit integer
 typedef unsigned long long uint64_t; //!< Unsigned 64-bit integer
 
+typedef int32_t intptr_t; //!< Signed pointer-sized integer
+typedef uint32_t uintptr_t; //!< Unsigned pointer-sized integer
+
 /** @} */
