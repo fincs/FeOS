@@ -27,30 +27,27 @@ _\name\()hook_addr:
 	.word 0
 .endm
 
-makehook conwrite, 0x13, 0
-makehook conerr, 0x14, 0
-
 @ FAT hooks
 
-makehook fatopen, 0x20
-makehook fatclose, 0x21
-makehook fatwrite, 0x22
-makehook fatread, 0x23
-makehook fatseek, 0x24
-makehook fatfstat, 0x25
-makehook fatstat, 0x26
-makehook fatlink, 0x27
-makehook fatunlink, 0x28
-makehook fatchdir, 0x29
-makehook fatrename, 0x2A
-makehook fatmkdir, 0x2B
-makehook fatdiropen, 0x2C
-makehook fatdirreset, 0x2D
-makehook fatdirnext, 0x2E
-makehook fatdirclose, 0x2F
-makehook fatstatvfs, 0x30
-makehook fatftruncate, 0x31
-makehook fatfsync, 0x32
+makehook fatopen, 0x10
+makehook fatclose, 0x11
+makehook fatwrite, 0x12
+makehook fatread, 0x13
+makehook fatseek, 0x14
+makehook fatfstat, 0x15
+makehook fatstat, 0x16
+makehook fatlink, 0x17
+makehook fatunlink, 0x18
+makehook fatchdir, 0x19
+makehook fatrename, 0x1A
+makehook fatmkdir, 0x1B
+makehook fatdiropen, 0x1C
+makehook fatdirreset, 0x1D
+makehook fatdirnext, 0x1E
+makehook fatdirclose, 0x1F
+makehook fatstatvfs, 0x20
+makehook fatftruncate, 0x21
+makehook fatfsync, 0x22
 
 .align 2
 _FAT_jumpAddr:

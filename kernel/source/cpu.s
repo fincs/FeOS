@@ -21,6 +21,10 @@ __SWIHandler:
 	@ Save the caller information
 	push {r12, lr} @ spsr and return address
 	ldrb r12, [lr, #-2] @ function number
+
+	@ Range check
+	cmp r12, #((__SVCTableEnd - __SVCTable) / 4)
+	bge .Lswiret
 	
 	@ Switch to system mode & enable interrupts
 	mrs r14, cpsr
@@ -40,6 +44,7 @@ __SWIHandler:
 	msr cpsr, r12
 	
 	@ Restore the caller information then return
+.Lswiret:
 	pop {r12, lr}
 	msr spsr, r12
 	
@@ -48,43 +53,29 @@ __SWIHandler:
 .align 2
 .global __SVCTable
 __SVCTable:
-	@ Public functions (0x0Z)
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word _DSIRQPoll
-	.word DC_FlushRange
-	.word DC_FlushAll
-	.word IC_InvalidateRange
-	.word IC_InvalidateAll
-	.word 0
-	.word 0
-	.word 0
-	.word 0
-	.word __SetExcptHandler
-	.word 0
-	.word 0
-
-	@ Kernel functions (0x1Z)
-	.word 0
+	@ Kernel function (0x0Z)
 	.word 0
 #ifdef DEBUG
 	.word __sassert
 #else
 	.word 0
 #endif
-	writehook conwrite
-	writehook conerr
-	.word 0
-	.word 0
+	.word _DSIRQPoll
+	.word DC_FlushRange
+	.word DC_FlushAll
+	.word IC_InvalidateRange
+	.word IC_InvalidateAll
 	.word _DC_DrainWriteBuffer
 	.word _DSWaitForMemAddr
+	.word __SetExcptHandler
 	.word 0
 	.word 0
-	.space 4*5
+	.word 0
+	.word 0
+	.word 0
+	.word 0
 
-	@ FAT hooks (0x2Z ~ 0x3Z)
+	@ FAT hooks (0x1Z ~ 0x2Z)
 
 	writehook fatopen
 	writehook fatclose
@@ -107,8 +98,7 @@ __SVCTable:
 	writehook fatfsync
 	.space 4*13
 
-	.space 4*192
-
+__SVCTableEnd:
 
 .align 2
 .global __ResetHandler
@@ -186,7 +176,7 @@ DSIRQPoll:
 	ldr pc, =_DSIRQPoll
 
 .Lpoll_from_user_mode:
-	swi 0x040000
+	swi 0x020000
 	bx lr
 
 .align 2
@@ -207,6 +197,7 @@ __ARMSWP:
 	swp r0, r0, [r1]
 	bx lr
 
+#if 0
 .align 2
 .global __getIRQStack
 .type __getIRQStack, %function
@@ -263,6 +254,7 @@ __setSWIStack:
 
 	@ Return
 	bx lr
+#endif
 
 .align 2
 .global __getMode
@@ -304,12 +296,12 @@ __enterThread: @ r0 - param, r1 - entrypoint, r2 - stack pointer
 .endm
 
 #ifdef DEBUG
-swiimp __assert2 0x12
+swiimp __assert2 0x01
 #endif
-swiimp KeDataCacheFlush 0x05
-swiimp KeDataCacheFlushAll 0x06
-swiimp KeInstrCacheInvalidate 0x07
-swiimp KeInstrCacheInvalidateAll 0x08
-swiimp DC_DrainWriteBuffer 0x17
-swiimp KeSetExcptHandler 0x0D
-swiimp KeWaitForMemAddr 0x18
+swiimp KeDataCacheFlush 0x03
+swiimp KeDataCacheFlushAll 0x04
+swiimp KeInstrCacheInvalidate 0x05
+swiimp KeInstrCacheInvalidateAll 0x06
+swiimp DC_DrainWriteBuffer 0x07
+swiimp KeWaitForMemAddr 0x08
+swiimp KeSetExcptHandler 0x09

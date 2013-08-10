@@ -15,7 +15,7 @@ static inline void IdMgrInit(idmgr_t* mgr)
 	mgr->free = 0;
 }
 
-int IdMgrAlloc(idmgr_t* mgr)
+static inline int IdMgrAlloc(idmgr_t* mgr)
 {
 	if (mgr->free == IDMGR_MAXIDS)
 		return -1;
@@ -23,7 +23,7 @@ int IdMgrAlloc(idmgr_t* mgr)
 	return mgr->ids[mgr->free++];
 }
 
-void IdMgrFree(idmgr_t* mgr, int id)
+static inline void IdMgrFree(idmgr_t* mgr, int id)
 {
 	mgr->ids[--mgr->free] = id;
 }

@@ -23,7 +23,7 @@ ssize_t iprintf(const char* fmt, ...)
 void __SWIHandler();
 void __ResetHandler();
 
-PrintConsole* con; // Am I the only one that finds this offensive?
+PrintConsole* con;
 int conbg;
 
 void chk_exit();
@@ -136,9 +136,9 @@ void videoInit()
 	keyboardShow();
 }
 
-void InstallThunks();
-void InstallConThunks();
-void InstallConDummy();
+void IoInstallThunks();
+void IoRestoreStdStreams();
+void IoMothballStdStreams();
 
 void DSVideoReset()
 {
@@ -167,7 +167,7 @@ void DSConsoleMode()
 	int cS = enterCriticalSection();
 	DSVideoReset();
 	videoInit();
-	InstallConThunks();
+	IoRestoreStdStreams();
 	conMode = true;
 	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
@@ -179,7 +179,7 @@ void DSDirectMode()
 	int cS = enterCriticalSection();
 	conMode = false;
 	DSVideoReset();
-	InstallConDummy();
+	IoMothballStdStreams();
 	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
 }
@@ -213,91 +213,10 @@ bool DSGetAutoUpdate(int which)
 	}
 }
 
-#ifdef CONF_ENABLEAPPKILL
-
-void ForcefulExit()
-{
-	LdrModuleExit(E_APPKILLED);
-}
-
-word_t* __getIRQStack();
-word_t* __getSWIStack();
-void __setSWIStack(word_t*);
-
-void KillCurrentApp_IRQ();
-void KillCurrentApp_SWI();
-
-void KillCurrentApp_IRQ()
-{
-	// Retrieve a pointer to the IRQ stack
-	word_t* irqstack = __getIRQStack();
-
-	// The only instructions that push anything to the IRQ stack are (in order of execution):
-	//   (BIOS)   push {r0, r1, r2, r3, ip, lr}
-	//   (libnds) stmfd sp!, {r0-r1,r12,lr} @ {spsr, IME, REG_BASE, lr_irq}
-	// The IRQ stack now looks like this:
-	//   spsr IME REG_BASE lr_irq r0 r1 r2 r3 ip lr
-	// So, irqstack[9] contains the return address and irqstack[0], the SPSR
-
-#ifdef __thumb__
-	irqstack[0] |= BIT(5); // THUMB flag
-#endif
-	irqstack[0] &= ~0xF; // Force user mode :)
-	irqstack[9] = (word_t) ForcefulExit;
-
-	// Reset/clear the SWI stack
-	extern word_t __sp_svc;
-	__setSWIStack(&__sp_svc);
-}
-
-void KillCurrentApp_SWI()
-{
-	// Retrieve a pointer to the SWI stack
-	word_t* swistack = __getSWIStack();
-
-	// The only instruction that pushes anything to the SWI stack is:
-	//   (swihook.s) push {r12, lr} @ spsr and return address
-	// So, we only need to pop 2 values
-	__setSWIStack(swistack + 2);
-
-	// Switch back to User mode
-	KeEnterUserMode();
-
-	// Kill the application
-	ForcefulExit();
-}
-
-void KillCurrentApp()
-{
-	if (stdioRead) KillCurrentApp_SWI();
-	else           KillCurrentApp_IRQ();
-}
-
-#endif
-
-void OnFold()
-{
-}
-
 void kbd_key(int key)
 {
 	if (stdioRead && key > 0)
-	{
 		putchar(key);
-		return;
-	}
-
-	switch(key)
-	{
-		case DVK_MENU:
-#ifdef CONF_ENABLEAPPKILL
-			if (keysHeld() & KEY_DOWN) KillCurrentApp();
-#endif
-			break;
-		case DVK_FOLD:
-			OnFold();
-			break;
-	}
 }
 
 volatile static bool _hasExited = false;
@@ -381,7 +300,7 @@ int main()
 	KeInitDefaultExecStatus();
 #endif
 	ThrInit();
-	InstallThunks();
+	IoInstallThunks();
 #ifdef LIBFAT_FEOS_MULTICWD
 	iprintf(MSG_OK);
 #else

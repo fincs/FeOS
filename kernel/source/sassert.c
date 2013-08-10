@@ -9,8 +9,7 @@
 // Replacement for the libnds function
 
 void DSVideoReset();
-void InstallConThunks();
-void InstallConDummy();
+void IoRestoreStdStreams();
 
 extern PrintConsole oConSub;
 
@@ -43,7 +42,7 @@ void __attribute__((noreturn)) __sassert(const char* file, int line, const char*
 	PrintConsole* conmain = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
 	memcpy(&oConSub, consoleGetDefault(), sizeof(PrintConsole));
 	PrintConsole* consub = consoleInit(&oConSub, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, false, true);
-	InstallConThunks();
+	IoRestoreStdStreams();
 
 	consoleSelect(conmain);
 

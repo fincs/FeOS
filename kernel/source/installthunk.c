@@ -13,9 +13,6 @@
 	element = _##name##hook; \
 }while(0)
 
-DECLAREHOOK(ssize_t, conwrite, (struct _reent*, int, const char*, size_t));
-DECLAREHOOK(ssize_t, conerr, (struct _reent*, int, const char*, size_t));
-
 // FAT hooks
 DECLAREHOOK(int, fatopen, (struct _reent*, void*, const char*, int, int));
 DECLAREHOOK(int, fatclose, (struct _reent*, int));
@@ -51,15 +48,18 @@ static ssize_t DummyWrite(struct _reent* r, int fd, const char* buf, size_t coun
 	return count;
 }
 
-void InstallConThunks()
+ssize_t (* _conout)(struct _reent*, int, const char *ptr, size_t);
+ssize_t (* _conerr)(struct _reent*, int, const char *ptr, size_t);
+
+void IoRestoreStdStreams()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
-	dotabs[STD_OUT]->write_r = _conwritehook;
+	dotabs[STD_OUT]->write_r = _conout;
 	dotabs[STD_IN]->read_r = DSKeybdRead;
-	dotabs[STD_ERR]->write_r = _conerrhook;
+	dotabs[STD_ERR]->write_r = _conerr;
 }
 
-void InstallConDummy()
+void IoMothballStdStreams()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
 	dotabs[STD_OUT]->write_r = DummyWrite;
@@ -67,12 +67,12 @@ void InstallConDummy()
 	dotabs[STD_ERR]->write_r = DummyWrite;
 }
 
-void InstallThunks()
+void IoInstallThunks()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
-	HOOK(dotabs[STD_OUT]->write_r, conwrite);
+	_conout = dotabs[STD_OUT]->write_r;
+	_conerr = dotabs[STD_ERR]->write_r;
 	dotabs[STD_IN]->read_r = DSKeybdRead;
-	HOOK(dotabs[STD_ERR]->write_r, conerr);
 
 	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("/"); // force non-constness
 	HOOK(dotab->open_r, fatopen);

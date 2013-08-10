@@ -6,8 +6,7 @@
 #include <stdarg.h>
 
 void DSVideoReset();
-void InstallConThunks();
-void InstallConDummy();
+void IoRestoreStdStreams();
 
 extern const byte_t __itcm_start[];
 extern const byte_t __end__[];
@@ -225,7 +224,7 @@ void KeSystemError()
 	PrintConsole* conmain = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);
 	memcpy(&oConSub, consoleGetDefault(), sizeof(PrintConsole));
 	PrintConsole* consub = consoleInit(&oConSub, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, false, true);
-	InstallConThunks();
+	IoRestoreStdStreams();
 
 	consoleSelect(conmain);
 
