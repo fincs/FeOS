@@ -3,7 +3,7 @@
 
 int main()
 {
-	const systeminfo_t* info = FeOS_GetSystemInfo();
+	const systeminfo_t* info = KeGetSysInfo();
 	printf(
 		"FeOS%s [Version %s]\n"
 		"\n"

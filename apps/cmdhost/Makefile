@@ -31,8 +31,8 @@ INCLUDES      := include
 FILETYPES     := filetypes.cfg
 
 CONF_DEFINES =
-CONF_USERLIBS = coopgui multifeos
-CONF_LIBS = -lcoopgui -lmultifeos
+CONF_USERLIBS = coopgui
+CONF_LIBS = -lcoopgui
 
 include $(FEOSMK)/app.mk
 

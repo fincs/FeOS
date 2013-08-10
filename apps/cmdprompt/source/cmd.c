@@ -22,7 +22,7 @@ int cmd_execute(cmd_data* data)
 
 	hook_data hook;
 	redir_hook(&hook, &redir);
-	data->rc = FeOS_Execute(argc, data->argv);
+	data->rc = LdrExecuteArgv(argc, data->argv);
 	redir_unhook(&hook);
 
 	switch(data->rc)
@@ -120,12 +120,12 @@ void redir_hook(hook_data* hook, redir_data* redir)
 		fprintf(stderr, "Error opening '%s': %s\n", redir->stdout_file, strerror(errno));
 		return;
 	}
-	hook->orgStdout = FeOS_SetStdout(hook->hookStdout);
+	hook->orgStdout = IoSetStdout(hook->hookStdout);
 }
 
 void redir_unhook(hook_data* hook)
 {
 	if (hook->hookStdout == NO_HOOK) return;
-	FeOS_SetStdout(hook->orgStdout);
+	IoSetStdout(hook->orgStdout);
 	fclose(hook->hookStdout);
 }

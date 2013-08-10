@@ -61,13 +61,13 @@ class ConsoleHostApp : public CApplication
 
 	static ssize_t Write(void* pThis, const char* buf, size_t len)
 	{
-		FeOS_Yield();
+		ThrYield();
 		return _X(pThis)->oCon.print(buf, (int)len);
 	}
 
 	static ssize_t Read(void* pThis, char* buf, size_t len)
 	{
-		FeOS_Yield();
+		ThrYield();
 		return _X(pThis)->oKbd->SyncRead(buf, len);
 	}
 
@@ -86,7 +86,7 @@ public:
 
 	~ConsoleHostApp()
 	{
-		FeOS_FreeThread(hChildThread);
+		ThrFree(hChildThread);
 		fclose(freadhook);
 		fclose(fwritehook);
 	}
@@ -117,25 +117,25 @@ public:
 			}
 		}
 
-		fwritehook = FeOS_OpenStream(&hostStreamSt, this);
+		fwritehook = IoOpenStream(&hostStreamSt, this);
 		if (!fwritehook) return false;
 
-		freadhook = FeOS_OpenStream(&hostStreamSt, this);
+		freadhook = IoOpenStream(&hostStreamSt, this);
 		if (!freadhook) return false;
 
 		setvbuf(fwritehook, NULL, _IONBF, 0);
 		setvbuf(freadhook, NULL, _IOLBF, 256);
 
 		FILE *fprevhook[3];
-		fprevhook[0] = FeOS_SetStdin(freadhook);
-		fprevhook[1] = FeOS_SetStdout(fwritehook);
-		fprevhook[2] = FeOS_SetStderr(fwritehook);
+		fprevhook[0] = IoSetStdin(freadhook);
+		fprevhook[1] = IoSetStdout(fwritehook);
+		fprevhook[2] = IoSetStderr(fwritehook);
 		
-		hChildThread = FeOS_CreateProcess(argc, argv);
+		hChildThread = PsCreateFromArgv(argc, argv);
 
-		FeOS_SetStdin(fprevhook[0]);
-		FeOS_SetStdout(fprevhook[1]);
-		FeOS_SetStderr(fprevhook[2]);
+		IoSetStdin(fprevhook[0]);
+		IoSetStdout(fprevhook[1]);
+		IoSetStderr(fprevhook[2]);
 
 		return hChildThread != nullptr;
 	}
@@ -157,7 +157,7 @@ public:
 		dmaCopy(caretPal, SPRITE_PALETTE, caretPalLen);
 
 		oamSet(&oamMain, 0, 0, 0, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color, SPRITE_GFX, -1, false, false, false, false, false);
-		caretSpr = FeOS_GetOAMMemory(&oamMain);
+		caretSpr = oamMain_mem;
 
 		caretSpr->isHidden = true;
 
@@ -178,7 +178,7 @@ public:
 		dmaCopy(selectedPal, SPRITE_PALETTE_SUB, selectedPalLen);
 
 		oamSet(&oamSub, 0, 0, 0, 0, 0, SpriteSize_8x8, SpriteColorFormat_16Color, SPRITE_GFX_SUB, -1, false, false, false, false, false);
-		selSpr = FeOS_GetOAMMemory(&oamSub);
+		selSpr = oamSub_mem;
 
 		selSpr->isHidden = true;
 
@@ -193,11 +193,11 @@ public:
 
 	void OnVBlank()
 	{
-		if (!FeOS_IsThreadActive(hChildThread) && !bFinished) do
+		if (!ThrIsActive(hChildThread) && !bFinished) do
 		{
 			bFinished = true;
 
-			int rc = FeOS_GetThreadRC(hChildThread);
+			int rc = ThrGetExitCode(hChildThread);
 			if (rc != 0)
 			{
 				fprintf(fwritehook, "\nThe application exited with a\nfailure code of %d.\nPress START to close...\n", rc);

@@ -67,17 +67,17 @@ static void _FILE_close(void* obj)
 
 static int _MOD_read(void* obj, void* buf, int size)
 {
-	return FeOS_ModuleExtraRead(obj, buf, size);
+	return LdrResRead(obj, buf, size);
 }
 
 static int _MOD_seek(void* obj, int pos, int mode)
 {
-	return FeOS_ModuleExtraSeek(obj, pos, mode);
+	return LdrResSeek(obj, pos, mode);
 }
 
 static int _MOD_tell(void* obj)
 {
-	return FeOS_ModuleExtraTell(obj);
+	return LdrResTell(obj);
 }
 
 static void _MOD_close(void* obj)
@@ -157,14 +157,14 @@ far_t FAR_OpenArchive(const char* path)
 	return FAR_OpenCommon(x);
 }
 
-far_t FAR_OpenModule(instance_t hInst)
+far_t FAR_OpenModule(module_t hMod)
 {
-	if (FeOS_ModuleGetExtraSize(hInst) < sizeof(FARheader_t))
+	if (LdrResGetSize(hMod) < sizeof(FARheader_t))
 		return NULL;
 	FARobj_t* x = new_F();
 	if (!x) return NULL;
 	x->vt = &MOD_iface;
-	x->vt_obj = hInst;
+	x->vt_obj = hMod;
 	return FAR_OpenCommon(x);
 }
 
@@ -294,7 +294,7 @@ const stream_t FARFILE_stm = { NULL, NULL, NULL, (ssize_t(*)(void*,char*,size_t)
 
 FILE* FAR_WrapFile(farfile_t hFile, bool bOwn)
 {
-	return FeOS_OpenStream(bOwn ? &FARFILE_stmown : &FARFILE_stm, hFile);
+	return IoOpenStream(bOwn ? &FARFILE_stmown : &FARFILE_stm, hFile);
 }
 
 static char enumBuf[256];

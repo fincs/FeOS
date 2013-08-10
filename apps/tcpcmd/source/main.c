@@ -46,15 +46,15 @@ int main(int argc, char *argv[]) {
   tcp.url = argv[1];
   tcp.port = atoi(argv[2]);
 
-  fp = FeOS_OpenStream(&TCPStream, &tcp);
+  fp = IoOpenStream(&TCPStream, &tcp);
   if(fp) {
-    old[0] = FeOS_SetStdin(fp);
-    old[1] = FeOS_SetStdout(fp);
-    old[2] = FeOS_SetStderr(fp);
-    FeOS_Execute(1, (const char*[]){ "cmd", NULL, });
-    FeOS_SetStdin(old[0]);
-    FeOS_SetStdout(old[1]);
-    FeOS_SetStderr(old[2]);
+    old[0] = IoSetStdin(fp);
+    old[1] = IoSetStdout(fp);
+    old[2] = IoSetStderr(fp);
+    LdrExecuteArgv(1, (const char*[]){ "cmd", NULL, });
+    IoSetStdin(old[0]);
+    IoSetStdout(old[1]);
+    IoSetStderr(old[2]);
   }
   else
     fprintf(stderr, "FeOS_OpenStream: %s\n", strerror(errno));

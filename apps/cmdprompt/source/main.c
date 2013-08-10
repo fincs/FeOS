@@ -75,7 +75,7 @@ static bool executeShell(cmd_data* data)
 		result = false;
 	else
 	{
-		int rc = FeOS_Execute(shell_argc, shell_argv);
+		int rc = LdrExecuteArgv(shell_argc, shell_argv);
 
 		if (rc == E_FILENOTFOUND)
 			return false; // Shortcut.

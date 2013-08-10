@@ -29,11 +29,11 @@ typedef int (* farEnumCb)(void* userData, far_t hFar, const char* path, bool isD
 //! \brief Opens an archive.
 LIBFAR_API far_t FAR_OpenArchive(const char* path);
 //! \brief Opens an archive that is embedded in a module.
-LIBFAR_API far_t FAR_OpenModule(instance_t hInst);
+LIBFAR_API far_t FAR_OpenModule(module_t hMod);
 //! \brief Closes an archive.
 LIBFAR_API void FAR_Close(far_t hArc);
 //! \brief Opens the archive embedded in the caller's module.
-#define FAR_OpenSelf() FAR_OpenModule(FeOS_GetInstance())
+#define FAR_OpenSelf() FAR_OpenModule(LdrGetSelf())
 
 //! \brief Opens a file in the archive.
 LIBFAR_API farfile_t FAR_GetFile(far_t hArc, const char* path);

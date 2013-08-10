@@ -122,7 +122,7 @@ int main_install(fpkl_t* pPkgList, const char* pkgName, bool bInteractive)
 	const char* pkgVer = metadata_read(meta, "version");
 	{
 		const char* min_feosver = metadata_read(meta, "feos-version");
-		if (parse_feosversion(min_feosver) > FeOS_GetVersion())
+		if (parse_feosversion(min_feosver) > KeGetOSVersion())
 		{
 			fprintf(stderr, "Package '%s' requires at least FeOS v%s!\n", pkgName, min_feosver);
 			return 1;

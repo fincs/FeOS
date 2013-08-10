@@ -22,9 +22,9 @@ int main()
 	usagestats_t st;
 	usagestats64_t st64;
 
-	FeOS_GetMemStats(&st);
+	KeGetMemStats(&st);
 	printStats("Memory", &st);
-	if (FeOS_GetDiskStats64(&st64))
+	if (KeGetDiskStats(&st64))
 		printStats64("Disk", &st64);
 	return 0;
 }

@@ -55,17 +55,7 @@ const char * ASSOCSTATUS_STRINGS[] = {
 
 
 void sgIP_IntrWaitEvent() {
-	/*
- //  __asm( ".ARM\n swi 0x060000\n" );
-	int i,j;
-	j=0;
-	for(i=0;i<20000;i++) {
-		j+=i;
-	}
-	*/
-	//int i;
-	//for (i = 0; i < 2048; i ++)
-		FeOS_WaitForIRQ(~0);
+	ThrIdle();
 }
 
 void * sgIP_malloc(int size) __attribute__((weak));
@@ -1055,7 +1045,7 @@ FEOS_EXPORT bool Wifi_InitDefault(bool useFirmwareSettings) {
 	// set timer3
 	//TIMER3_DATA = -6553; // 6553.1 * 256 cycles = ~50ms;
 	//TIMER3_CR = 0x00C2; // enable, irq, 1/256 clock
-	FeOS_TimerWrite(3, ((-6553) & 0xFFFF) | (0x00C2 << 16));
+	DSTimerWrite(3, ((-6553) & 0xFFFF) | (0x00C2 << 16));
 
 	fifoSendAddress(FIFO_DSWIFI, (void *)wifi_pass);
 
@@ -1082,13 +1072,13 @@ FEOS_EXPORT bool Wifi_InitDefault(bool useFirmwareSettings) {
 
 FEOS_EXPORT void Wifi_Deinit()
 {
-	FeOS_TimerStop(3);
+	DSTimerStop(3);
 	if (Wifi_CheckInit())
 	{
 		// Deinitialize the Wifi hardware
 		fifoSendAddress(FIFO_DSWIFI, (void*)0x02000000);
 		while (WifiData->flags7 & WFLAG_ARM7_RUNNING) // wait for the ARM7 to actually do it
-			FeOS_WaitForIRQ(~0);
+			ThrIdle();
 		WifiData = NULL;
 	}
 	fifoSetValue32Handler(FIFO_DSWIFI, NULL, NULL);
