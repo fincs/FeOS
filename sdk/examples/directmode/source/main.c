@@ -25,7 +25,7 @@ int main()
 			break;
 	}
 
-	FeOS_DirectMode();
+	DSDirectMode();
 
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);
@@ -44,7 +44,7 @@ int main()
 	irqDisable(IRQ_HBLANK);
 	irqSet(IRQ_HBLANK, NULL);
 
-	FeOS_ConsoleMode();
+	DSConsoleMode();
 	printf("End of direct mode demo\n");
 
 	return 0;

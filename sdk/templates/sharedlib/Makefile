@@ -32,8 +32,6 @@ INCLUDES      := include
 MANIFEST      := package.manifest
 PACKAGENAME   := $(TARGET)
 
-CONF_DEFINES = -DEXAMPLELIB_BUILD
-
 include $(FEOSMK)/dynlib.mk
 include $(FEOSMK)/package.mk
 

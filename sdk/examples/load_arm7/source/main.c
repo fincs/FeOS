@@ -5,13 +5,13 @@ int main()
 {
 	printf("ARM7 load test\n");
 	int fifoCh;
-	instance_t arm7_inst = FeOS_LoadARM7("/data/FeOS/arm7/arm7let.fx2", &fifoCh);
-	printf("inst %08X\nfifo ch %d\n", (word_t)arm7_inst, fifoCh);
-	if (arm7_inst)
+	module_t hArm7Mod = DSLoadARM7("/data/FeOS/arm7/arm7let.fx2", &fifoCh);
+	printf("Module handle: %p\nFIFO channel: %d\n", hArm7Mod, fifoCh);
+	if (hArm7Mod)
 	{
 		int i;
 		for (i = 0; i < 60; i ++) swiWaitForVBlank();
-		FeOS_FreeARM7(arm7_inst, fifoCh);
+		DSFreeARM7(hArm7Mod, fifoCh);
 	}
 	return 0;
 }

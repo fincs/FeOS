@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <feos.h>
 
-void PrintStatus(keys_t keys, const char* verb)
+void PrintStatus(word_t keys, const char* verb)
 {
 	const char* name = NULL;
 	     if (keys & KEY_A) name = "A";

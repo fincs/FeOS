@@ -70,8 +70,8 @@ several callback registering functions (recommended):
 	coopFifoSetValue32Handler
 	coopFifoSetAddressHandler
 	coopIrqSet
-	coopIrqCheck (similar to FeOS_CheckPendingIRQs)
-	coopIrqNext (similar to FeOS_NextIRQ)
+	coopIrqCheck (similar to DSProcessIRQs)
+	coopIrqNext (similar to DSWaitForNextIRQ)
 	coopTimerStart
 
 */

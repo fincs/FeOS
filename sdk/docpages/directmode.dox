@@ -14,7 +14,7 @@ for hardware access. The skeleton of a direct mode application looks like this:
 int main()
 {
 	// Switch to Direct mode
-	FeOS_DirectMode();
+	DSDirectMode();
 	
 	// Video initialization...
 	
@@ -30,7 +30,7 @@ int main()
 	}
 
 	// Switch back to Console mode
-	FeOS_ConsoleMode();
+	DSConsoleMode();
 	return 0;
 }
 \endcode

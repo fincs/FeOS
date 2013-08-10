@@ -2,7 +2,7 @@
 
 int main()
 {
-	FeOS_DirectMode();
+	DSDirectMode();
 
 	// Place your video inits here
 
@@ -15,6 +15,6 @@ int main()
 			break;
 	}
 
-	FeOS_ConsoleMode();
+	DSConsoleMode();
 	return 0;
 }
