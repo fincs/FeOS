@@ -1,10 +1,10 @@
 #pragma once
 #include <nds.h>
 #include "../../kernel/source/feos.h"
-#include "../../kernel/source/fxe.h"
+#include "../../kernel/source/loader.h"
 #include "../../kernel/source/feosfifo.h"
 
-void FeOS_VBlankFunc();
+void Ke7VBlankISR();
 
 void coopFifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata);
 void coopFifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata);

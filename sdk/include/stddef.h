@@ -5,7 +5,7 @@
 //
 
 #pragma once
-#include <feosbase.h>
+#include <feosdef.h>
 
 /** @file stddef.h
  *  \brief Standard C definitions

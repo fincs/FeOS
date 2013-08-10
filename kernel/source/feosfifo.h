@@ -1,6 +1,6 @@
 #pragma once
 #include "feos.h"
-#include "fxe.h"
+#include "loader.h"
 
 #define FIFO_BASE_CH FIFO_USER_01
 #define FIFO_FEOS (FIFO_USER_01)
@@ -36,7 +36,7 @@ typedef struct
 		FeOSLoadStruct* loadStruct;
 		struct
 		{
-			instance_t hModule;
+			module_t hModule;
 			int fifoCh;
 		};
 	};

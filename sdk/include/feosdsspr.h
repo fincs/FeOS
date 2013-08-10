@@ -156,9 +156,9 @@ extern SpriteEntry* oamMain_mem;
 extern SpriteEntry* oamSub_mem;
 
 //! \cond
-OamState* FeOS_GetMainOAM();
-OamState* FeOS_GetSubOAM();
-SpriteEntry* FeOS_GetOAMMemory(OamState*);
+OamState* DSGetMainOAM();
+OamState* DSGetSubOAM();
+SpriteEntry* DSGetOAMMemory(OamState*);
 //! \endcond
 
 //! \brief Initializes the 2D sprite engine.

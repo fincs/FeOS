@@ -12,8 +12,8 @@ unsigned long long __aeabi_uldivmod(unsigned long long, unsigned long long);
 
 long long __aeabi_lmul(long long, long long);
 
-#define ADD_FUNC(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
-#define ADD_FUNC_ALIAS(FUNC, NAME) {{(word_t)#NAME}, {(word_t)FUNC}}
+#define ADD_FUNC_(FUNC) {{(word_t)#FUNC}, {(word_t)FUNC}}
+#define ADD_ALIAS(NAME, FUNC) {{(word_t)#NAME}, {(word_t)FUNC}}
 
 #define arm7_func_count (sizeof(arm7_funcs) / sizeof(fxe2_export_t))
 
@@ -32,61 +32,61 @@ void coopTimerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback)
 
 static const fxe2_export_t arm7_funcs[] =
 {
-	ADD_FUNC_ALIAS(coopWaitForVBlank, swiWaitForVBlank),
-	ADD_FUNC(irqSet),
-	ADD_FUNC(irqClear),
-	ADD_FUNC(irqEnable),
-	ADD_FUNC(irqDisable),
-	ADD_FUNC(writePowerManagement),
-	ADD_FUNC(timerStart),
-	ADD_FUNC(timerPause),
-	ADD_FUNC(timerStop),
-	ADD_FUNC(timerElapsed),
-	ADD_FUNC(micSetAmp),
-	ADD_FUNC(micReadData8),
-	ADD_FUNC(micReadData12),
-	ADD_FUNC(fifoSendAddress),
-	ADD_FUNC(fifoSendValue32),
-	ADD_FUNC(fifoSendDatamsg),
-	ADD_FUNC(fifoSetAddressHandler),
-	ADD_FUNC(fifoSetValue32Handler),
-	ADD_FUNC(fifoSetDatamsgHandler),
-	ADD_FUNC(fifoCheckAddress),
-	ADD_FUNC(fifoCheckValue32),
-	ADD_FUNC(fifoCheckDatamsg),
-	ADD_FUNC(fifoCheckDatamsgLength),
-	ADD_FUNC(fifoGetAddress),
-	ADD_FUNC(fifoGetValue32),
-	ADD_FUNC(fifoGetDatamsg),
-	ADD_FUNC(swiDelay),
-	ADD_FUNC_ALIAS(coop_swiIntrWaitCompat, swiIntrWait),
-	ADD_FUNC(memcpy),
-	ADD_FUNC(memcmp),
-	ADD_FUNC(memset),
-	ADD_FUNC(strcpy),
-	ADD_FUNC(strcmp),
-	ADD_FUNC(strncpy),
-	ADD_FUNC(strncmp),
-	ADD_FUNC(malloc),
-	ADD_FUNC(free),
-	ADD_FUNC(__aeabi_idiv),
-	ADD_FUNC(__aeabi_idivmod),
-	ADD_FUNC(__aeabi_uidiv),
-	ADD_FUNC(__aeabi_uidivmod),
-	ADD_FUNC(__aeabi_ldivmod),
-	ADD_FUNC(__aeabi_uldivmod),
-	ADD_FUNC(__aeabi_lmul),
+	ADD_ALIAS(swiWaitForVBlank, coopWaitForVBlank),
+	ADD_FUNC_(irqSet),
+	ADD_FUNC_(irqClear),
+	ADD_FUNC_(irqEnable),
+	ADD_FUNC_(irqDisable),
+	ADD_FUNC_(writePowerManagement),
+	ADD_FUNC_(timerStart),
+	ADD_FUNC_(timerPause),
+	ADD_FUNC_(timerStop),
+	ADD_FUNC_(timerElapsed),
+	ADD_FUNC_(micSetAmp),
+	ADD_FUNC_(micReadData8),
+	ADD_FUNC_(micReadData12),
+	ADD_FUNC_(fifoSendAddress),
+	ADD_FUNC_(fifoSendValue32),
+	ADD_FUNC_(fifoSendDatamsg),
+	ADD_FUNC_(fifoSetAddressHandler),
+	ADD_FUNC_(fifoSetValue32Handler),
+	ADD_FUNC_(fifoSetDatamsgHandler),
+	ADD_FUNC_(fifoCheckAddress),
+	ADD_FUNC_(fifoCheckValue32),
+	ADD_FUNC_(fifoCheckDatamsg),
+	ADD_FUNC_(fifoCheckDatamsgLength),
+	ADD_FUNC_(fifoGetAddress),
+	ADD_FUNC_(fifoGetValue32),
+	ADD_FUNC_(fifoGetDatamsg),
+	ADD_FUNC_(swiDelay),
+	ADD_ALIAS(swiIntrWait, coop_swiIntrWaitCompat),
+	ADD_FUNC_(memcpy),
+	ADD_FUNC_(memcmp),
+	ADD_FUNC_(memset),
+	ADD_FUNC_(strcpy),
+	ADD_FUNC_(strcmp),
+	ADD_FUNC_(strncpy),
+	ADD_FUNC_(strncmp),
+	ADD_FUNC_(malloc),
+	ADD_FUNC_(free),
+	ADD_FUNC_(__aeabi_idiv),
+	ADD_FUNC_(__aeabi_idivmod),
+	ADD_FUNC_(__aeabi_uidiv),
+	ADD_FUNC_(__aeabi_uidivmod),
+	ADD_FUNC_(__aeabi_ldivmod),
+	ADD_FUNC_(__aeabi_uldivmod),
+	ADD_FUNC_(__aeabi_lmul),
 
-	ADD_FUNC(coopFifoSetDatamsgHandler),
-	ADD_FUNC(coopFifoSetValue32Handler),
-	ADD_FUNC(coopFifoSetAddressHandler),
-	ADD_FUNC(coopIrqSet),
-	ADD_FUNC(coopIrqCheck),
-	ADD_FUNC(coopIrqNext),
-	ADD_FUNC(coopTimerStart)
+	ADD_FUNC_(coopFifoSetDatamsgHandler),
+	ADD_FUNC_(coopFifoSetValue32Handler),
+	ADD_FUNC_(coopFifoSetAddressHandler),
+	ADD_FUNC_(coopIrqSet),
+	ADD_FUNC_(coopIrqCheck),
+	ADD_FUNC_(coopIrqNext),
+	ADD_FUNC_(coopTimerStart)
 };
 
-bool FeOS_ResolveImp(word_t* addr, const char* name)
+bool Ke7ResolveImp(word_t* addr, const char* name)
 {
 	register int i;
 	for (i = 0; i < arm7_func_count; i ++)

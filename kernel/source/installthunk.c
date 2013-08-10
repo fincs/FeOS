@@ -37,7 +37,7 @@ DECLAREHOOK(int, fatstatvfs, (struct _reent*, const char*, struct statvfs*));
 DECLAREHOOK(int, fatftruncate, (struct _reent*, int, off_t));
 DECLAREHOOK(int, fatfsync, (struct _reent*, int));
 
-ssize_t FeOS_KeybdRead(struct _reent*, int, char*, size_t);
+ssize_t DSKeybdRead(struct _reent*, int, char*, size_t);
 
 static ssize_t DummyRead(struct _reent* r, int fd, char* buf, size_t count)
 {
@@ -55,7 +55,7 @@ void InstallConThunks()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
 	dotabs[STD_OUT]->write_r = _conwritehook;
-	dotabs[STD_IN]->read_r = FeOS_KeybdRead;
+	dotabs[STD_IN]->read_r = DSKeybdRead;
 	dotabs[STD_ERR]->write_r = _conerrhook;
 }
 
@@ -71,7 +71,7 @@ void InstallThunks()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
 	HOOK(dotabs[STD_OUT]->write_r, conwrite);
-	dotabs[STD_IN]->read_r = FeOS_KeybdRead;
+	dotabs[STD_IN]->read_r = DSKeybdRead;
 	HOOK(dotabs[STD_ERR]->write_r, conerr);
 
 	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("/"); // force non-constness

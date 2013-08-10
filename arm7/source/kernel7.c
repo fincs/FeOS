@@ -30,7 +30,7 @@ void installFeOSFIFO()
 }
 
 static FeOSLoadStruct* ldSt = NULL;
-static instance_t freeMod = NULL;
+static module_t freeMod = NULL;
 static int freeChn;
 
 static volatile int oldPower;
@@ -102,13 +102,13 @@ void __wrap_systemSleep()
 	__real_systemSleep();
 }
 
-static void FeOS_LoadModule();
+static void Ke7LoadModule();
 
-void FeOS_VBlankFunc()
+void Ke7VBlankISR()
 {
 	if (ldSt)
 	{
-		FeOS_LoadModule();
+		Ke7LoadModule();
 		ldSt = NULL;
 	}
 	if (freeMod)
@@ -121,9 +121,9 @@ void FeOS_VBlankFunc()
 	}
 }
 
-bool FeOS_ResolveImp(word_t* addr, const char* name);
+bool Ke7ResolveImp(word_t* addr, const char* name);
 
-void FeOS_LoadModule()
+void Ke7LoadModule()
 {
 	FeOSFifoMsg msg;
 	msg.type = FEOS_ARM7_RETURN_MODULE;
@@ -166,7 +166,7 @@ void FeOS_LoadModule()
 			word_t* addr = (word_t*)(imps[i].address + (word_t)hModule);
 			const char* name = (const char*)(imps[i].nameoffset + (word_t) imps);
 
-			if (!FeOS_ResolveImp(addr, name))
+			if (!Ke7ResolveImp(addr, name))
 			{
 				free(hModule);
 				freeFifoChannel(msg.fifoCh);

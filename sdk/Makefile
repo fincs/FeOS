@@ -4,14 +4,8 @@ TOOLS := bin/fxe2tool_src \
          bin/fartool_src \
          bin/fpkgtool_src \
          bin/fmantool_src
-FAKES := source/FEOSBASE \
-         source/FEOSSTDIO \
-         source/FEOSPOSIXEMU \
-         source/FEOSMATH \
-         source/FEOSDSAPI \
-         source/FEOSDSSPR \
-         source/FEOSDSBG \
-         source/FEOSARM7 \
+FAKES := source/FEOSKRNL \
+         source/FEOSDSHW \
          source7/FEOS7
 
 .PHONY: all clean $(TOOLS) $(FAKES)

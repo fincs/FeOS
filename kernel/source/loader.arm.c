@@ -1,4 +1,4 @@
-#include "fxe.h"
+#include "loader.h"
 #include "feosfifo.h"
 #include <fcntl.h>
 #include <unistd.h>
@@ -6,7 +6,7 @@
 #include <string.h>
 #include <limits.h>
 
-static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName);
+static module_t _LdrLoadModule(const char* aFilename, const char* aModuleName);
 
 static const char* moduleSearchPaths[] =
 {
@@ -15,7 +15,7 @@ static const char* moduleSearchPaths[] =
 	NULL
 };
 
-instance_t LoadModule(const char* aFilename)
+module_t LdrLoadModule(const char* aFilename)
 {
 	sassert(aFilename, ERRSTR_INVALIDPARAM);
 	if (*aFilename == '/')
@@ -48,7 +48,7 @@ instance_t LoadModule(const char* aFilename)
 
 		// Check if the module is already loaded
 		{
-			fxe_runtime_header* header = FeOS_ModuleListFind(aModuleName);
+			fxe_runtime_header* header = LdrModuleListFind(aModuleName);
 			if (header)
 			{
 				header->refcount ++;
@@ -57,14 +57,14 @@ instance_t LoadModule(const char* aFilename)
 			}
 		}
 
-		instance_t ret = _LoadModule_imp(aFilename, aModuleName);
+		module_t ret = _LdrLoadModule(aFilename, aModuleName);
 		free(aModuleName);
 		return ret;
 	}else
 	{
 		// Check if the module is already loaded
 		{
-			fxe_runtime_header* header = FeOS_ModuleListFind(aFilename);
+			fxe_runtime_header* header = LdrModuleListFind(aFilename);
 			if (header)
 			{
 				header->refcount ++;
@@ -89,14 +89,14 @@ instance_t LoadModule(const char* aFilename)
 			}
 
 			// Load the module
-			instance_t ret = *aBuf ? _LoadModule_imp(buf, aFilename) : NULL;
+			module_t ret = *aBuf ? _LdrLoadModule(buf, aFilename) : NULL;
 			free(buf);
 			return ret;
 		}
 	}
 }
 
-static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName)
+static module_t _LdrLoadModule(const char* aFilename, const char* aModuleName)
 {
 	int aModuleNameLen = strlen(aModuleName)+1;
 
@@ -240,7 +240,7 @@ static instance_t _LoadModule_imp(const char* aFilename, const char* aModuleName
 				imptbl[i].address += (word_t) pMem;
 		}
 
-		if (!ResolveImports(imptbl, nimports))
+		if (!LdrResolveImports(imptbl, nimports))
 		{
 			free(imptbl), free(pMem), close(fd);
 			return NULL;
@@ -297,11 +297,11 @@ _impcopy_err:
 	*(volatile word_t*)pMem = (word_t) rh;
 
 	// Update caches
-	FeOS_swi_DataCacheFlush(pMem, totalsize);
-	FeOS_swi_InstrCacheInvalidate(pMem, totalsize);
+	KeDataCacheFlush(pMem, totalsize);
+	KeInstrCacheInvalidate(pMem, totalsize);
 
 	// Add this module to the list of loaded modules
-	FeOS_ModuleListAdd(rh);
+	LdrModuleListAdd(rh);
 
 	// Get the start and size of the extra data section
 	rh->extrapos = tell(fd);
@@ -322,24 +322,22 @@ _impcopy_err:
 	return pMem;
 }
 
-int ModuleExtraGetSize(instance_t hInst)
+int LdrResGetSize(module_t hMod)
 {
-	CHK_HINST(hInst);
-	fxe_runtime_header* rh = GetRuntimeData(hInst);
-	return rh->extrasize;
+	CHK_HMOD(hMod);
+	return GetRuntimeData(hMod)->extrasize;
 }
 
-int ModuleExtraRead(instance_t hInst, void* buf, size_t size)
+int LdrResRead(module_t hMod, void* buf, size_t size)
 {
-	CHK_HINST(hInst);
-	fxe_runtime_header* rh = GetRuntimeData(hInst);
-	return read(rh->file, buf, size);
+	CHK_HMOD(hMod);
+	return read(GetRuntimeData(hMod)->file, buf, size);
 }
 
-int ModuleExtraSeek(instance_t hInst, int pos, int mode)
+int LdrResSeek(module_t hMod, int pos, int mode)
 {
-	CHK_HINST(hInst);
-	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	CHK_HMOD(hMod);
+	fxe_runtime_header* rh = GetRuntimeData(hMod);
 	int fd = rh->file;
 	int base = rh->extrapos;
 	switch (mode)
@@ -362,19 +360,17 @@ int ModuleExtraSeek(instance_t hInst, int pos, int mode)
 	return -1;
 }
 
-int ModuleExtraTell(instance_t hInst)
+int LdrResTell(module_t hMod)
 {
-	CHK_HINST(hInst);
-	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	CHK_HMOD(hMod);
+	fxe_runtime_header* rh = GetRuntimeData(hMod);
 	return tell(rh->file) - rh->extrapos;
 }
 
 static FeOSLoadStruct __ldSt;
-
-//#define GET_LOADST() ((FeOSLoadStruct*)memUncached(&__ldSt))
 #define GET_LOADST() (&__ldSt)
 
-instance_t LoadModule_ARM7(const char* aFilename, int* pFifoCh)
+module_t DSLoadARM7(const char* aFilename, int* pFifoCh)
 {
 	sassert(aFilename, ERRSTR_INVALIDPARAM);
 	sassert(pFifoCh, ERRSTR_INVALIDPARAM);
@@ -432,8 +428,8 @@ _fullerr:
 	ldSt->nrelocs = head.nrelocs;
 	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
 
-	DC_FlushRange(pMem, readsize + head.simports);
-	DC_FlushRange(ldSt, sizeof(FeOSLoadStruct));
+	KeDataCacheFlush(pMem, readsize + head.simports);
+	KeDataCacheFlush(ldSt, sizeof(FeOSLoadStruct));
 
 	// Tell the ARM7 to load the module
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
@@ -450,24 +446,23 @@ _fullerr:
 	return msg.hModule;
 }
 
-void FreeModule_ARM7(instance_t hModule, int fifoCh)
+void DSFreeARM7(module_t hMod, int fifoCh)
 {
-	sassert(hModule, ERRSTR_INVALIDPARAM);
+	sassert(hMod, ERRSTR_INVALIDPARAM);
 
 	FeOSFifoMsg msg;
 	msg.type = FEOS_ARM7_UNLOAD_MODULE;
-	msg.hModule = hModule;
+	msg.hModule = hMod;
 	msg.fifoCh = fifoCh;
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
 	while(!fifoCheckValue32(FIFO_FEOS));
 	fifoGetValue32(FIFO_FEOS);
 }
 
-void FreeModule(instance_t hInst)
+void LdrFreeModule(module_t hMod)
 {
-	CHK_HINST(hInst);
-
-	fxe_runtime_header* rh = GetRuntimeData(hInst);
+	CHK_HMOD(hMod);
+	fxe_runtime_header* rh = GetRuntimeData(hMod);
 
 	rh->refcount --;
 	if (rh->refcount) return;
@@ -476,7 +471,7 @@ void FreeModule(instance_t hInst)
 	rh->entrypoint(FEOS_EP_FINI, 0, 0, 0);
 
 	// Remove the module from the list of loaded modules
-	FeOS_ModuleListRemove(rh);
+	LdrModuleListRemove(rh);
 
 	// Free the export table
 	if (rh->exp.count)
@@ -485,7 +480,7 @@ void FreeModule(instance_t hInst)
 	// Free the import table
 	if (rh->imp.count)
 	{
-		FreeImports(rh->imp.table, rh->imp.count);
+		LdrFreeImports(rh->imp.table, rh->imp.count);
 		free(rh->imp.table);
 	}
 
@@ -493,33 +488,49 @@ void FreeModule(instance_t hInst)
 	close(rh->file);
 
 	// Free the module memory
-	free(hInst);
+	free(hMod);
 }
 
-void ModuleLock(instance_t hInst)
+void LdrLockModule(module_t hMod)
 {
-	CHK_HINST(hInst);
-	GetRuntimeData(hInst)->refcount ++;
+	CHK_HMOD(hMod);
+	GetRuntimeData(hMod)->refcount ++;
 }
 
-void ModuleUnlock(instance_t hInst)
+void LdrUnlockModule(module_t hMod)
 {
-	CHK_HINST(hInst);
-	GetRuntimeData(hInst)->refcount --;
+	CHK_HMOD(hMod);
+	GetRuntimeData(hMod)->refcount --;
 }
 
-extern const fxe_inmem_exports _exp_FEOSBASE;
-
-void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name)
+void* LdrFindInTbl(const fxe_inmem_exports* exphdr, const char* name)
 {
+	/*
 	register int i;
 	for(i = 0; i < exphdr->count; i ++)
 		if (strcmp(exphdr->table[i].name, name) == 0)
 			return exphdr->table[i].addr;
+	*/
+	int min = 0, max = exphdr->count;
+
+	while (max >= min)
+	{
+		int mid = (min + max) / 2;
+		int rc = strcmp(exphdr->table[mid].name, name);
+		if (rc < 0)
+			min = mid + 1;
+		else if (rc > 0)
+		{
+			if (mid == 0) break;
+			max = mid - 1;
+		} else
+			return exphdr->table[mid].addr;
+	}
+
 	return NULL;
 }
 
-int ResolveImports(fxe2_import_t* imptbl, int count)
+int LdrResolveImports(fxe2_import_t* imptbl, int count)
 {
 	register int i;
 	fxe_inmem_exports* exptable = NULL;
@@ -531,16 +542,16 @@ int ResolveImports(fxe2_import_t* imptbl, int count)
 
 		if(imp->address == FX2_IMP_SELECT_MODULE)
 		{
-			instance_t hModule = LoadModule(imp->name);
-			if (!hModule) return 0;
+			module_t hMod = LdrLoadModule(imp->name);
+			if (!hMod) return 0;
 
-			exptable = &GetRuntimeData(hModule)->exp;
+			exptable = &GetRuntimeData(hMod)->exp;
 			continue;
 		}
 
 		if (!exptable) return 0;
 
-		sym = FindInTbl(exptable, imp->name);
+		sym = LdrFindInTbl(exptable, imp->name);
 
 		if (!sym) return 0;
 
@@ -549,7 +560,7 @@ int ResolveImports(fxe2_import_t* imptbl, int count)
 	return 1;
 }
 
-void FreeImports(fxe2_import_t* imptbl, int count)
+void LdrFreeImports(fxe2_import_t* imptbl, int count)
 {
 	register int i;
 
@@ -559,9 +570,9 @@ void FreeImports(fxe2_import_t* imptbl, int count)
 
 		if(imp->address != FX2_IMP_SELECT_MODULE) continue;
 
-		fxe_runtime_header* header = FeOS_ModuleListFind(imp->name);
+		fxe_runtime_header* header = LdrModuleListFind(imp->name);
 		if (!header) continue; // oops, memory corruption? (shouldn't happen)
 
-		FreeModule(header->hThis);
+		LdrFreeModule(header->hThis);
 	}
 }

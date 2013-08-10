@@ -74,33 +74,33 @@ typedef struct
 } systeminfo_t;
 
 //! \brief Gets the currently running FeOS version
-int FeOS_GetVersion();
+int KeGetOSVersion();
 
 //! \brief Gets information about the system
-const systeminfo_t* FeOS_GetSystemInfo();
+const systeminfo_t* KeGetSysInfo();
 
 //! \brief Determines whether the application is running under the specified FeOS version or later
-static inline int FeOS_VersionAtLeast(int minorVer, int majorVer)
+static inline int KeOSVersionAtLeast(int minorVer, int majorVer)
 {
-	return FeOS_GetVersion() >= FEOS_VPACK_MAKE(minorVer, majorVer);
+	return KeGetOSVersion() >= FEOS_VPACK_MAKE(minorVer, majorVer);
 }
 
 //! \brief Determines whether the application is running up to the specified FeOS version
-static inline int FeOS_VersionUpTo(int minorVer, int majorVer)
+static inline int KeOSVersionUpTo(int minorVer, int majorVer)
 {
-	return FeOS_GetVersion() <= FEOS_VPACK_MAKE(minorVer, majorVer);
+	return KeGetOSVersion() <= FEOS_VPACK_MAKE(minorVer, majorVer);
 }
 
 //! \brief Determines whether the application is running under a FeOS version greater than the specified one
-static inline int FeOS_VersionLaterThan(int minorVer, int majorVer)
+static inline int KeOSVersionLaterThan(int minorVer, int majorVer)
 {
-	return FeOS_GetVersion() > FEOS_VPACK_MAKE(minorVer, majorVer);
+	return KeGetOSVersion() > FEOS_VPACK_MAKE(minorVer, majorVer);
 }
 
 //! \brief Determines whether the application is running under a FeOS version earlier than the specified one
-static inline int FeOS_VersionEarlierThan(int minorVer, int majorVer)
+static inline int KeOSVersionEarlierThan(int minorVer, int majorVer)
 {
-	return FeOS_GetVersion() < FEOS_VPACK_MAKE(minorVer, majorVer);
+	return KeGetOSVersion() < FEOS_VPACK_MAKE(minorVer, majorVer);
 }
 
 #endif

@@ -124,7 +124,7 @@ typedef struct
 
 typedef struct tag_fxe_runtime_header
 {
-	instance_t hThis;
+	module_t hThis;
 	const char* name;
 	int refcount;
 	int file;
@@ -138,49 +138,44 @@ typedef struct tag_fxe_runtime_header
 	struct tag_fxe_runtime_header* prev;
 } fxe_runtime_header;
 
-static inline fxe_runtime_header* GetRuntimeData(instance_t hinst)
+static inline fxe_runtime_header* GetRuntimeData(module_t hMod)
 {
-	return (fxe_runtime_header*) *(word_t*) hinst;
+	return (fxe_runtime_header*) *(word_t*) hMod;
 }
 
-instance_t LoadModule(const char* aFilename);
-void FreeModule(instance_t hInst);
-instance_t FeOS_GetModule(const char* name);
-const char* FeOS_GetModuleName(instance_t hInst);
+module_t LdrLoadModule(const char* aFilename);
+void LdrFreeModule(module_t hMod);
+module_t LdrGetModule(const char* name);
+const char* LdrGetModuleName(module_t hMod);
 
-void* FeOS_FindSymbol(instance_t hinst, const char* sym);
+void* LdrFindSymbol(module_t hMod, const char* sym);
 
-void ModuleLock(instance_t hInst);
-void ModuleUnlock(instance_t hInst);
+void LdrLockModule(module_t hMod);
+void LdrUnlockModule(module_t hMod);
 
-int ModuleExtraGetSize(instance_t hInst);
-int ModuleExtraRead(instance_t hInst, void* buf, size_t size);
-int ModuleExtraSeek(instance_t hInst, int pos, int mode);
-int ModuleExtraTell(instance_t hInst);
+int LdrResGetSize(module_t hMod);
+int LdrResRead(module_t hMod, void* buf, size_t size);
+int LdrResSeek(module_t hMod, int pos, int mode);
+int LdrResTell(module_t hMod);
 
-int FeOS_Execute(int, const char*[]);
+int LdrExecuteArgv(int, const char*[]);
 
-int ResolveImports(fxe2_import_t* imptbl, int count);
-void FreeImports(fxe2_import_t* imptbl, int count);
-void* FindInTbl(const fxe_inmem_exports* exphdr, const char* name);
+int LdrResolveImports(fxe2_import_t* imptbl, int count);
+void LdrFreeImports(fxe2_import_t* imptbl, int count);
+void* LdrFindInTbl(const fxe_inmem_exports* exphdr, const char* name);
 
-void FeOS_ModuleListInit();
-void FeOS_ModuleListAdd(fxe_runtime_header* pModule);
-void FeOS_ModuleListRemove(fxe_runtime_header* pModule);
-int FeOS_ModuleListCount();
-fxe_runtime_header* FeOS_ModuleListFind(const char* name);
+void LdrModuleListInit();
+void LdrModuleListAdd(fxe_runtime_header* pModule);
+void LdrModuleListRemove(fxe_runtime_header* pModule);
+int LdrModuleListCount();
+fxe_runtime_header* LdrModuleListFind(const char* name);
 
-typedef int (* moduleEnumCb)(instance_t hInst, const char* name, size_t size, void* user_data);
+typedef int (* moduleEnumCb)(module_t hMod, const char* name, size_t size, void* user_data);
 
-void FeOS_EnumModules(moduleEnumCb cb, void* user_data);
+void LdrEnumModules(moduleEnumCb cb, void* user_data);
+void LdrModuleExit(int);
 
-//int FeOS_PushExitFunc(FeOSExitFunc func);
-void FeOS_ModuleExit(int);
-//void FeOS_PopExitFunc();
-
-void* FeOS_GetModuleExidxTbl(instance_t, int*);
-void* FeOS_ModuleFromAddress(void*);
-
-extern instance_t FeOS_CurInstance;
+void* LdrGetExidxTbl(module_t, int*);
+void* LdrResolveAddr(void*);
 
 #endif

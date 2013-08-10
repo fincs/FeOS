@@ -1,12 +1,23 @@
 #include "feos.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "fxe.h"
+#include <stdarg.h>
+#include "loader.h"
 #include "feosfifo.h"
 #include <sys/iosupport.h>
 
 #include "hudicons.h"
 #include "caret.h"
+
+// Replacement for newlib iprintf
+ssize_t iprintf(const char* fmt, ...)
+{
+	va_list va;
+	va_start(va, fmt);
+	ssize_t ret = vfiprintf(stdout, fmt, va);
+	va_end(va);
+	return ret;
+}
 
 void __SWIHandler();
 void __ResetHandler();
@@ -30,7 +41,7 @@ int caretBlink = 0;
 extern volatile bool inHeadphoneSleep;
 volatile int vblankCounter = 0; // upper bound: ~2.275 years
 
-void irq_vblank()
+void KeVBlankISR()
 {
 	// Done here because it's kernel mode code
 	chk_exit();
@@ -115,7 +126,7 @@ void videoInit()
 	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
 	dmaCopyHalfWords(3, caretPal, SPRITE_PALETTE, caretPalLen);
 
-	irqSet(IRQ_VBLANK, irq_vblank);
+	irqSet(IRQ_VBLANK, KeVBlankISR);
 
 	// Initialize the keyboard
 	Keyboard* kbd = keyboardDemoInit();
@@ -128,11 +139,10 @@ void InstallThunks();
 void InstallConThunks();
 void InstallConDummy();
 
-void UnblockIORegion();
-void BlockIORegion();
-
-void videoReset()
+void DSVideoReset()
 {
+	if (conMode) return;
+
 	dmaFillWords(0, (void*)0x04000000, 0x56);
 	dmaFillWords(0, (void*)0x04001008, 0x56);
 	videoSetModeSub(0);
@@ -150,35 +160,35 @@ void videoReset()
 	irqEnable(IRQ_VBLANK);
 }
 
-void InitConMode()
+void DSConsoleMode()
 {
+	if (conMode) return;
 	int cS = enterCriticalSection();
-	videoReset();
+	DSVideoReset();
 	videoInit();
 	InstallConThunks();
-	BlockIORegion();
 	conMode = true;
 	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
 }
 
-void InitFreeMode()
+void DSDirectMode()
 {
+	if (!conMode) return;
 	int cS = enterCriticalSection();
-	videoReset();
-	InstallConDummy();
-	UnblockIORegion();
 	conMode = false;
+	DSVideoReset();
+	InstallConDummy();
 	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
 	leaveCriticalSection(cS);
 }
 
-int GetCurMode()
+int DSGetCurMode()
 {
 	return (int)conMode;
 }
 
-void FeOS_SetAutoUpdate(int which, bool enable)
+void DSSetAutoUpdate(int which, bool enable)
 {
 	if (conMode) return; // can't tweak
 	switch (which)
@@ -190,7 +200,7 @@ void FeOS_SetAutoUpdate(int which, bool enable)
 	}
 }
 
-bool FeOS_GetAutoUpdate(int which)
+bool DSGetAutoUpdate(int which)
 {
 	if (conMode) return true;
 	switch (which)
@@ -206,7 +216,7 @@ bool FeOS_GetAutoUpdate(int which)
 
 void ForcefulExit()
 {
-	FeOS_ModuleExit(E_APPKILLED);
+	LdrModuleExit(E_APPKILLED);
 }
 
 word_t* __getIRQStack();
@@ -250,7 +260,7 @@ void KillCurrentApp_SWI()
 	__setSWIStack(swistack + 2);
 
 	// Switch back to User mode
-	DoTheUserMode();
+	KeEnterUserMode();
 
 	// Kill the application
 	ForcefulExit();
@@ -298,10 +308,10 @@ void chk_exit()
 		exit(_rc);
 }
 
-void FeOS_InitStreams();
-void FeOS_InitSystemInfo();
+void IoInitStreams();
+void KeInitSystemInfo();
 
-void ExcptHandler_C();
+void KeSystemError();
 
 static void error_die()
 {
@@ -310,7 +320,10 @@ static void error_die()
 	{
 		swiWaitForVBlank();
 		if (keysDown() & KEY_START)
-			exit(1);
+		{
+			_rc = 1;
+			_hasExited = true;
+		}
 	}
 }
 
@@ -333,15 +346,14 @@ int main()
 	videoInit();
 	consoleDebugInit(DebugDevice_CONSOLE);
 	
-	setExceptionHandler(ExcptHandler_C);
+	setExceptionHandler(KeSystemError);
 	SystemVectors.reset = (u32) __ResetHandler;
 	SystemVectors.swi = (u32) __SWIHandler;
 	setVectorBase(0);
-	FeOS_ModuleListInit();
-	FeOS_InitStreams();
+	LdrModuleListInit();
+	IoInitStreams();
 	installFeOSFIFO();
-
-	FeOS_InitSystemInfo();
+	KeInitSystemInfo();
 
 	iprintf(
 		"\n  FeOS kernel v" FEOS_VERSION_TEXT "\n"
@@ -354,37 +366,38 @@ int main()
 	iprintf("\nInitializing filesystem... ");
 	if (!fatInitDefault())
 	{
-		iprintf(MSG_FAIL);
-		iprintf("Make sure you have DLDI patched\n");
-		iprintf("the kernel binary. If the issue\n");
-		iprintf("persists, try using HBMenu.\n\n");
-		iprintf("  http://devkitpro.org/hbmenu\n");
-		iprintf("  http://feos.mtheall.com/forum\n");
+		iprintf(
+			MSG_FAIL
+			"Make sure you have DLDI patched\n"
+			"the kernel binary. If the issue\n"
+			"persists, try using HBMenu.\n\n"
+			"  http://devkitpro.org/hbmenu\n"
+			"  http://feos.mtheall.com/forum\n");
 		error_die();
 	}
 #ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdClusterPtr = (vu32*) _FAT_getCwdClusterPtr("/");
-	FeOS_InitDefaultExecStatus();
+	KeInitDefaultExecStatus();
 #endif
 	InstallThunks();
 #ifdef LIBFAT_FEOS_MULTICWD
 	iprintf(MSG_OK);
 #else
-	iprintf(MSG_OK2);
 	iprintf(
+		MSG_OK2
 		WARNING "Multi-CWD support is\n"
 		"disabled due to the usage of an\n"
 		"old version of libfat.\n\n");
 #endif
 
 	iprintf("Initializing user mode...  ");
-	PrepareUserMode();
-	DoTheUserMode();
+	KeInitUserMode();
+	KeEnterUserMode();
 	iprintf(MSG_OK);
 
 #ifdef DEBUG
 	iprintf("Loading debug library...   ");
-	instance_t hCxxLib = LoadModule("feoscxx");
+	module_t hCxxLib = LdrLoadModule("feoscxx");
 	if (!hCxxLib)
 	{
 		iprintf(
@@ -401,8 +414,17 @@ int main()
 
 	const char* argv[] = { "cmd", ":startup", NULL };
 
-	_rc = FeOS_Execute(2, argv);
+	_rc = LdrExecuteArgv(2, argv);
+	if (_rc < 0)
+	{
+		iprintf(
+			MSG_FAIL
+			"The following file is missing\n"
+			"or it may have been corrupted:\n"
+			"  /data/FeOS/bin/cmd.fx2\n");
+		error_die();
+	}
 	_hasExited = true;
 
-	for(;;) FeOS_WaitForVBlank();
+	for(;;) DSWaitForVBlank();
 }

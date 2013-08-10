@@ -26,7 +26,7 @@ typedef struct
 
 static _Unwind_Reason_Code backtraceCb(_Unwind_Context*, void*);
 
-extern "C" FEOS_EXPORT void FeOS_Backtrace(bt_func pFunc, void* user_data)
+extern "C" FEOS_EXPORT void CxxBacktrace(bt_func pFunc, void* user_data)
 {
 	bt_context ctx = { pFunc, user_data, -2 };
 	_Unwind_Backtrace(backtraceCb, &ctx);
@@ -35,7 +35,7 @@ extern "C" FEOS_EXPORT void FeOS_Backtrace(bt_func pFunc, void* user_data)
 static phase2_vrs backtraceCtx;
 
 // WARNING: this function may be called by the kernel in a privileged mode.
-extern "C" FEOS_EXPORT void FeOS_BacktraceDump(word_t* pCtx, bt_func pFunc, void* user_data)
+extern "C" FEOS_EXPORT void CxxBacktraceDump(word_t* pCtx, bt_func pFunc, void* user_data)
 {
 	bt_context ctx = { pFunc, user_data, -1 };
 	backtraceCtx.demand_save_flags = 0xDEAD; // see hack in unwind.c
@@ -61,6 +61,6 @@ int main(int argc, const char* argv[])
 		__builtin_printf("Usage: %s [/r]\n  /r - Stay resident\n", argv[0]);
 		return 0;
 	}
-	FeOS_StayResident();
+	LdrBeginResidency();
 	return 0;
 }

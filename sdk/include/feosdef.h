@@ -1,13 +1,13 @@
 //
 // FeOS Standard Library
-// feosbase.h
+// feosdef.h
 //     Base definitions for FeOS
 //
 
 #pragma once
 #include <stdbool.h>
 
-/** @file feosbase.h
+/** @file feosdef.h
  *  \brief Base definitions for FeOS
  */
 
@@ -35,8 +35,7 @@ typedef signed char char_t; //!< Signed 8-bit integer.
 typedef signed short short_t; //!< Signed 16-bit integer.
 typedef signed int long_t; //!< Signed 32-bit integer.
 typedef signed long long dlong_t; //!< Signed 64-bit integer.
-typedef void* instance_t; //!< Module instance handle.
-typedef word_t file_t;
+typedef void* module_t; //!< Module handle.
 typedef word_t bool_t;
 typedef long_t off_t; //!< Offset datatype.
 typedef void (* fp_t)(); //!< Function pointer datatype.
@@ -46,8 +45,7 @@ typedef void (* fp_t)(); //!< Function pointer datatype.
 #endif
 
 //! \cond
-extern char __hinstance[];
-#define FeOS_hInstance ((instance_t) __hinstance)
+extern char __modulebase[];
 
 #ifdef __cplusplus
 #define EXTERNC extern "C"

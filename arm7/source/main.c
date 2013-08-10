@@ -95,7 +95,7 @@ int main()
 	while (!exitflag)
 	{
 		coopWaitForVBlank();
-		FeOS_VBlankFunc();
+		Ke7VBlankISR();
 		if (!(REG_KEYINPUT & (KEY_SELECT | KEY_START | KEY_L | KEY_R)))
 			break;
 		Wifi_Update();

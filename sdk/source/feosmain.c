@@ -28,7 +28,7 @@ word_t __FeOSMain(word_t event, word_t prm1, word_t prm2, word_t prm3)
 			extern exidx_entry_t* __exidx_start;
 			extern exidx_entry_t* __exidx_end;
 
-			FeOS_GetExidxTbl_t* out = (FeOS_GetExidxTbl_t*) prm1;
+			exidxinfo_t* out = (exidxinfo_t*) prm1;
 			out->table = &__exidx_start;
 			out->nentries = &__exidx_end - &__exidx_start;
 			return FEOS_RC_OK;

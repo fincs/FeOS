@@ -21,9 +21,8 @@
  */
 
 //! \headerfile feos.h <feos.h>
-//! \brief Structure for FeOS_GetStylusPos().
-typedef struct { int x, y; } styluspos_t;
-typedef word_t keys_t;
+//! \brief Structure for touchRead().
+typedef struct { int px, py; } touchPosition;
 
 // libnds-compatible type defines
 typedef byte_t u8; //!< libnds unsigned 8-bit integer type
@@ -63,8 +62,8 @@ typedef volatile dword_t vuint64; //!< libnds volatile unsigned 64-bit integer t
 typedef volatile dlong_t vint64; //!< libnds volatile signed 64-bit integer type
 
 // libnds compatibility defines
-#define timerTick FeOS_TimerTick //!< libnds alias for FeOS_TimerTick()
-#define timerStop FeOS_TimerStop //!< libnds alias for FeOS_TimerStop()
+#define timerTick DSTimerTick //!< libnds alias for DSTimerTick()
+#define timerStop DSTimerStop //!< libnds alias for DSTimerStop()
 
 //! \brief Screen resolution constants
 enum
@@ -355,36 +354,24 @@ enum
 };
 
 //! \brief Retrieves a bitmask containing the keys that have just been pressed.
-keys_t keysDown();
+word_t keysDown();
 //! \brief Retrieves a bitmask containing the keys that are pressed.
-keys_t keysHeld();
+word_t keysHeld();
 //! \brief Retrieves a bitmask containing the keys that have just been released.
-keys_t keysUp();
+word_t keysUp();
 //! \brief Retrieves a bitmask containing the keys that have just been pressed, accounting for auto-repeat.
-keys_t keysDownRepeat();
+word_t keysDownRepeat();
 //! \brief Configures the timing for key auto-repeat.
 void keysSetRepeat(byte_t, byte_t);
 //! \brief Retrieves the stylus position.
-void FeOS_GetStylusPos(styluspos_t*);
+void touchRead(touchPosition*);
 //! \brief Scans the status of the keypad. Has no effect if AUTOUPD_KEYS is turned on.
 void scanKeys();
-
-// libnds-compat stylus access
-
-//! \headerfile feos.h <feos.h>
-//! \brief libnds touch position structure for touchRead().
-typedef struct { int px, py; } touchPosition;
-
-//! \brief Retrieves the stylus position (libnds-like version).
-static inline void touchRead(touchPosition* tp)
-{
-	FeOS_GetStylusPos((styluspos_t*) tp);
-}
 
 //! \brief Registers a function to be called when the specified interrupt(s) is (are) fired.
 //! \warning FeOS handles interrupt and FIFO callbacks in a cooperative way instead of
 //! immediately executing the handlers. This means that callbacks will only be called
-//! if and when an application uses IRQ waiting functions or FeOS_CheckPendingIRQs().
+//! if and when an application uses IRQ waiting functions or DSProcessIRQs().
 //! \returns The previous callback function.
 fp_t irqSet(word_t, fp_t);
 
@@ -396,22 +383,22 @@ static inline fp_t irqGet(word_t mask)
 
 //! \brief Checks for interrupts that may have been fired and runs any necessary callbacks.
 //! \returns The interrupts that may have been fired.
-word_t FeOS_CheckPendingIRQs();
+word_t DSProcessIRQs();
 
 //! \brief Waits for one of the specified interrupts to occur.
-void FeOS_WaitForIRQ(word_t);
+void DSWaitForIRQ(word_t);
 //! \brief Enables the specified interrupt(s).
 void irqEnable(word_t);
 //! \brief Disables the specified interrupt(s).
 void irqDisable(word_t);
 //! \brief Waits for any interrupt to occur. May return immediately if there were pending interrupts.
 //! \returns The interrupt(s) that occured.
-word_t FeOS_NextIRQ();
+word_t DSWaitForNextIRQ();
 
 //! \brief Waits for the next VBlank to occur.
 static inline void swiWaitForVBlank()
 {
-	FeOS_WaitForIRQ(IRQ_VBLANK);
+	DSWaitForIRQ(IRQ_VBLANK);
 }
 
 #define DEFAULT_IRQFUNC ((irqWaitFunc_t)0) //!< Internal macro not for public consumption.
@@ -419,25 +406,25 @@ static inline void swiWaitForVBlank()
 typedef void (*irqWaitFunc_t)(word_t); //!< Internal data type not for public consumption.
 
 //! \brief Internal function not for public consumption.
-irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc);
+irqWaitFunc_t DSSetIRQWaitFunc(irqWaitFunc_t newFunc);
 
 //! \brief Writes a value into a timer register.
-void FeOS_TimerWrite(int, word_t);
+void DSTimerWrite(int, word_t);
 //! \brief Reads a timer's counting value.
-hword_t FeOS_TimerTick(int);
+hword_t DSTimerTick(int);
 
 //! \brief Stops a timer.
-static inline void FeOS_TimerStop(int timer)
+static inline void DSTimerStop(int timer)
 {
-	FeOS_TimerWrite(timer, 0);
+	DSTimerWrite(timer, 0);
 }
 
 //! \brief Switches to console mode. This should be the last thing done before exiting a direct mode program.
-void FeOS_ConsoleMode();
+void DSConsoleMode();
 //! \brief Switches to direct mode.
-void FeOS_DirectMode();
+void DSDirectMode();
 //! \brief Returns the current operation mode.
-int FeOS_GetMode();
+int DSGetMode();
 
 //! \brief Internal data type not for public consumption.
 typedef struct
@@ -450,10 +437,10 @@ typedef struct
 //! \brief Internal macro not for public consumption.
 #define FEOS_GET_SHIM ((const modeshim_t*)~0)
 //! \brief Internal function not for public consumption.
-const modeshim_t* FeOS_ModeShim(const modeshim_t* pNewShim);
+const modeshim_t* DSModeShim(const modeshim_t* pNewShim);
 
-//! \brief Resets the video hardware to its default state after a FeOS_DirectMode() call.
-void FeOS_VideoReset();
+//! \brief Resets the video hardware to its default state after a DSDirectMode() call.
+void DSVideoReset();
 
 //! \brief Copies words using the specified DMA channel.
 void dmaCopyWords(int, const void*, void*, word_t);

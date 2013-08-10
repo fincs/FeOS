@@ -50,17 +50,17 @@ typedef struct
 	off_t   (*Seek) (void*, off_t, int); //!< Called when the stream is sought.
 } stream_t;
 
-FILE* FeOS_GetStdin(); //!< Gets the standard input stream.
-FILE* FeOS_GetStdout(); //!< Gets the standard output stream.
-FILE* FeOS_GetStderr(); //!< Gets the standard error stream.
-FILE* FeOS_SetStdin(FILE*); //!< Hooks the standard input stream. Returns the previous hook.
-FILE* FeOS_SetStdout(FILE*); //!< Hooks the standard output stream. Returns the previous hook.
-FILE* FeOS_SetStderr(FILE*); //!< Hooks the standard error stream. Returns the previous hook.
-FILE* FeOS_OpenStream(const stream_t*, void*); //!< Opens a custom data stream with the specified callbacks and user data.
+FILE* IoGetStdin(); //!< Gets the standard input stream.
+FILE* IoGetStdout(); //!< Gets the standard output stream.
+FILE* IoGetStderr(); //!< Gets the standard error stream.
+FILE* IoSetStdin(FILE*); //!< Hooks the standard input stream. Returns the previous hook.
+FILE* IoSetStdout(FILE*); //!< Hooks the standard output stream. Returns the previous hook.
+FILE* IoSetStderr(FILE*); //!< Hooks the standard error stream. Returns the previous hook.
+FILE* IoOpenStream(const stream_t*, void*); //!< Opens a custom data stream with the specified callbacks and user data.
 
-#define stdin  FeOS_GetStdin()  //!< C stdin object.
-#define stdout FeOS_GetStdout() //!< C stdout object.
-#define stderr FeOS_GetStderr() //!< C stderr object.
+#define stdin  IoGetStdin()  //!< C stdin object.
+#define stdout IoGetStdout() //!< C stdout object.
+#define stderr IoGetStderr() //!< C stderr object.
 
 #define	SEEK_SET 0 //!< Specifies seeking from the beginning of the stream.
 #define	SEEK_CUR 1 //!< Specifies seeking from the current position.

@@ -1,11 +1,11 @@
 #include "feos.h"
-#include "fxe.h"
+#include "loader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 
-void videoReset();
+void DSVideoReset();
 void InstallConThunks();
 void InstallConDummy();
 
@@ -28,7 +28,7 @@ PrintConsole oConSub;
 typedef struct
 {
 	const char* name;
-	instance_t module;
+	module_t module;
 	word_t offset;
 } part_t;
 
@@ -43,7 +43,7 @@ static bool resolveAddr(part_t* pPart, void* addr)
 		pPart->offset = (word_t)addr;
 		return true;
 	}
-	instance_t module = FeOS_ModuleFromAddress(addr);
+	module_t module = LdrResolveAddr(addr);
 	if (!module) return false;
 
 	pPart->name = GetRuntimeData(module)->name;
@@ -89,12 +89,12 @@ static int stCallback(void* address, int depth /* 0-based */, void* user_data);
 static void showStacktrace()
 {
 	iprintf("\x1b[2J\x1b[5CStacktrace\n\n");
-	instance_t cxxInst = FeOS_GetModule("feoscxx");
-	if (!cxxInst)
+	module_t hCxxMod = LdrGetModule("feoscxx");
+	if (!hCxxMod)
 		iprintf("Unavailable: feoscxx not loaded\n\n");
 	else
 	{
-		btDumpFunc btDump = (btDumpFunc) FeOS_FindSymbol(cxxInst, "FeOS_BacktraceDump");
+		btDumpFunc btDump = (btDumpFunc) LdrFindSymbol(hCxxMod, "CxxBacktraceDump");
 		btDump((word_t*)exceptionRegisters, stCallback, NULL);
 		iprintf("\n");
 	}
@@ -214,10 +214,12 @@ static word_t resolveErrorAddress(void* pOpcode, bool isThumb)
 		return resolveErrorAddress_ARM(*(word_t*)pOpcode);
 }
 
-void ExcptHandler_C()
+void KeSystemError()
 {
 	REG_IME = 0;
-	videoReset();
+	extern bool conMode;
+	conMode = false;
+	DSVideoReset();
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);
 	PrintConsole* conmain = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);

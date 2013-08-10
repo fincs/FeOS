@@ -1,14 +1,14 @@
 #ifdef DEBUG
 
 #include "feos.h"
-#include "fxe.h"
+#include "loader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Replacement for the libnds function
 
-void videoReset();
+void DSVideoReset();
 void InstallConThunks();
 void InstallConDummy();
 
@@ -30,13 +30,14 @@ static const char* meow[] =
 	NULL
 };
 
-void __attribute__((noreturn)) FeOS_swi_assertfail(const char* file, int line, const char* cond, const char* msg);
+void __attribute__((noreturn)) __assert2(const char* file, int line, const char* cond, const char* msg);
 
 void __attribute__((noreturn)) __sassert(const char* file, int line, const char* cond, const char* msg)
 {
-	if (isUserMode()) FeOS_swi_assertfail(file, line, cond, msg);
-
-	videoReset();
+	if (isUserMode()) __assert2(file, line, cond, msg);
+	extern bool conMode;
+	conMode = false;
+	DSVideoReset();
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);
 	PrintConsole* conmain = consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 0, 1, true, true);

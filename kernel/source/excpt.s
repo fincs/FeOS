@@ -136,7 +136,7 @@ __SetExcptHandler:
 	cmp r0, #0
 	bne .LnoRestore
 	mov r0, r4
-	bl FeOS_swi_SetExcptHandler
+	bl KeSetExcptHandler
 
 .LnoRestore:
 	@ Resume execution

@@ -34,21 +34,21 @@ int tanLerp(short); //!< Tangent function. Argument is in DS angle units. \retur
 short asinLerp(short); //!< Arcsine function. Argument is in 12-bit fixed point. \returns Angle in DS angle units.
 short acosLerp(short); //!< Arccosine function. Argument is in 12-bit fixed point. \returns Angle in DS angle units.
 
-int FeOS_div3232(int, int); //!< Hardware-accelerated 32/32 integer division.
-int FeOS_mod3232(int, int); //!< Hardware-accelerated 32/32 integer modulo.
-int FeOS_div6432(long long, int); //!< Hardware-accelerated 64/32 integer division.
-int FeOS_mod6432(long long, int); //!< Hardware-accelerated 64/32 integer modulo.
-long long FeOS_div6464(long long, long long); //!< Hardware-accelerated 64/64 integer division.
-long long FeOS_mod6464(long long, long long); //!< Hardware-accelerated 64/64 integer modulo.
-int FeOS_sqrt32(int);  //!< Hardware-accelerated 32-bit square root.
-long long FeOS_sqrt64(long long); //!< \brief Hardware-accelerated 64-bit square root.
+int KeDiv3232(int, int); //!< Hardware-accelerated 32/32 integer division.
+int KeMod3232(int, int); //!< Hardware-accelerated 32/32 integer modulo.
+int KeDiv6432(long long, int); //!< Hardware-accelerated 64/32 integer division.
+int KeMod6432(long long, int); //!< Hardware-accelerated 64/32 integer modulo.
+long long KeDiv6464(long long, long long); //!< Hardware-accelerated 64/64 integer division.
+long long KeMod6464(long long, long long); //!< Hardware-accelerated 64/64 integer modulo.
+int KeSqrt32(int);  //!< Hardware-accelerated 32-bit square root.
+long long KeSqrt64(long long); //!< \brief Hardware-accelerated 64-bit square root.
 
 // libnds compatibility functions
 
 //! \brief 12-bit fixed point division.
 static inline int divf32(int a, int b)
 {
-	return FeOS_div6432((long long)a << 12, b);
+	return KeDiv6432((long long)a << 12, b);
 }
 
 //! \brief 12-bit fixed point multiplication.
@@ -61,15 +61,15 @@ static inline int mulf32(int a, int b)
 //! \brief 12-bit fixed point square root.
 static inline int sqrtf32(int a)
 {
-	return FeOS_sqrt64((long long)a << 12);
+	return KeSqrt64((long long)a << 12);
 }
 
-#define div32 FeOS_div3232 //!< libnds compatibility alias.
-#define mod32 FeOS_mod3232 //!< libnds compatibility alias.
-#define div64 FeOS_div6432 //!< libnds compatibility alias.
-#define mod64 FeOS_mod6432 //!< libnds compatibility alias.
-#define sqrt32 FeOS_sqrt32 //!< libnds compatibility alias.
-#define sqrt64 FeOS_sqrt64 //!< libnds compatibility alias.
+#define div32 KeDiv3232 //!< libnds compatibility alias.
+#define mod32 KeMod3232 //!< libnds compatibility alias.
+#define div64 KeDiv6432 //!< libnds compatibility alias.
+#define mod64 KeMod6432 //!< libnds compatibility alias.
+#define sqrt32 KeSqrt32 //!< libnds compatibility alias.
+#define sqrt64 KeSqrt64 //!< libnds compatibility alias.
 
 //! \brief 3D 12-bit fixed point vectorial product.
 static inline void crossf32(int* a, int* b, int* result)

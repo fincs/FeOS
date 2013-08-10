@@ -1,27 +1,21 @@
-#include "fxe.h"
+#include "loader.h"
 
 #define LINK_FAKEMODULE(NAME) \
 	extern fxe_runtime_header _header_##NAME; \
-	FeOS_ModuleListAdd(&_header_##NAME)
+	LdrModuleListAdd(&_header_##NAME)
 
-extern fxe_runtime_header _header_FEOSBASE;
+extern fxe_runtime_header _header_FEOSKRNL;
 
-static fxe_runtime_header* mListHead = &_header_FEOSBASE;
-static fxe_runtime_header* mListTail = &_header_FEOSBASE;
+static fxe_runtime_header* mListHead = &_header_FEOSKRNL;
+static fxe_runtime_header* mListTail = &_header_FEOSKRNL;
 static int nmodules = 1;
 
-void FeOS_ModuleListInit()
+void LdrModuleListInit()
 {
-	LINK_FAKEMODULE(FEOSSTDIO);
-	LINK_FAKEMODULE(FEOSPOSIXEMU);
-	LINK_FAKEMODULE(FEOSMATH);
-	LINK_FAKEMODULE(FEOSDSAPI);
-	LINK_FAKEMODULE(FEOSDSSPR);
-	LINK_FAKEMODULE(FEOSDSBG);
-	LINK_FAKEMODULE(FEOSARM7);
+	LINK_FAKEMODULE(FEOSDSHW);
 }
 
-void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
+void LdrModuleListAdd(fxe_runtime_header* pModule)
 {
 	mListTail->next = pModule;
 	pModule->next = NULL;
@@ -30,7 +24,7 @@ void FeOS_ModuleListAdd(fxe_runtime_header* pModule)
 	nmodules ++;
 }
 
-void FeOS_ModuleListRemove(fxe_runtime_header* pModule)
+void LdrModuleListRemove(fxe_runtime_header* pModule)
 {
 	if (pModule->file == -1) return; // thwart attempts at doing evil
 
@@ -40,12 +34,12 @@ void FeOS_ModuleListRemove(fxe_runtime_header* pModule)
 	nmodules --;
 }
 
-int FeOS_ModuleListCount()
+int LdrModuleListCount()
 {
 	return nmodules;
 }
 
-fxe_runtime_header* FeOS_ModuleListFind(const char* name)
+fxe_runtime_header* LdrModuleListFind(const char* name)
 {
 	fxe_runtime_header* item;
 	for (item = mListHead; item != NULL; item = item->next)
@@ -56,7 +50,7 @@ fxe_runtime_header* FeOS_ModuleListFind(const char* name)
 extern const byte_t __text_start[];
 extern const byte_t __end__[];
 
-void* FeOS_ModuleFromAddress(void* addr)
+void* LdrResolveAddr(void* addr)
 {
 	word_t addrw = (word_t) addr;
 
@@ -78,7 +72,7 @@ void* FeOS_ModuleFromAddress(void* addr)
 	return NULL;
 }
 
-void FeOS_EnumModules(moduleEnumCb cb, void* user_data)
+void LdrEnumModules(moduleEnumCb cb, void* user_data)
 {
 	sassert(cb, ERRSTR_INVALIDPARAM);
 

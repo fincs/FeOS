@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 #ifndef ARM7
-void FeOS_IRQPoll();
+void DSIRQPoll();
 #else
-static void FeOS_IRQPoll() { swiSetHaltCR(0x80); }
+static void DSIRQPoll() { swiSetHaltCR(0x80); }
 #endif
 
 #ifdef ARM7
@@ -58,7 +58,7 @@ static FifoAddressHandlerFunc addresshnd_array[FIFO_PROG_CH_NUM];
 
 enum
 {
-	/*QUEUE_DATAMSG, */ QUEUE_VALUE32, QUEUE_ADDRESS
+	QUEUE_VALUE32, QUEUE_ADDRESS
 };
 
 typedef struct tagFifoMsgQueueEntry
@@ -67,7 +67,6 @@ typedef struct tagFifoMsgQueueEntry
 	u16 type, channel;
 	union
 	{
-		//int datamsgSize;
 		word_t value32;
 		void* address;
 	};
@@ -84,7 +83,7 @@ typedef struct tagFifoMsgQueueEntry
 static byte_t fifoMsgStack[FIFOMSGSTACK_SIZE];
 static int fifoMsgStackPos = FIFOMSGSTACK_SIZE;
 
-static FifoMsgQueueEntry* FeOS_AllocFifoMsg()
+static FifoMsgQueueEntry* DSAllocFifoMsg()
 {
 	FifoMsgQueueEntry* ret = NULL;
 	int cs = enterCriticalSection();
@@ -129,7 +128,7 @@ extern FifoMsgQueueEntry* __fifoMsgQueueTail;
 
 void __clearFifoMsgQueue();
 
-static void FeOS_AddFifoMsgToQueue(FifoMsgQueueEntry* msg)
+static void DSAddFifoMsgToQueue(FifoMsgQueueEntry* msg)
 {
 	int cs = enterCriticalSection();
 
@@ -145,9 +144,7 @@ static void FeOS_AddFifoMsgToQueue(FifoMsgQueueEntry* msg)
 	leaveCriticalSection(cs);
 }
 
-//int FeOS_swi_FifoGetDatamsg(int, word_t, void*);
-
-void FeOS_RunFifoQueue()
+void DSRunFifoQueue()
 {
 	FifoMsgQueueEntry* ent;
 
@@ -157,14 +154,6 @@ void FeOS_RunFifoQueue()
 		void* userdata = userdata_array[chn];
 		switch(ent->type)
 		{
-			/*
-			case QUEUE_DATAMSG:
-				if (datamsghnd_array[chn])
-					datamsghnd_array[chn](ent->datamsgSize, userdata);
-				else
-					FeOS_swi_FifoGetDatamsg(ent->channel, 0, NULL); // delete the data msg
-				break;
-				*/
 			case QUEUE_VALUE32:
 				if (value32hnd_array[chn])
 					value32hnd_array[chn](ent->value32, userdata);
@@ -180,34 +169,19 @@ void FeOS_RunFifoQueue()
 	fifoMsgStackPos = FIFOMSGSTACK_SIZE;
 }
 
-#ifdef ARM7
-#define FeOS_swi_FifoCheckDatamsgLength fifoCheckDatamsgLength
-#endif
-
-void FeOS_HandleDatamsgs()
+void DSHandleDatamsgs()
 {
 	int i, length;
 	for (i = 0; i < FIFO_PROG_CH_NUM; i ++)
 		if (datamsghnd_array[i])
-			while ((length = FeOS_swi_FifoCheckDatamsgLength(FIFO_PROG_CH + i)) != -1)
+			while ((length = fifoCheckDatamsgLength(FIFO_PROG_CH + i)) != -1)
 				datamsghnd_array[i](length, userdata_array[i]);
 }
 
-/*
-static void StubFifoDatamsgHandler(int datamsgSize, void* userdata)
-{
-	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
-	FeOS_AddFifoMsgToQueue(msg);
-	msg->type = QUEUE_DATAMSG;
-	msg->channel = (u16) (word_t) userdata;
-	msg->datamsgSize = datamsgSize;
-}
-*/
-
 static void StubFifoValue32Handler(word_t value32, void* userdata)
 {
-	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
-	FeOS_AddFifoMsgToQueue(msg);
+	FifoMsgQueueEntry* msg = DSAllocFifoMsg();
+	DSAddFifoMsgToQueue(msg);
 	msg->type = QUEUE_VALUE32;
 	msg->channel = (u16) (word_t) userdata;
 	msg->value32 = value32;
@@ -215,24 +189,14 @@ static void StubFifoValue32Handler(word_t value32, void* userdata)
 
 static void StubFifoAddressHandler(void* address, void* userdata)
 {
-	FifoMsgQueueEntry* msg = FeOS_AllocFifoMsg();
-	FeOS_AddFifoMsgToQueue(msg);
+	FifoMsgQueueEntry* msg = DSAllocFifoMsg();
+	DSAddFifoMsgToQueue(msg);
 	msg->type = QUEUE_ADDRESS;
 	msg->channel = (u16) (word_t) userdata;
 	msg->address = address;
 }
 
-/*
-void _SetDatamsgHandler(int channel, bool set)
-{
-	if (set)
-		fifoSetDatamsgHandler(channel, StubFifoDatamsgHandler, (void*) channel);
-	else
-		fifoSetDatamsgHandler(channel, NULL, NULL);
-}
-*/
-
-void _SetValue32Handler(int channel, bool set)
+void DSSetValue32Handler(int channel, bool set)
 {
 	if (set)
 		fifoSetValue32Handler(channel, StubFifoValue32Handler, (void*) channel);
@@ -240,7 +204,7 @@ void _SetValue32Handler(int channel, bool set)
 		fifoSetValue32Handler(channel, NULL, NULL);
 }
 
-void _SetAddressHandler(int channel, bool set)
+void DSSetAddressHandler(int channel, bool set)
 {
 	if (set)
 		fifoSetAddressHandler(channel, StubFifoAddressHandler, (void*) channel);
@@ -249,51 +213,45 @@ void _SetAddressHandler(int channel, bool set)
 }
 
 #ifdef ARM7
-#define FeOS_FifoSetDatamsgHandler coopFifoSetDatamsgHandler
-#define FeOS_FifoSetValue32Handler coopFifoSetValue32Handler
-#define FeOS_FifoSetAddressHandler coopFifoSetAddressHandler
-#define FeOS_SetInterrupt coopIrqSet
-#define FeOS_CheckPendingIRQs coopIrqCheck
-#define _FeOS_WaitForIRQ coopIrqWait
-#define FeOS_NextIRQ coopIrqNext
+#define DSFifoSetDatamsgHandler coopFifoSetDatamsgHandler
+#define DSFifoSetValue32Handler coopFifoSetValue32Handler
+#define DSFifoSetAddressHandler coopFifoSetAddressHandler
+#define DSIrqSet coopIrqSet
+#define DSProcessIRQs coopIrqCheck
+#define DSWaitForIRQRaw coopIrqWait
+#define DSWaitForNextIRQRaw coopIrqNext
 #endif
 
-void FeOS_FifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata)
+void DSFifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc handler, void* userdata)
 {
 	int ch = channel - FIFO_PROG_CH;
 	userdata_array[ch] = userdata;
 	datamsghnd_array[ch] = handler;
-	//FeOS_swi_SetDatamsgHandler(channel, !!handler);
 	if (handler)
 	{
 		int l = 0;
-		while ((l = FeOS_swi_FifoCheckDatamsgLength(channel)) != -1)
+		while ((l = fifoCheckDatamsgLength(channel)) != -1)
 			handler(l, userdata);
 	}
-	FeOS_RunFifoQueue();
+	DSRunFifoQueue();
 }
 
-#ifdef ARM7
-#define FeOS_swi_SetValue32Handler _SetValue32Handler
-#define FeOS_swi_SetAddressHandler _SetAddressHandler
-#endif
-
-void FeOS_FifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata)
+void DSFifoSetValue32Handler(int channel, FifoValue32HandlerFunc handler, void* userdata)
 {
 	int ch = channel - FIFO_PROG_CH;
 	userdata_array[ch] = userdata;
 	value32hnd_array[ch] = handler;
-	FeOS_swi_SetValue32Handler(channel, !!handler);
-	FeOS_RunFifoQueue();
+	DSSetValue32Handler(channel, !!handler);
+	DSRunFifoQueue();
 }
 
-void FeOS_FifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, void* userdata)
+void DSFifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, void* userdata)
 {
 	int ch = channel - FIFO_PROG_CH;
 	userdata_array[ch] = userdata;
 	addresshnd_array[ch] = handler;
-	FeOS_swi_SetAddressHandler(channel, !!handler);
-	FeOS_RunFifoQueue();
+	DSSetAddressHandler(channel, !!handler);
+	DSRunFifoQueue();
 }
 
 //-----------------------------------------------------------------------------
@@ -306,7 +264,7 @@ void FeOS_FifoSetAddressHandler(int channel, FifoAddressHandlerFunc handler, voi
 
 static struct IntTable irqTable[MAX_IRQS];
 
-VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn)
+VoidFn DSIrqSet(word_t mask, VoidFn fn)
 {
 	if (!mask) return NULL;
 
@@ -328,13 +286,13 @@ VoidFn FeOS_SetInterrupt(word_t mask, VoidFn fn)
 	return oldFn;
 }
 
-static void FeOS_ProcessIRQ(word_t flags)
+static void DSProcessIRQ(word_t flags)
 {
 	// Check for FIFO recv IRQ before everything else
 	if (flags & IRQ_FIFO_NOT_EMPTY)
 	{
-		FeOS_RunFifoQueue();
-		FeOS_HandleDatamsgs();
+		DSRunFifoQueue();
+		DSHandleDatamsgs();
 
 		// We don't want user code responding to this IRQ
 		flags &= ~IRQ_FIFO_NOT_EMPTY;
@@ -345,8 +303,8 @@ static void FeOS_ProcessIRQ(word_t flags)
 	{
 		extern volatile bool inHeadphoneSleep;
 		extern bool bKeyUpd, bBgUpd, bOAMUpd, conMode;
-		void _FeOS_oamUpdate(OamState* oam);
-		void _FeOS_bgUpdate();
+		void oamUpdate2(OamState* oam);
+		void DSBgUpdate();
 
 		if (!conMode) do
 		{
@@ -358,15 +316,15 @@ static void FeOS_ProcessIRQ(word_t flags)
 			if (bBgUpd)
 			{
 				bBgUpd = false;
-				_FeOS_bgUpdate();
+				DSBgUpdate();
 				bBgUpd = true;
 			}
 
 			if (bOAMUpd)
 			{
 				bOAMUpd = false;
-				_FeOS_oamUpdate(&oamMain);
-				_FeOS_oamUpdate(&oamSub);
+				oamUpdate2(&oamMain);
+				oamUpdate2(&oamSub);
 				bOAMUpd = true;
 			}
 		} while(0);
@@ -382,14 +340,14 @@ static void FeOS_ProcessIRQ(word_t flags)
 		}
 }
 
-word_t FeOS_CheckPendingIRQs()
+word_t DSProcessIRQs()
 {
 	word_t totalflags = 0;
 	for(;;) // IRQ/FIFO might fire while the handlers are executing
 	{
 		word_t flags = __ARMSWP(0, &INTR_WAIT_FLAGS);
 		if (flags)
-			FeOS_ProcessIRQ(flags);
+			DSProcessIRQ(flags);
 		else
 			break;
 		totalflags |= flags;
@@ -397,13 +355,13 @@ word_t FeOS_CheckPendingIRQs()
 	return totalflags;
 };
 
-void _FeOS_WaitForIRQ(word_t mask)
+void DSWaitForIRQRaw(word_t mask)
 {
-	FeOS_CheckPendingIRQs();
+	DSProcessIRQs();
 	for(;;)
 	{
-		FeOS_IRQPoll();
-		if (FeOS_CheckPendingIRQs() & mask)
+		DSIRQPoll();
+		if (DSProcessIRQs() & mask)
 			break;
 	}
 }
@@ -420,12 +378,12 @@ void coop_swiIntrWaitCompat(word_t how, word_t what)
 #ifdef ARM9
 static irqWaitFunc_t irqWaitFunc = NULL;
 
-void FeOS_WaitForIRQ(word_t mask)
+void DSWaitForIRQ(word_t mask)
 {
-	(irqWaitFunc ? irqWaitFunc : &_FeOS_WaitForIRQ)(mask);
+	irqWaitFunc ? irqWaitFunc(mask) : DSWaitForIRQRaw(mask);
 }
 
-irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc)
+irqWaitFunc_t DSSetIRQWaitFunc(irqWaitFunc_t newFunc)
 {
 	irqWaitFunc_t oldFunc = irqWaitFunc;
 	if (newFunc != GET_IRQFUNC)
@@ -434,14 +392,14 @@ irqWaitFunc_t FeOS_SetIRQWaitFunc(irqWaitFunc_t newFunc)
 }
 #endif
 
-word_t FeOS_NextIRQ()
+word_t DSWaitForNextIRQRaw()
 {
 	word_t flags = 0;
 	for(;;)
 	{
-		flags = FeOS_CheckPendingIRQs();
+		flags = DSProcessIRQs();
 		if (flags == 0)
-			FeOS_IRQPoll(); // wait for *any* IRQs to happen
+			DSIRQPoll(); // wait for *any* IRQs to happen
 		else
 			break;
 	}
@@ -449,12 +407,9 @@ word_t FeOS_NextIRQ()
 }
 
 #ifdef ARM9
-word_t FeOS_FifoGetRetValue32(int ch)
+word_t DSFifoGetRetValue32(int ch)
 {
 	static volatile byte_t counters[FIFO_PROG_CH_NUM];
-	bool FeOS_swi_FifoCheckValue32(int);
-	word_t FeOS_swi_FifoGetValue32(int);
-
 	volatile byte_t* pCounter = counters + ch - FIFO_PROG_CH;
 #define WAIT_COUNTER (*pCounter)
 
@@ -469,16 +424,16 @@ word_t FeOS_FifoGetRetValue32(int ch)
 			// Decrement queue position
 			queuePos -= prevCnt - curCnt;
 		prevCnt = curCnt;
-		FeOS_WaitForIRQ(~0);
+		DSWaitForIRQ(~0);
 	}
 
 	// Wait for the return value
-	while (!FeOS_swi_FifoCheckValue32(ch))
-		FeOS_WaitForIRQ(~0);
+	while (!fifoCheckValue32(ch))
+		DSWaitForIRQ(~0);
 
 	// Return
 	WAIT_COUNTER --;
-	return FeOS_swi_FifoGetValue32(ch);
+	return fifoGetValue32(ch);
 
 #undef WAIT_COUNTER
 }

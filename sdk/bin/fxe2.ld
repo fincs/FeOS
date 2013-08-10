@@ -15,7 +15,7 @@ SECTIONS
 	   =========================== */
 	. = 0;
 	__start__ = . ;
-	__hinstance = . ;
+	__modulebase = . ;
 	__load_start = . ;
 
 	__text_start = . ;

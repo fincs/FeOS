@@ -50,25 +50,25 @@ __SWIHandler:
 __SVCTable:
 	@ Public functions (0x0Z)
 	.word 0
-	.word LoadModule_ARM7
-	.word FreeModule_ARM7
-	.word keyboardUpdate
-	.word __FeOS_IRQPoll
+	.word 0
+	.word 0
+	.word 0
+	.word _DSIRQPoll
 	.word DC_FlushRange
 	.word DC_FlushAll
 	.word IC_InvalidateRange
 	.word IC_InvalidateAll
-	.word irqEnable
-	.word irqDisable
-	.word InitConMode
-	.word InitFreeMode
+	.word 0
+	.word 0
+	.word 0
+	.word 0
 	.word __SetExcptHandler
-	.word _SetValue32Handler
-	.word _SetAddressHandler
+	.word 0
+	.word 0
 
 	@ Kernel functions (0x1Z)
 	.word 0
-	.word FeOS_SetSuspendMode
+	.word 0
 #ifdef DEBUG
 	.word __sassert
 #else
@@ -78,10 +78,10 @@ __SVCTable:
 	writehook conerr
 	.word 0
 	.word 0
-	.word __FeOS_DrainWriteBuffer
-	.word __FeOS_WaitForMemAddr
-	.word _TimerWrite
-	.word _TimerTick
+	.word _DC_DrainWriteBuffer
+	.word _DSWaitForMemAddr
+	.word 0
+	.word 0
 	.space 4*5
 
 	@ FAT hooks (0x2Z ~ 0x3Z)
@@ -107,31 +107,7 @@ __SVCTable:
 	writehook fatfsync
 	.space 4*13
 
-	@ FIFO functions (0x4Z)
-	.word fifoSendAddress
-	.word fifoSendValue32
-	.word fifoSendDatamsg
-	.word fifoCheckAddress
-	.word fifoCheckValue32
-	.word fifoCheckDatamsg
-	.word fifoGetAddress
-	.word fifoGetValue32
-	.word fifoGetDatamsg
-	.word fifoCheckDatamsgLength
-	.space 4*6
-	
-	@ Math functions (0x5Z)
-	.word FeOS_div3232
-	.word FeOS_mod3232
-	.word FeOS_div6432
-	.word FeOS_mod6432
-	.word FeOS_div6464
-	.word FeOS_mod6464
-	.word FeOS_sqrt32
-	.word FeOS_sqrt64
-	.space 4*8
-
-	.space 4*160
+	.space 4*192
 
 
 .align 2
@@ -146,7 +122,7 @@ __ResetHandler:
 	.word 0xE7F000F0
 
 .align 2
-__FeOS_IRQPoll:
+_DSIRQPoll:
 	@ savedIME = REG_IME, REG_IME = 1
 	mov r2, #1
 	mov r12, #0x4000000
@@ -164,12 +140,12 @@ __FeOS_IRQPoll:
 	bx lr
 
 .align 2
-__FeOS_DrainWriteBuffer:
+_DC_DrainWriteBuffer:
 	mcr p15, 0, r0, c7, c10, 4
 	bx lr
 
 .align 2
-__FeOS_WaitForMemAddr:
+_DSWaitForMemAddr:
 	bic r3, r0, #0x1F
 .Lwait_addr:
 	mcr p15, 0, r3, c7, c14, 1 // invalidate line
@@ -180,9 +156,9 @@ __FeOS_WaitForMemAddr:
 
 .text
 .align 2
-.global PrepareUserMode
-.type PrepareUserMode, %function
-PrepareUserMode:
+.global KeInitUserMode
+.type KeInitUserMode, %function
+KeInitUserMode:
 	@ Copy ITCM MPU section to GBA ROM section
 	mrc p15, 0, r0, c6, c4, 0
 	mcr p15, 0, r0, c6, c3, 0
@@ -198,49 +174,25 @@ PrepareUserMode:
 	bx  lr
 
 AccessSettings:
-	.word 0x33313151
-	@.word 0x33311151
-	@.word 0x31113151
-	@.word 0x32113551
-	@.word 0x32313551
-
-AccessSettings2:
 	.word 0x33313153
-	@.word 0x33311153
 
 .align 2
-.global UnblockIORegion
-.type UnblockIORegion, %function
-UnblockIORegion:
-	ldr r0, AccessSettings2
-	mcr p15, 0, r0, c5, c0, 2 @ data
-	bx  lr
-
-.align 2
-.global BlockIORegion
-.type BlockIORegion, %function
-BlockIORegion:
-	ldr r0, AccessSettings
-	mcr p15, 0, r0, c5, c0, 2 @ data
-	bx  lr
-
-.align 2
-.global FeOS_IRQPoll
-.type FeOS_IRQPoll, %function
-FeOS_IRQPoll:
+.global DSIRQPoll
+.type DSIRQPoll, %function
+DSIRQPoll:
 	mrs r0, cpsr
 	tst r0, #0xF
 	beq .Lpoll_from_user_mode
-	ldr pc, =__FeOS_IRQPoll
+	ldr pc, =_DSIRQPoll
 
 .Lpoll_from_user_mode:
 	swi 0x040000
 	bx lr
 
 .align 2
-.global DoTheUserMode
-.type DoTheUserMode, %function
-DoTheUserMode:
+.global KeEnterUserMode
+.type KeEnterUserMode, %function
+KeEnterUserMode:
 	@ Switch to user mode
 	mrs r0, cpsr
 	bic r0, r0, #0xF
@@ -335,57 +287,21 @@ __isEmulator: @ Only to be called once!
 
 .macro swiimp name num
 .align 2
-.global FeOS_swi_\name
-.type FeOS_swi_\name, %function
+.global \name
+.type \name, %function
 .thumb_func
-FeOS_swi_\name\():
+\name\():
 	swi \num
 	bx lr
 .endm
 
-swiimp LoadModule_ARM7 0x01
-swiimp FreeModule_ARM7 0x02
-swiimp keyboardUpdate 0x03
-swiimp DebugPrint 0x10
-swiimp SetSuspendMode 0x11
 #ifdef DEBUG
-swiimp assertfail 0x12
+swiimp __assert2 0x12
 #endif
-swiimp DataCacheFlush 0x05
-swiimp DataCacheFlushAll 0x06
-swiimp InstrCacheInvalidate 0x07
-swiimp InstrCacheInvalidateAll 0x08
-swiimp DrainWriteBuffer 0x17
-swiimp IrqEnable 0x09
-swiimp IrqDisable 0x0A
-swiimp ConsoleMode 0x0B
-swiimp DirectMode 0x0C
-swiimp SetExcptHandler 0x0D
-swiimp SetValue32Handler 0x0E
-swiimp SetAddressHandler 0x0F
-
-swiimp SuspendIRQ_t 0x15
-swiimp RestoreIRQ_t 0x16
-swiimp WaitForMemAddr 0x18
-swiimp TimerWrite 0x19
-swiimp TimerTick 0x1A
-
-swiimp FifoSendAddress 0x40
-swiimp FifoSendValue32 0x41
-swiimp FifoSendDatamsg 0x42
-swiimp FifoCheckAddress 0x43
-swiimp FifoCheckValue32 0x44
-swiimp FifoCheckDatamsg 0x45
-swiimp FifoGetAddress 0x46
-swiimp FifoGetValue32 0x47
-swiimp FifoGetDatamsg 0x48
-swiimp FifoCheckDatamsgLength 0x49
-
-swiimp div3232 0x50
-swiimp mod3232 0x51
-swiimp div6432 0x52
-swiimp mod6432 0x53
-swiimp div6464 0x54
-swiimp mod6464 0x55
-swiimp sqrt32  0x56
-swiimp sqrt64  0x57
+swiimp KeDataCacheFlush 0x05
+swiimp KeDataCacheFlushAll 0x06
+swiimp KeInstrCacheInvalidate 0x07
+swiimp KeInstrCacheInvalidateAll 0x08
+swiimp DC_DrainWriteBuffer 0x17
+swiimp KeSetExcptHandler 0x0D
+swiimp KeWaitForMemAddr 0x18

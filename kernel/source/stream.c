@@ -1,5 +1,5 @@
 #include "feos.h"
-#include "fxe.h"
+#include "loader.h"
 #include <sys/fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -58,14 +58,14 @@ static const devoptab_t dotab_stm =
 	NULL
 };
 
-void FeOS_InitStreams()
+void IoInitStreams()
 {
 	AddDevice(&dotab_stm);
 }
 
 static stmfile_t _stmCtor;
 
-FILE* FeOS_OpenStream(const stream_t* pStm, void* cData)
+FILE* IoOpenStream(const stream_t* pStm, void* cData)
 {
 	if (!pStm) return NULL;
 

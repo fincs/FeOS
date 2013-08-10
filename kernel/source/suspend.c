@@ -3,7 +3,7 @@
 
 static int suspendMode = MODE_NORMAL;
 
-int FeOS_SetSuspendMode(int mode)
+int DSSetSuspendMode(int mode)
 {
 	if (mode == MODE_GET) return suspendMode;
 	sassert(mode >= 0 && mode < MODE_COUNT, ERRSTR_INVALIDPARAM);

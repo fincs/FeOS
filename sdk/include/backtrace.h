@@ -22,7 +22,7 @@ extern "C"
 
 typedef int (*BacktraceCallback)(void* address, int depth /* 0-based */, void* user_data); //!< Backtrace callback
 
-void FeOS_Backtrace(BacktraceCallback callback, void* user_data); //!< Performs a backtrace.
+void CxxBacktrace(BacktraceCallback callback, void* user_data); //!< Performs a backtrace.
 
 /** @} */
 

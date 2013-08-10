@@ -59,7 +59,7 @@ extern "C"
 	- \ref sndlock.h "Sound locking library"
 */
 
-#include <feosbase.h>
+#include <feosdef.h>
 #include <feosver.h>
 
 #ifndef ARM7
@@ -71,6 +71,10 @@ extern "C"
 #include <feosdsbg.h>
 #else
 #include <feos7.h>
+#endif
+
+#ifdef FEOS_ALLOW_OLD_NAMES
+#include <feosoldnames.h>
 #endif
 
 #ifdef __cplusplus

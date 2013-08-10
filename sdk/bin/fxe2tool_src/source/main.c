@@ -444,6 +444,13 @@ int SortSymbols(elf2fx2_cnvstruct_t* cs)
 	return 0;
 }
 
+int cmp_expptr(const void* _a, const void* _b)
+{
+	const elf2fx2_expimp_t* a = *(const elf2fx2_expimp_t**) _a;
+	const elf2fx2_expimp_t* b = *(const elf2fx2_expimp_t**) _b;
+	return strcmp(a->name, b->name);
+}
+
 int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 {
 	char cmd[1024];
@@ -467,7 +474,7 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			(strncmp(symname, "__load_", 7) == 0) ||
 			(strncmp(symname, "__exidx_", 8) == 0) ||
 			(strncmp(symname, "__bss_", 6) == 0)  ||
-			(strcmp(symname, "__hinstance") == 0) ||
+			(strcmp(symname, "__modulebase") == 0) ||
 			(strcmp(symname, "__start__") == 0)   ||
 			(strcmp(symname, "__end__") == 0)
 		) continue;
@@ -518,11 +525,20 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 		fxe2_export_t* expdata_curexp = expdata;
 		char* expdata_cursym = (char*) expdata + expsymoff;
 
-		// Walk the exports linked list
+		elf2fx2_expimp_t** expTbl = (elf2fx2_expimp_t**) malloc(cs->fxe2hdr.nexports*sizeof(elf2fx2_expimp_t*));
+		if (!expTbl)
+			die("Out of memory!");
+
+		// Walk and sort the exports linked list
 		elf2fx2_expimp_t* exp = exp_list;
-		while(exp != NULL)
+		for (i = 0; exp != NULL; exp = exp->next)
+			expTbl[i++] = exp;
+		qsort(expTbl, cs->fxe2hdr.nexports, sizeof(elf2fx2_expimp_t*), cmp_expptr);
+
+		// Process the exports
+		for (i = 0; i < cs->fxe2hdr.nexports; i ++)
 		{
-			elf2fx2_expimp_t* next = exp->next;
+			elf2fx2_expimp_t* exp = expTbl[i];
 
 			expdata_curexp->address = eswap_word(exp->addr);
 			expdata_curexp->nameoffset = eswap_word(expsymoff);
@@ -534,8 +550,9 @@ int ProcessSymbols(elf2fx2_cnvstruct_t* cs)
 			expsymoff += symlen;
 
 			free(exp);
-			exp = next;
 		}
+
+		free(expTbl);
 
 		safe_call(WriteData(cs->outf, expdata, cs->fxe2hdr.sexports));
 		free(expdata);

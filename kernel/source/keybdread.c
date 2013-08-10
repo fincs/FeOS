@@ -14,32 +14,20 @@ extern bool stdioRead;
 extern char keyBuffer[KEY_BUFFER_SIZE];
 extern Keyboard* curKeyboard;
 
-int FeOS_swi_keyboardUpdate();
-
-ssize_t FeOS_KeybdRead(struct _reent *r, int unused, char *ptr, size_t len)
+ssize_t DSKeybdRead(struct _reent *r, int unused, char *ptr, size_t len)
 {
-	//int wasHidden = 0;
 	int tempLen;
 	int c = NOKEY;
 
 	stdioRead = true;
-
-	// FeOS: this never happens
-	/*
-	if (!curKeyboard->visible)
-	{
-		wasHidden = 1;
-		keyboardShow();
-	}
-	*/
 
 	do
 	{
 		// FeOS: wait for VBlank.
 		//   - It avoids unnecessarily killing the CPU
 		//   - It allows user IRQs to run
-		FeOS_WaitForVBlank();
-		FeOS_swi_keyboardUpdate();
+		DSWaitForVBlank();
+		keyboardUpdate();
 	} while(keyBufferLength <= 0 || (keyBufferLength < KEY_BUFFER_SIZE && lastKey != DVK_ENTER));
 
 	tempLen = keyBufferLength;
@@ -53,12 +41,6 @@ ssize_t FeOS_KeybdRead(struct _reent *r, int unused, char *ptr, size_t len)
 		keyBufferLength--;
 		len--;
 	}
-
-	// FeOS: this never happens
-	/*
-	if (wasHidden)
-		keyboardHide();
-	*/
 
 	stdioRead = false;
 

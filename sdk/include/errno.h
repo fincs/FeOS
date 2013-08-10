@@ -19,9 +19,9 @@ extern "C"
  *  @{
  */
 
-int* FeOS_GetErrnoPtr(); //!< Get the pointer to the errno variable
+int* KeGetErrnoPtr(); //!< Get the pointer to the errno variable
 
-#define errno (*FeOS_GetErrnoPtr()) //!< Error variable
+#define errno (*KeGetErrnoPtr()) //!< Error variable
 
 #define	EPERM 1		/* Not super-user */
 #define	ENOENT 2	/* No such file or directory */
