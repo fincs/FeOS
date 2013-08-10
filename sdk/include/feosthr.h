@@ -58,6 +58,16 @@ thread_t PsCreateFromArgv(int argc, const char* argv[]);
 //! \brief Creates a process using a command line.
 thread_t PsCreateFromCmdLine(const char* command);
 
+//! \brief Allocates a thread-local storage slot.
+//! \returns The index of the slot. If the function fails it returns a negative number.
+int ThrTlsAlloc();
+//! \brief Frees a thread-local storage slot.
+void ThrTlsFree(int id);
+//! \brief Retrieves the value in the current thread's specified thread-local storage slot.
+void* ThrTlsGetValue(int id);
+//! \brief Sets the value of the current thread's specified thread-local storage slot.
+void ThrTlsSetValue(int id, void* value);
+
 // Simple lock API
 
 typedef volatile word_t lock_t; //!< Simple lock datatype

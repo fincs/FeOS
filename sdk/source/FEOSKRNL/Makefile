@@ -60,6 +60,10 @@ ThrIsActive \
 ThrJoin \
 ThrRunInContext \
 ThrSetPriority \
+ThrTlsAlloc \
+ThrTlsFree \
+ThrTlsGetValue \
+ThrTlsSetValue \
 ThrYield \
 __aeabi_idiv \
 __aeabi_idivmod \

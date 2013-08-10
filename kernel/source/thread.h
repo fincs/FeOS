@@ -16,6 +16,7 @@ typedef struct tag_threadSt
 	execstat_t execStat;
 	word_t flags;
 	union { int rc; word_t irqMask; };
+	void* tls[IDMGR_MAXIDS];
 } threadSt;
 
 typedef threadSt* thread_t;
@@ -37,3 +38,8 @@ int ThrRunInContext(thread_t hThread, threadEP_t func, void* param);
 
 thread_t PsCreateFromArgv(int argc, const char* argv[]);
 thread_t PsCreateFromCmdLine(const char* command);
+
+int ThrTlsAlloc();
+void ThrTlsFree(int id);
+void* ThrTlsGetValue(int id);
+void ThrTlsSetValue(int id, void* value);

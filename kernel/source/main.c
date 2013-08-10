@@ -379,8 +379,8 @@ int main()
 #ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdClusterPtr = (vu32*) _FAT_getCwdClusterPtr("/");
 	KeInitDefaultExecStatus();
-	ThrInit();
 #endif
+	ThrInit();
 	InstallThunks();
 #ifdef LIBFAT_FEOS_MULTICWD
 	iprintf(MSG_OK);

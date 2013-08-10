@@ -48,6 +48,8 @@ typedef void* module_t;
 #ifdef ARM9
 #include "feos_setjmp.h"
 
+#define IDMGR_MAXIDS 64
+
 void KeEnterUserMode();
 void KeInitUserMode();
 

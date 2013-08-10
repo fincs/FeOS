@@ -1,6 +1,8 @@
 #include "thread.h"
+#include "idmgr.h"
 
 threadSt _firstThread;
+idmgr_t _tlsIds;
 
 threadSt* curThread = &_firstThread;
 int nThreads = 1;
@@ -18,6 +20,7 @@ void ThrInit()
 	curThread->execStat = KeGetCurExecStatus();
 	curThread->prev = curThread;
 	curThread->next = curThread;
+	IdMgrInit(&_tlsIds);
 }
 
 thread_t ThrCreate(word_t stackSize, threadEP_t entryPoint, void* param)
@@ -314,4 +317,24 @@ threadSt* _irqWaitCheck()
 	}
 
 	return nextT;
+}
+
+int ThrTlsAlloc()
+{
+	return IdMgrAlloc(&_tlsIds);
+}
+
+void ThrTlsFree(int id)
+{
+	IdMgrFree(&_tlsIds, id);
+}
+
+void* ThrTlsGetValue(int id)
+{
+	return curThread->tls[id];
+}
+
+void ThrTlsSetValue(int id, void* value)
+{
+	curThread->tls[id] = value;
 }
