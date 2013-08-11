@@ -34,8 +34,6 @@ DECLAREHOOK(int, fatstatvfs, (struct _reent*, const char*, struct statvfs*));
 DECLAREHOOK(int, fatftruncate, (struct _reent*, int, off_t));
 DECLAREHOOK(int, fatfsync, (struct _reent*, int));
 
-ssize_t DSKeybdRead(struct _reent*, int, char*, size_t);
-
 static ssize_t DummyRead(struct _reent* r, int fd, char* buf, size_t count)
 {
 	memset(buf, 0, count);
@@ -48,31 +46,32 @@ static ssize_t DummyWrite(struct _reent* r, int fd, const char* buf, size_t coun
 	return count;
 }
 
+ssize_t (* _conin)(struct _reent*, int, char *ptr, size_t);
 ssize_t (* _conout)(struct _reent*, int, const char *ptr, size_t);
 ssize_t (* _conerr)(struct _reent*, int, const char *ptr, size_t);
 
 void IoRestoreStdStreams()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
+	dotabs[STD_IN]->read_r   = _conin;
 	dotabs[STD_OUT]->write_r = _conout;
-	dotabs[STD_IN]->read_r = DSKeybdRead;
 	dotabs[STD_ERR]->write_r = _conerr;
 }
 
 void IoMothballStdStreams()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
+	dotabs[STD_IN]->read_r   = DummyRead;
 	dotabs[STD_OUT]->write_r = DummyWrite;
-	dotabs[STD_IN]->read_r = DummyRead;
 	dotabs[STD_ERR]->write_r = DummyWrite;
 }
 
 void IoInstallThunks()
 {
 	devoptab_t** dotabs = (devoptab_t**) devoptab_list; // force non-constness
+	_conin  = dotabs[STD_IN]->read_r;
 	_conout = dotabs[STD_OUT]->write_r;
 	_conerr = dotabs[STD_ERR]->write_r;
-	dotabs[STD_IN]->read_r = DSKeybdRead;
 
 	devoptab_t* dotab = (devoptab_t*) GetDeviceOpTab("/"); // force non-constness
 	HOOK(dotab->open_r, fatopen);
