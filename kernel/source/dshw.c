@@ -32,50 +32,6 @@ static SpriteEntry* DSGetOAMMemory(OamState* oam)
 	return oam->oamMemory;
 }
 
-// A custom version must be used because of the usage of swiWaitForVBlank and DC_FlushRange
-static void oamInit2(OamState* oam, SpriteMapping mapping, bool extPalette)
-{
-	int i;
-	int extPaletteFlag = extPalette ? DISPLAY_SPR_EXT_PALETTE : 0;
-
-	sassert(oam == &oamMain || oam == &oamSub, "Invalid parameter");
-
-	oam->gfxOffsetStep = (mapping & 3) + 5;
-
-	oam->spriteMapping = mapping;
-
-	dmaFillWords(0, oam->oamMemory, 128*sizeof(SpriteEntry));
-
-	for(i = 0; i < 128; i ++)
-		oam->oamMemory[i].isHidden = true;
-
-	for(i = 0; i < 32; i ++)
-	{
-		oam->oamRotationMemory[i].hdx = (1<<8);
-		oam->oamRotationMemory[i].vdy = (1<<8);
-	}
-
-	DSWaitForVBlankRaw();
-
-	KeDataCacheFlush(oam->oamMemory, 128*sizeof(SpriteEntry));
-
-	if(oam == &oamMain)
-	{
-		dmaCopy(oam->oamMemory, OAM, 128*sizeof(SpriteEntry));
-
-		REG_DISPCNT &= ~DISPLAY_SPRITE_ATTR_MASK;
-		REG_DISPCNT |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;
-	}else
-	{
-		dmaCopy(oam->oamMemory, OAM_SUB, 128*sizeof(SpriteEntry));
-
-		REG_DISPCNT_SUB &= ~DISPLAY_SPRITE_ATTR_MASK;
-		REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;
-	}
-
-	oamAllocReset(oam);
-}
-
 #define TIMER_CR_32(n) (*(vu32*)(0x04000100+((n)<<2)))
 
 void DSTimerWrite(int timer, word_t v)
@@ -91,21 +47,6 @@ u16 DSTimerTick(int timer)
 void DSScanKeys()
 {
 	if (!bKeyUpd) scanKeys();
-}
-
-// A custom version must be used because of the usage of DC_FlushRange
-void oamUpdate2(OamState* oam)
-{
-	sassert(oam == &oamMain || oam == &oamSub, "Invalid parameter");
-
-	if (bOAMUpd) return;
-
-	KeDataCacheFlush(oam->oamMemory, 128*sizeof(SpriteEntry));
-
-	if (oam == &oamMain)
-		dmaCopy(oam->oamMemory, OAM, 128*sizeof(SpriteEntry));
-	else
-		dmaCopy(oam->oamMemory, OAM_SUB, 128*sizeof(SpriteEntry));
 }
 
 void DSBgUpdate()
@@ -237,12 +178,12 @@ BEGIN_TABLE(FEOSDSHW)
 	ADD_FUNC_(oamFreeGfx),
 	ADD_FUNC_(oamGetGfxPtr),
 	ADD_FUNC_(oamGfxPtrToOffset),
-	ADD_ALIAS(oamInit, oamInit2),
+	ADD_FUNC_(oamInit),
 	ADD_FUNC_(oamRotateScale),
 	ADD_FUNC_(oamSet),
 	ADD_FUNC_(oamSetMosaic),
 	ADD_FUNC_(oamSetMosaicSub),
-	ADD_ALIAS(oamUpdate, oamUpdate2),
+	ADD_FUNC_(oamUpdate),
 	ADD_FUNC_(powerOff),
 	ADD_FUNC_(powerOn),
 	ADD_ALIAS(scanKeys, DSScanKeys),

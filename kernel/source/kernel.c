@@ -381,12 +381,12 @@ FILE* IoOpenStream(const void*);
 
 BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(DC_DrainWriteBuffer),
-	ADD_ALIAS(DC_FlushAll, KeDataCacheFlushAll),
-	ADD_ALIAS(DC_FlushRange, KeDataCacheFlush),
+	ADD_FUNC_(DC_FlushAll),
+	ADD_FUNC_(DC_FlushRange),
 	ADD_FUNC_(DSGetAutoUpdate),
 	ADD_FUNC_(DSSetAutoUpdate),
-	ADD_ALIAS(IC_InvalidateAll, KeInstrCacheInvalidateAll),
-	ADD_ALIAS(IC_InvalidateRange, KeInstrCacheInvalidate),
+	ADD_FUNC_(IC_InvalidateAll),
+	ADD_FUNC_(IC_InvalidateRange),
 	ADD_FUNC_(IoGetStderr),
 	ADD_FUNC_(IoGetStdin),
 	ADD_FUNC_(IoGetStdout),

@@ -57,8 +57,10 @@ CFLAGS	:=	-g -Wall $(COPTFLAG) -funwind-tables -save-temps\
 CFLAGS	+=	$(INCLUDE) -DARM9 $(DEFINES)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
+HOOKS	:=	systemValueHandler swiIntrWait swiWaitForVBlank \
+			DC_FlushRange DC_FlushAll IC_InvalidateRange IC_InvalidateAll
 ASFLAGS	:=	-g $(ARCH) $(DEFINES)
-LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) -Wl,-wrap,systemValueHandler -Wl,-wrap,swiIntrWait -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) $(foreach func,$(HOOKS),-Wl,-wrap,$(func)) -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)

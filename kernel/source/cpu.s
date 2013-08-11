@@ -61,10 +61,10 @@ __SVCTable:
 	.word 0
 #endif
 	.word _DSIRQPoll
-	.word DC_FlushRange
-	.word DC_FlushAll
-	.word IC_InvalidateRange
-	.word IC_InvalidateAll
+	.word __real_DC_FlushRange
+	.word __real_DC_FlushAll
+	.word __real_IC_InvalidateRange
+	.word __real_IC_InvalidateAll
 	.word _DC_DrainWriteBuffer
 	.word _DSWaitForMemAddr
 	.word __SetExcptHandler
@@ -285,6 +285,20 @@ __enterThread: @ r0 - param, r1 - entrypoint, r2 - stack pointer
 	ldr lr, =ThrExit
 	bx r1
 
+.macro fnthunk name num
+.align 2
+.global __wrap_\name
+.type __wrap_\name, %function
+.arm
+__wrap_\name\():
+	mrs r12, cpsr
+	and r12, r12, #0x1F
+	cmp r12, #0x10
+	bne __real_\name
+	swi (\num << 16)
+	bx lr
+.endm
+
 .macro swiimp name num
 .align 2
 .global \name
@@ -298,10 +312,10 @@ __enterThread: @ r0 - param, r1 - entrypoint, r2 - stack pointer
 #ifdef DEBUG
 swiimp __assert2 0x01
 #endif
-swiimp KeDataCacheFlush 0x03
-swiimp KeDataCacheFlushAll 0x04
-swiimp KeInstrCacheInvalidate 0x05
-swiimp KeInstrCacheInvalidateAll 0x06
+fnthunk DC_FlushRange 0x03
+fnthunk DC_FlushAll 0x04
+fnthunk IC_InvalidateRange 0x05
+fnthunk IC_InvalidateAll 0x06
 swiimp DC_DrainWriteBuffer 0x07
 swiimp KeWaitForMemAddr 0x08
 swiimp KeSetExcptHandler 0x09

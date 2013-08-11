@@ -105,10 +105,6 @@ enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
 void DSSetAutoUpdate(int which, bool enable);
 bool DSGetAutoUpdate(int which);
 
-void KeDataCacheFlush(const void* mem, size_t size);
-void KeDataCacheFlushAll();
-void KeInstrCacheInvalidate(const void* mem, size_t size);
-void KeInstrCacheInvalidateAll();
 void DSSetValue32Handler(int, bool);
 void DSSetAddressHandler(int, bool);
 

@@ -347,5 +347,5 @@ int main()
 	}
 	_hasExited = true;
 
-	for(;;) DSWaitForVBlank();
+	for(;;) DSWaitForVBlankRaw();
 }

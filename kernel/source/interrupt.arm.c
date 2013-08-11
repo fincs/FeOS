@@ -303,7 +303,6 @@ static void DSProcessIRQ(word_t flags)
 	{
 		extern volatile bool inHeadphoneSleep;
 		extern bool bKeyUpd, bBgUpd, bOAMUpd, conMode;
-		void oamUpdate2(OamState* oam);
 		void DSBgUpdate();
 
 		if (!conMode) do
@@ -322,10 +321,8 @@ static void DSProcessIRQ(word_t flags)
 
 			if (bOAMUpd)
 			{
-				bOAMUpd = false;
-				oamUpdate2(&oamMain);
-				oamUpdate2(&oamSub);
-				bOAMUpd = true;
+				oamUpdate(&oamMain);
+				oamUpdate(&oamSub);
 			}
 		} while(0);
 	}
@@ -419,6 +416,15 @@ void __wrap_swiIntrWait(word_t mode, word_t mask)
 		mode ? DSWaitForIRQRaw(mask) : DSWaitForNextIRQ(mask);
 	else
 		__real_swiIntrWait(mode, mask);
+}
+
+void __real_swiWaitForVBlank();
+void __wrap_swiWaitForVBlank()
+{
+	if (isUserMode())
+		DSWaitForVBlankRaw();
+	else
+		__real_swiWaitForVBlank();
 }
 #endif
 

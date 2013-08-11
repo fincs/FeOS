@@ -297,8 +297,8 @@ _impcopy_err:
 	*(volatile word_t*)pMem = (word_t) rh;
 
 	// Update caches
-	KeDataCacheFlush(pMem, totalsize);
-	KeInstrCacheInvalidate(pMem, totalsize);
+	DC_FlushRange(pMem, totalsize);
+	IC_InvalidateRange(pMem, totalsize);
 
 	// Add this module to the list of loaded modules
 	LdrModuleListAdd(rh);
@@ -428,8 +428,8 @@ _fullerr:
 	ldSt->nrelocs = head.nrelocs;
 	ldSt->relocs = (fxe2_reloc_t*)((u8*)pMem + head.loadsize);
 
-	KeDataCacheFlush(pMem, readsize + head.simports);
-	KeDataCacheFlush(ldSt, sizeof(FeOSLoadStruct));
+	DC_FlushRange(pMem, readsize + head.simports);
+	DC_FlushRange(ldSt, sizeof(FeOSLoadStruct));
 
 	// Tell the ARM7 to load the module
 	fifoSendDatamsg(FIFO_FEOS, sizeof(FeOSFifoMsg), (void*) &msg);
