@@ -128,23 +128,6 @@ void DC_DrainWriteBuffer();
 //! \brief Waits for a certain memory addresses to hold a certain value.
 void KeWaitForMemAddr(volatile byte_t*, byte_t);
 
-//! \brief Auto-update modes.
-enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
-//! \brief Turns on or off a certain auto-update mode.
-//!
-//! Auto-updates is a mechanism that automatically issues calls to scanKeys(), bgUpdate() and oamUpdate()
-//! at each VBlank. They are always on in console mode, so this function only has effect in direct mode.
-void DSSetAutoUpdate(int which, bool enable);
-//! \brief Retrieves whether a certain auto-update mode is on.
-bool DSGetAutoUpdate(int which);
-
-//! \brief Suspend modes.
-enum { SuspendMode_Get = -1, SuspendMode_Disable = 0, SuspendMode_Normal, SuspendMode_Headphones };
-//! \brief Changes FeOS' behaviour when the lid is closed.
-int DSSetSuspendMode(int mode);
-//! \brief Retrieves the current lid closing behaviour.
-#define DSGetSuspendMode() DSSetSuspendMode(SuspendMode_Get)
-
 //! \headerfile feos.h <feos.h>
 typedef struct
 {

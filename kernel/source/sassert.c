@@ -34,8 +34,7 @@ void __attribute__((noreturn)) __assert2(const char* file, int line, const char*
 void __attribute__((noreturn)) __sassert(const char* file, int line, const char* cond, const char* msg)
 {
 	if (isUserMode()) __assert2(file, line, cond, msg);
-	extern bool conMode;
-	conMode = false;
+
 	DSVideoReset();
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);

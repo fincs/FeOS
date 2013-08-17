@@ -6,8 +6,6 @@ FUNCS := \
 DC_DrainWriteBuffer \
 DC_FlushAll \
 DC_FlushRange \
-DSGetAutoUpdate \
-DSSetAutoUpdate \
 IC_InvalidateAll \
 IC_InvalidateRange \
 IoGetStderr \

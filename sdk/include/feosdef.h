@@ -36,9 +36,11 @@ typedef signed short short_t; //!< Signed 16-bit integer.
 typedef signed int long_t; //!< Signed 32-bit integer.
 typedef signed long long dlong_t; //!< Signed 64-bit integer.
 typedef void* module_t; //!< Module handle.
+typedef void* thread_t; //!< Thread handle.
 typedef word_t bool_t;
 typedef long_t off_t; //!< Offset datatype.
 typedef void (* fp_t)(); //!< Function pointer datatype.
+typedef int (*threadEP_t)(void* param); //!< Thread entry point callback datatype.
 
 #ifndef ARM7
 #define BIT(n) (1<<(n)) //!< Allows access to the nth bit.

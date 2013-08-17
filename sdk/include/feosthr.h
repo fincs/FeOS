@@ -20,9 +20,6 @@
 #define PRIORITY_HIGH   0x7FFFFFFF //!< High priority.
 #define PRIORITY_NORMAL 0 //!< Low priority
 
-typedef void* thread_t; //!< Thread handle datatype.
-typedef int (*threadEP_t)(void* param); //!< Thread entry point callback datatype.
-
 //! \brief Creates a thread.
 thread_t ThrCreate(word_t stackSize, threadEP_t entryPoint, void* param);
 //! \brief Yields thread execution. Normally an IRQ wait function should be used instead.

@@ -3,16 +3,13 @@
 MODULE := $(shell basename $(CURDIR))
 
 FUNCS := \
-DSConsoleMode \
-DSDirectMode \
 DSFreeARM7 \
 DSGetMainOAM \
-DSGetMode \
 DSGetOAMMemory \
 DSGetSubOAM \
 DSLoadARM7 \
-DSModeShim \
 DSProcessIRQs \
+DSRequestHardware \
 DSSetSuspendMode \
 DSTimerTick \
 DSTimerWrite \

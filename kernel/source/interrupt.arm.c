@@ -298,36 +298,6 @@ static void DSProcessIRQ(word_t flags)
 		flags &= ~IRQ_FIFO_NOT_EMPTY;
 	}
 
-#ifdef ARM9
-	if (flags & IRQ_VBLANK)
-	{
-		extern volatile bool inHeadphoneSleep;
-		extern bool bKeyUpd, bBgUpd, bOAMUpd, conMode;
-		void DSBgUpdate();
-
-		if (!conMode) do
-		{
-			if (bKeyUpd) scanKeys();
-
-			if (inHeadphoneSleep)
-				break;
-
-			if (bBgUpd)
-			{
-				bBgUpd = false;
-				DSBgUpdate();
-				bBgUpd = true;
-			}
-
-			if (bOAMUpd)
-			{
-				oamUpdate(&oamMain);
-				oamUpdate(&oamSub);
-			}
-		} while(0);
-	}
-#endif
-
 	int i; word_t mask; VoidFn fn;
 	for (i = 0; i < MAX_IRQS && (mask = irqTable[i].mask); i ++)
 		if ((mask & flags) && (fn = irqTable[i].handler))

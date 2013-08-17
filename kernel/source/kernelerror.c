@@ -216,8 +216,7 @@ static word_t resolveErrorAddress(void* pOpcode, bool isThumb)
 void KeSystemError()
 {
 	REG_IME = 0;
-	extern bool conMode;
-	conMode = false;
+
 	DSVideoReset();
 	videoSetMode(MODE_0_2D);
 	videoSetModeSub(MODE_0_2D);

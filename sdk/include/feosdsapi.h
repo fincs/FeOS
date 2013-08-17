@@ -365,7 +365,7 @@ word_t keysDownRepeat();
 void keysSetRepeat(byte_t, byte_t);
 //! \brief Retrieves the stylus position.
 void touchRead(touchPosition*);
-//! \brief Scans the status of the keypad. Has no effect if AUTOUPD_KEYS is turned on.
+//! \brief Scans the status of the keypad. Should not be used outside DSRequestHardware().
 void scanKeys();
 
 //! \brief Registers a function to be called when the specified interrupt(s) is (are) fired.
@@ -412,27 +412,26 @@ static inline void DSTimerStop(int timer)
 	DSTimerWrite(timer, 0);
 }
 
-//! \brief Switches to console mode. This should be the last thing done before exiting a direct mode program.
-void DSConsoleMode();
-//! \brief Switches to direct mode.
-void DSDirectMode();
-//! \brief Returns the current operation mode.
-int DSGetMode();
+//! \brief Suspend modes.
+enum { SuspendMode_Get = -1, SuspendMode_Disable = 0, SuspendMode_Normal, SuspendMode_Headphones };
+//! \brief Changes FeOS' behaviour when the lid is closed.
+int DSSetSuspendMode(int mode);
+//! \brief Retrieves the current lid closing behaviour.
+#define DSGetSuspendMode() DSSetSuspendMode(SuspendMode_Get)
 
-//! \brief Internal data type not for public consumption.
-typedef struct
-{
-	void (* directMode)();
-	void (* consoleMode)();
-	int (* getMode)();
-} modeshim_t;
+//! \brief Callback to be called when the video hardware is requested
+//! while it is already in use by another application
+typedef int (* hwreqfunc_t)(threadEP_t func, void* userData);
+ 
+//! \brief Calls a function during which the video hardware is exclusively owned by it.
+//! \param func The function to be executed.
+//! \param userdata An user-defined pointer to be passed to the function (can be NULL).
+//! \param reqFunc A function to be executed when a subsequent application requests
+//! hardware access when func is being executed. Passing NULL denies said requests.
+//! \returns The function's return value on success, -1 on failure.
+int DSRequestHardware(threadEP_t func, void* userData, hwreqfunc_t reqFunc);
 
-//! \brief Internal macro not for public consumption.
-#define FEOS_GET_SHIM ((const modeshim_t*)~0)
-//! \brief Internal function not for public consumption.
-const modeshim_t* DSModeShim(const modeshim_t* pNewShim);
-
-//! \brief Resets the video hardware to its default state after a DSDirectMode() call.
+//! \brief Resets the video hardware to its default state.
 void DSVideoReset();
 
 //! \brief Copies words using the specified DMA channel.

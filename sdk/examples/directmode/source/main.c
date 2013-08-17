@@ -14,6 +14,29 @@ void hblank()
 	BG_PALETTE_SUB[0] = RGB15(0, ff, 0);
 }
 
+int hwMainFunc(void* userData)
+{
+	videoSetMode(MODE_0_2D);
+	videoSetModeSub(MODE_0_2D);
+
+	irqSet(IRQ_HBLANK, hblank);
+	irqEnable(IRQ_HBLANK);
+
+	for (;;)
+	{
+		swiWaitForVBlank();
+		scanKeys();
+
+		count ++;
+		if (keysDown() & KEY_A)
+			break;
+	}
+
+	irqDisable(IRQ_HBLANK);
+	irqSet(IRQ_HBLANK, NULL);
+	return 0;
+}
+
 int main()
 {
 	printf("Direct Mode Demo\n");
@@ -25,26 +48,8 @@ int main()
 			break;
 	}
 
-	DSDirectMode();
+	DSRequestHardware(hwMainFunc, NULL, NULL);
 
-	videoSetMode(MODE_0_2D);
-	videoSetModeSub(MODE_0_2D);
-
-	irqSet(IRQ_HBLANK, hblank);
-	irqEnable(IRQ_HBLANK);
-
-	for (;;)
-	{
-		swiWaitForVBlank();
-		count ++;
-		if (keysDown() & KEY_A)
-			break;
-	}
-
-	irqDisable(IRQ_HBLANK);
-	irqSet(IRQ_HBLANK, NULL);
-
-	DSConsoleMode();
 	printf("End of direct mode demo\n");
 
 	return 0;

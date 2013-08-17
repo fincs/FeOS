@@ -57,7 +57,7 @@ CFLAGS	:=	-g -Wall $(COPTFLAG) -funwind-tables -save-temps\
 CFLAGS	+=	$(INCLUDE) -DARM9 $(DEFINES)
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
-HOOKS	:=	systemValueHandler swiIntrWait swiWaitForVBlank \
+HOOKS	:=	systemValueHandler swiIntrWait swiWaitForVBlank decompress \
 			DC_FlushRange DC_FlushAll IC_InvalidateRange IC_InvalidateAll
 ASFLAGS	:=	-g $(ARCH) $(DEFINES)
 LDFLAGS	=	-specs=ds_arm9.specs -g $(ARCH) $(foreach func,$(HOOKS),-Wl,-wrap,$(func)) -Wl,-Map,$(notdir $*.map)

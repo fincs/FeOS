@@ -147,7 +147,7 @@ int bgInit(int layer, word_t type, word_t size, int mapBase, int tileBase);
 //! \returns The background ID.
 int bgInitSub(int layer, word_t type, word_t size, int mapBase, int tileBase);
 
-//! \brief Updates the background hardware. Has no effect if AUTOUPD_BG is turned on.
+//! \brief Updates the background hardware. Should not be used outside DSRequestHardware().
 void bgUpdate();
 
 //! \cond

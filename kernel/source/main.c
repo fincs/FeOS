@@ -26,13 +26,16 @@ void __ResetHandler();
 PrintConsole* con;
 int conbg;
 
-void chk_exit();
+static void _CheckExit();
+static void _KeybdKey(int);
 
 extern bool stdioRead;
 
 volatile touchPosition touchPos;
 
-bool conMode = true, bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
+static int mainRequestHW(threadEP_t func, void* userData);
+static hwreqfunc_t hwReqFunc = mainRequestHW;
+static volatile bool hwOwned = true;
 
 extern int keyBufferOffset;
 extern int keyBufferLength;
@@ -42,46 +45,43 @@ int caretBlink = 0;
 extern volatile bool inHeadphoneSleep;
 volatile int vblankCounter = 0; // upper bound: ~2.275 years
 
-void KeVBlankISR()
+static void KeVBlankISR()
 {
 	// Done here because it's kernel mode code
-	chk_exit();
+	_CheckExit();
 
 	vblankCounter ++;
 
 	touchRead((touchPosition*)&touchPos);
 
-	if (conMode)
+	if (!hwOwned) return;
+
+	scanKeys();
+	bgUpdate();
+
+	if (inHeadphoneSleep) return;
+
+	oamSub.oamMemory[0].isHidden = !__inFAT;
+	oamSub.oamMemory[1].isHidden = !stdioRead;
+	oamMain.oamMemory[0].x = con->cursorX * 8;
+	oamMain.oamMemory[0].y = con->cursorY * 8;
+	caretBlink ++;
+	if (caretBlink >= 30) caretBlink = 0;
+	oamMain.oamMemory[0].isHidden = (caretBlink > 15);
+
+	oamUpdate(&oamMain);
+	oamUpdate(&oamSub);
+
+	if (!stdioRead)
 	{
-		scanKeys();
-		bgUpdate();
-
-		if (inHeadphoneSleep) return;
-
-		oamSub.oamMemory[0].isHidden = !__inFAT;
-		oamSub.oamMemory[1].isHidden = !stdioRead;
-		oamMain.oamMemory[0].x = con->cursorX * 8;
-		oamMain.oamMemory[0].y = con->cursorY * 8;
-		caretBlink ++;
-		if (caretBlink >= 30) caretBlink = 0;
-		oamMain.oamMemory[0].isHidden = (caretBlink > 15);
-
-		oamUpdate(&oamMain);
-		oamUpdate(&oamSub);
-
-		if (!stdioRead)
-		{
-			int oldOff = keyBufferOffset, oldLen = keyBufferLength;
-			keyboardUpdate();
-			keyBufferOffset = oldOff, keyBufferLength = oldLen;
-		}
+		int oldOff = keyBufferOffset, oldLen = keyBufferLength;
+		keyboardUpdate();
+		keyBufferOffset = oldOff, keyBufferLength = oldLen;
 	}
 }
 
 u16* caret_gfx;
 u16* hudicon_gfx[2];
-
-void kbd_key();
 
 void videoInit()
 {
@@ -131,7 +131,7 @@ void videoInit()
 
 	// Initialize the keyboard
 	Keyboard* kbd = keyboardDemoInit();
-	kbd->OnKeyPressed = kbd_key;
+	kbd->OnKeyPressed = _KeybdKey;
 	kbd->scrollSpeed = 0;
 	keyboardShow();
 }
@@ -142,7 +142,8 @@ void IoMothballStdStreams();
 
 void DSVideoReset()
 {
-	if (conMode) return;
+	// Not my fault if this func is inappropiately used!
+	// (This func used to block attempts to call it when the HW was owned by main.c)
 
 	dmaFillWords(0, (void*)0x04000000, 0x56);
 	dmaFillWords(0, (void*)0x04001008, 0x56);
@@ -161,59 +162,35 @@ void DSVideoReset()
 	irqEnable(IRQ_VBLANK);
 }
 
-void DSConsoleMode()
+int mainRequestHW(threadEP_t func, void* userData)
 {
-	if (conMode) return;
 	int cS = enterCriticalSection();
+	hwOwned = false;
+	DSVideoReset();
+	IoMothballStdStreams();
+	leaveCriticalSection(cS);
+
+	int rc = func(userData);
+
 	DSVideoReset();
 	videoInit();
 	IoRestoreStdStreams();
-	conMode = true;
-	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
-	leaveCriticalSection(cS);
+	hwOwned = true;
+
+	return rc;
 }
 
-void DSDirectMode()
+int DSRequestHardware(threadEP_t func, void* userData, hwreqfunc_t reqFunc)
 {
-	if (!conMode) return;
-	int cS = enterCriticalSection();
-	conMode = false;
-	DSVideoReset();
-	IoMothballStdStreams();
-	bOAMUpd = true, bBgUpd = true, bKeyUpd = true;
-	leaveCriticalSection(cS);
+	if (!hwReqFunc) return -1;
+	hwreqfunc_t oldFunc = hwReqFunc;
+	hwReqFunc = reqFunc;
+	int rc = oldFunc(func, userData);
+	hwReqFunc = oldFunc;
+	return rc;
 }
 
-int DSGetCurMode()
-{
-	return (int)conMode;
-}
-
-void DSSetAutoUpdate(int which, bool enable)
-{
-	if (conMode) return; // can't tweak
-	switch (which)
-	{
-		case AUTOUPD_OAM:  bOAMUpd = enable; break;
-		case AUTOUPD_BG:   bBgUpd  = enable; break;
-		case AUTOUPD_KEYS: bKeyUpd = enable; break;
-		default:                             break;
-	}
-}
-
-bool DSGetAutoUpdate(int which)
-{
-	if (conMode) return true;
-	switch (which)
-	{
-		case AUTOUPD_OAM:  return bOAMUpd;
-		case AUTOUPD_BG:   return bBgUpd;
-		case AUTOUPD_KEYS: return bKeyUpd;
-		default:           return false;
-	}
-}
-
-void kbd_key(int key)
+void _KeybdKey(int key)
 {
 	if (stdioRead && key > 0)
 		putchar(key);
@@ -222,7 +199,7 @@ void kbd_key(int key)
 volatile static bool _hasExited = false;
 volatile static int _rc = 0;
 
-void chk_exit()
+void _CheckExit()
 {
 	if (_hasExited)
 		exit(_rc);

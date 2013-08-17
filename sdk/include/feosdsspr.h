@@ -166,7 +166,7 @@ SpriteEntry* DSGetOAMMemory(OamState*);
 //! In order to mix tiled and bitmap sprites use SpriteMapping_Bmp_1D_128 or SpriteMapping_Bmp_1D_256.
 void oamInit(OamState*, word_t sprMapping, bool useExtPalette);
 
-//! \brief Updates the hardware's OAM memory. Has no effect if AUTOUPD_OAM is enabled.
+//! \brief Updates the hardware's OAM memory. Should not be used outside DSRequestHardware().
 void oamUpdate(OamState*);
 
 //! \brief Disables sprite rendering.

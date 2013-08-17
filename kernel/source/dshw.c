@@ -11,9 +11,6 @@ void DSTouchRead(styluspos_t* pos)
 	pos->y = touchPos.py;
 }
 
-void DSConsoleMode();
-void DSDirectMode();
-int DSGetCurMode();
 void DSVideoReset();
 
 static OamState* DSGetMainOAM()
@@ -44,62 +41,17 @@ u16 DSTimerTick(int timer)
 	return TIMER_DATA(timer&3);
 }
 
-void DSScanKeys()
-{
-	if (!bKeyUpd) scanKeys();
-}
-
-void DSBgUpdate()
-{
-	if (!bBgUpd) bgUpdate();
-}
-
-typedef struct
-{
-	void (* directMode)();
-	void (* consoleMode)();
-	int (* getMode)();
-} modeshim_t;
-
-static modeshim_t* pModeShim = NULL;
-
-static void directModeShim()
-{
-	pModeShim ? pModeShim->directMode() : DSDirectMode();
-}
-
-static void consoleModeShim()
-{
-	pModeShim ? pModeShim->consoleMode() : DSConsoleMode();
-}
-
-static int getModeShim()
-{
-	return pModeShim ? pModeShim->getMode() : DSGetCurMode();
-}
-
-static modeshim_t* DSModeShim(modeshim_t* pNewShim)
-{
-	modeshim_t* pOldShim = pModeShim;
-	if (pNewShim != (modeshim_t*)~0)
-		pModeShim = pNewShim;
-	return pOldShim;
-}
-
 module_t DSLoadARM7(const char*, int*);
 void DSFreeARM7(module_t, int);
 
 BEGIN_TABLE(FEOSDSHW)
-	ADD_ALIAS(DSConsoleMode, consoleModeShim),
-	ADD_ALIAS(DSDirectMode, directModeShim),
 	ADD_FUNC_(DSFreeARM7),
 	ADD_FUNC_(DSGetMainOAM),
-	ADD_ALIAS(DSGetMode, getModeShim),
 	ADD_FUNC_(DSGetOAMMemory),
 	ADD_FUNC_(DSGetSubOAM),
 	ADD_FUNC_(DSLoadARM7),
-	ADD_FUNC_(DSModeShim),
 	ADD_FUNC_(DSProcessIRQs),
+	ADD_FUNC_(DSRequestHardware),
 	ADD_FUNC_(DSSetSuspendMode),
 	ADD_FUNC_(DSTimerTick),
 	ADD_FUNC_(DSTimerWrite),
@@ -137,7 +89,7 @@ BEGIN_TABLE(FEOSDSHW)
 	ADD_FUNC_(bgSetScrollf),
 	ADD_FUNC_(bgSetTileBase),
 	ADD_FUNC_(bgShow),
-	ADD_ALIAS(bgUpdate, DSBgUpdate),
+	ADD_FUNC_(bgUpdate),
 	ADD_FUNC_(dmaCopyHalfWords),
 	ADD_FUNC_(dmaCopyWords),
 	ADD_FUNC_(dmaFillHalfWords),
@@ -186,7 +138,7 @@ BEGIN_TABLE(FEOSDSHW)
 	ADD_FUNC_(oamUpdate),
 	ADD_FUNC_(powerOff),
 	ADD_FUNC_(powerOn),
-	ADD_ALIAS(scanKeys, DSScanKeys),
+	ADD_FUNC_(scanKeys),
 	ADD_FUNC_(setBrightness),
 	ADD_ALIAS(touchRead, DSTouchRead),
 	ADD_FUNC_(video3DEnabled),

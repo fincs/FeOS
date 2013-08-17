@@ -1,21 +1,21 @@
 /*! \page directmode Direct mode applications
 
-By default FeOS applications run either in console mode (which is a sandbox that
-emulates a text-mode console and a keyboard and blocks all direct access to the DS
-hardware) or under the \ref coopguidev "cooperative GUI system". However several
-kinds of applications such as games or demos require owning exclusive rights to
-the DS hardware and high performance. FeOS Direct Mode allows you to easily develop
-these kinds of applications. For that you use a \ref api_ds "libnds-compatible API"
-for hardware access. The skeleton of a direct mode application looks like this:
+FeOS applications by default do not own the hardware, leaving its management to another
+application running on the system (or the kernel, if no such application is running).
+Using the \ref coopguidev "cooperative GUI system" allows an application to display
+arbitrary graphics while sharing access rights; however several kinds of applications
+such as games or demos require owning exclusive rights to the hardware and high
+performance.
+
+This document details how to build an application that requests hardware ownership
+(Direct mode application). The skeleton of such applications look like this:
 
 \code
 #include <feos.h>
 
-int main()
+// This function is analogous to old-style libnds applications' main() function
+static int hwMain(void* userData)
 {
-	// Switch to Direct mode
-	DSDirectMode();
-	
 	// Video initialization...
 	
 	// Main loop...
@@ -23,22 +23,28 @@ int main()
 	{
 		// VBlank sync
 		swiWaitForVBlank();
+		scanKeys(); // Key input reading
 		
 		// Graphics updating...
 		
 		// Game/application logic...
 	}
 
-	// Switch back to Console mode
-	DSConsoleMode();
+	// Video deinitialization...
 	return 0;
+}
+
+int main()
+{
+	// Request hardware ownership
+	return DSRequestHardware(hwMain, NULL, NULL);
 }
 \endcode
 
-Apart from the different header file and the need to switch into/from Direct Mode,
-this is identical to classic-style libnds application development. Make sure you
-provide a way to exit the application (and thus break from the main loop) or else
-the user will be forced to reset the DS.
+Apart from the different header file and the need to manage hardware ownership,
+this is mostly identical to old-style libnds application development. Make sure
+you provide a way to exit the application (and thus break from the main loop) or
+else the user will be forced to reset the DS.
 
 Game assets such as graphics are best loaded from \ref far.h "an embedded filesystem".
 However it is also possible to statically link in `.bin` files through putting them

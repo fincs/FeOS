@@ -44,6 +44,7 @@ typedef unsigned short hword_t;
 typedef unsigned char byte_t;
 typedef word_t bool_t;
 typedef void* module_t;
+typedef int (*threadEP_t)(void* param);
 
 #ifdef ARM9
 #include "feos_setjmp.h"
@@ -99,11 +100,8 @@ int DSSetSuspendMode(int mode);
 
 #define tell(fd) lseek(fd, 0, SEEK_CUR)
 
-extern bool bOAMUpd, bBgUpd, bKeyUpd;
-
-enum { AUTOUPD_OAM = 1, AUTOUPD_BG, AUTOUPD_KEYS };
-void DSSetAutoUpdate(int which, bool enable);
-bool DSGetAutoUpdate(int which);
+typedef int (* hwreqfunc_t)(threadEP_t func, void* userData);
+int DSRequestHardware(threadEP_t func, void* userData, hwreqfunc_t reqFunc);
 
 void DSSetValue32Handler(int, bool);
 void DSSetAddressHandler(int, bool);

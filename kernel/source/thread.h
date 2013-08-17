@@ -20,7 +20,6 @@ typedef struct tag_threadSt
 } threadSt;
 
 typedef threadSt* thread_t;
-typedef int (*threadEP_t)(void* param);
 
 void ThrInit();
 

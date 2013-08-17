@@ -383,8 +383,6 @@ BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(DC_DrainWriteBuffer),
 	ADD_FUNC_(DC_FlushAll),
 	ADD_FUNC_(DC_FlushRange),
-	ADD_FUNC_(DSGetAutoUpdate),
-	ADD_FUNC_(DSSetAutoUpdate),
 	ADD_FUNC_(IC_InvalidateAll),
 	ADD_FUNC_(IC_InvalidateRange),
 	ADD_FUNC_(IoGetStderr),

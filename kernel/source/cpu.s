@@ -68,7 +68,7 @@ __SVCTable:
 	.word _DC_DrainWriteBuffer
 	.word _DSWaitForMemAddr
 	.word __SetExcptHandler
-	.word 0
+	.word __real_decompress
 	.word 0
 	.word 0
 	.word 0
@@ -319,3 +319,4 @@ fnthunk IC_InvalidateAll 0x06
 swiimp DC_DrainWriteBuffer 0x07
 swiimp KeWaitForMemAddr 0x08
 swiimp KeSetExcptHandler 0x09
+fnthunk decompress 0x0A
