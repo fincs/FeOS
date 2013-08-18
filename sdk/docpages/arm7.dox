@@ -53,6 +53,8 @@ The following non-inline libnds/system functions are available:
 	fifoGetDatamsg
 	swiDelay
 	swiIntrWait
+	i2cWriteRegister
+	i2cReadRegister
 	memcpy
 	memcmp
 	memset

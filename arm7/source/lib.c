@@ -83,7 +83,9 @@ static const fxe2_export_t arm7_funcs[] =
 	ADD_FUNC_(coopIrqSet),
 	ADD_FUNC_(coopIrqCheck),
 	ADD_FUNC_(coopIrqNext),
-	ADD_FUNC_(coopTimerStart)
+	ADD_FUNC_(coopTimerStart),
+	ADD_FUNC_(i2cWriteRegister),
+	ADD_FUNC_(i2cReadRegister),
 };
 
 bool Ke7ResolveImp(word_t* addr, const char* name)

@@ -52,7 +52,9 @@ coopFifoSetAddressHandler \
 coopIrqSet \
 coopIrqCheck \
 coopIrqNext \
-coopTimerStart
+coopTimerStart \
+i2cWriteRegister \
+i2cReadRegister
 
 SFILES := $(addsuffix .s, $(FUNCS))
 
