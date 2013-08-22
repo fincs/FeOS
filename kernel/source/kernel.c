@@ -93,9 +93,9 @@ void KeGetMemStats(usagestats_t* pStats)
 
 	u8 *heapLimit = getHeapLimit(), *heapStart = getHeapStart(), *heapEnd = getHeapEnd();
 	struct mallinfo mi = mallinfo();
-	pStats->used = mi.uordblks;
+	pStats->total = (heapLimit - heapStart + (BIT(20)-1)) &~ (BIT(20)-1); // MB-align the size
 	pStats->free = mi.fordblks + (heapLimit - heapEnd);
-	pStats->total = heapLimit - heapStart;
+	pStats->used = pStats->total - pStats->free;
 }
 
 int KeGetTickCount()
