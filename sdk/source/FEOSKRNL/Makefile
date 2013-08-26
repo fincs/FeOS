@@ -163,6 +163,7 @@ strrchr \
 strspn \
 strstr \
 strtok \
+strtok_r \
 strtol \
 strtoul \
 system \

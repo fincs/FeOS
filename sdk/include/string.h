@@ -53,6 +53,7 @@ char* strrchr(const char*, int); //!< TODO: description
 size_t strspn(const char*, const char*); //!< TODO: description
 char* strstr(const char*, const char*); //!< TODO: description
 char* strtok(char*, const char*); //!< TODO: description
+char* strtok_r(char*, const char*, char**); //!< TODO: description
 
 // Misc
 char* strerror(int); //!< Retrieves the string that corresponds to the specified errno code.

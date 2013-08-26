@@ -540,6 +540,7 @@ BEGIN_TABLE(FEOSKRNL)
 	ADD_FUNC_(strspn),
 	ADD_FUNC_(strstr),
 	ADD_FUNC_(strtok),
+	ADD_FUNC_(strtok_r),
 	ADD_FUNC_(strtol),
 	ADD_FUNC_(strtoul),
 	ADD_FUNC_(system),
