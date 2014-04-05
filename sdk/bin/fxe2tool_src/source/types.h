@@ -17,7 +17,7 @@ typedef signed short short_t;
 typedef signed char char_t;
 
 #ifndef BYTE_ORDER
-#error What's the endian of the platform you're targeting?
+#error "What's the endian of the platform you're targeting?"
 #endif
 
 #if BYTE_ORDER == BIG_ENDIAN
@@ -41,5 +41,5 @@ static inline hword_t eswap_hword(hword_t a)
 #define eswap_word(a) (a)
 #define eswap_hword(a) (a)
 #else
-#error What's the endian of the platform you're targeting?
+#error "What's the endian of the platform you're targeting?"
 #endif

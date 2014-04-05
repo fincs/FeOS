@@ -1,5 +1,7 @@
 #include <fat.h>
-#ifdef LIBFAT_FEOS_MULTICWD
+#ifndef LIBFAT_FEOS_MULTICWD
+#error "libfat multi-CWD support is required."
+#endif
 
 // cwd.c - based on chdir.c from dkA's newlib, then horribly raped
 
@@ -199,5 +201,3 @@ char *getcwd(char *buf, size_t size) {
 	strncpy (buf, cwdBuf, size);
 	return buf;
 }
-
-#endif

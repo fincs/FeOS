@@ -93,7 +93,7 @@ void KeGetMemStats(usagestats_t* pStats)
 
 	u8 *heapLimit = getHeapLimit(), *heapStart = getHeapStart(), *heapEnd = getHeapEnd();
 	struct mallinfo mi = mallinfo();
-	pStats->total = (heapLimit - heapStart + (BIT(20)-1)) &~ (BIT(20)-1); // MB-align the size
+	pStats->total = ((u32)(heapLimit - heapStart) + (BIT(20)-1)) &~ (BIT(20)-1); // MB-align the size
 	pStats->free = mi.fordblks + (heapLimit - heapEnd);
 	pStats->used = pStats->total - pStats->free;
 }
@@ -571,16 +571,12 @@ static word_t dummy_entrypoint(word_t a, word_t b, word_t c, word_t d)
 static executeStatus_t defaultExecStatus;
 executeStatus_t* curExecStatus = &defaultExecStatus;
 
-#ifdef LIBFAT_FEOS_MULTICWD
 void KeInitDefaultExecStatus()
 {
 	defaultExecStatus.cwdBuffer = _getCwdBuf();
 }
 
 #define EXECSTAT_ADDENDUM 256
-#else
-#define EXECSTAT_ADDENDUM 0
-#endif
 
 #define GET_ADDENDUM(x) ((char*)(x) + sizeof(executeStatus_t));
 
@@ -597,12 +593,10 @@ execstat_t KeExecStatusCreate()
 	pSt->stdout_hook = curExecStatus->stdout_hook;
 	pSt->stderr_hook = curExecStatus->stderr_hook;
 
-#ifdef LIBFAT_FEOS_MULTICWD
 	// Inherit current working directory
 	pSt->cwdCluster = g_fatCwdCluster;
 	pSt->cwdBuffer = GET_ADDENDUM(pSt);
 	memcpy(pSt->cwdBuffer, curExecStatus->cwdBuffer, EXECSTAT_ADDENDUM);
-#endif
 
 	return pSt;
 }
@@ -623,14 +617,10 @@ void KeExecStatusRelease(execstat_t hSt)
 
 void KeSetCurExecStatus(execstat_t hSt)
 {
-#ifdef LIBFAT_FEOS_MULTICWD
 	curExecStatus->cwdCluster = g_fatCwdCluster;
-#endif
 	curExecStatus = hSt;
-#ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdCluster = curExecStatus->cwdCluster;
 	_setCwdBuf(curExecStatus->cwdBuffer);
-#endif
 }
 
 execstat_t KeGetCurExecStatus()

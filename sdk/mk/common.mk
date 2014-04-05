@@ -105,7 +105,7 @@ LIBDIRS += $(CONF_LIBDIRS)
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
 
-export PATH := $(FEOSBIN):$(DEVKITARM)/bin:$(PATH)
+export PATH := $(FEOSBIN):$(PATH)
 
 ifneq ($(strip $(CONF_TARGET)),staticlib)
 export OUTPUT := $(CURDIR)/$(TARGET)
@@ -215,7 +215,7 @@ endif
 	@echo Linking...
 	@$(LD) $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
 ifeq ($(EMITDEBUGINFO),1)
-	@$(OBJCOPY) --only-keep-debug $@ $@.dbg
+	@$(OBJCOPY) --only-keep-debug $@ $@.dbg 2> /dev/null
 	@$(STRIP) -g $@
 endif
 

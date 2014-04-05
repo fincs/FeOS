@@ -24,33 +24,6 @@ word_t __ARMSWP(word_t value, volatile word_t* addr);
 // User-mode FIFO handler support, to be moved to a separate file
 //-----------------------------------------------------------------------------
 
-#define _MAKELIBNDSVER(A,B,C) ((A)*10000 + (B)*100 + (C))
-#define _LIBNDS_VER _MAKELIBNDSVER(_LIBNDS_MAJOR_,_LIBNDS_MINOR_,_LIBNDS_PATCH_)
-
-#if _LIBNDS_VER <= _MAKELIBNDSVER(1, 5, 7)
-
-// fifoCheckDatamsgLength is amusingly missing from libnds versions up to 1.5.7.
-// This code segment is to be removed when a new version is released.
-#define FIFO_BUFFER_GETEXTRA(index) ((fifo_buffer[(index)*2]>>16)&0xFFF)
-extern vu32 fifo_buffer[256*2];
-typedef struct fifo_queue
-{
-	vu16 head;
-	vu16 tail;
-} fifo_queue;
-extern fifo_queue fifo_data_queue[16];
-
-int __attribute__((weak)) fifoCheckDatamsgLength(int channel)
-{
-       if(channel<0 || channel>=16) return -1;
-       if(!fifoCheckDatamsg(channel)) return -1;
-
-       int block = fifo_data_queue[channel].head;
-       return FIFO_BUFFER_GETEXTRA(block);
-}
-
-#endif
-
 static void* userdata_array[FIFO_PROG_CH_NUM];
 static FifoDatamsgHandlerFunc datamsghnd_array[FIFO_PROG_CH_NUM];
 static FifoValue32HandlerFunc value32hnd_array[FIFO_PROG_CH_NUM];
@@ -178,7 +151,7 @@ void DSHandleDatamsgs()
 				datamsghnd_array[i](length, userdata_array[i]);
 }
 
-static void StubFifoValue32Handler(word_t value32, void* userdata)
+static void StubFifoValue32Handler(u32 value32, void* userdata)
 {
 	FifoMsgQueueEntry* msg = DSAllocFifoMsg();
 	DSAddFifoMsgToQueue(msg);
@@ -312,7 +285,7 @@ word_t DSProcessIRQs()
 	word_t totalflags = 0;
 	for(;;) // IRQ/FIFO might fire while the handlers are executing
 	{
-		word_t flags = __ARMSWP(0, &INTR_WAIT_FLAGS);
+		word_t flags = __ARMSWP(0, (volatile word_t*) &INTR_WAIT_FLAGS);
 		if (flags)
 			DSProcessIRQ(flags);
 		else

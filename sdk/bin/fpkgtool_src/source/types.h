@@ -17,7 +17,7 @@ typedef signed char char_t;
 #define foreach(type,i,ctr) for(type i = (ctr).begin(); i != (ctr).end(); ++i)
 
 #ifndef BYTE_ORDER
-#error What's the endian of the platform you're targeting?
+#error "What's the endian of the platform you're targeting?"
 #endif
 
 #define BYTE_SHR_SHL(a, b, c) ((((a) >> (b)) & 0xFF) << (c))
@@ -48,5 +48,5 @@ static inline hword_t eswap_hword(hword_t a)
 #define le_word(a) eswap_word(a)
 #define le_hword(a) eswap_hword(a)
 #else
-#error What's the endian of the platform you're targeting?
+#error "What's the endian of the platform you're targeting?"
 #endif

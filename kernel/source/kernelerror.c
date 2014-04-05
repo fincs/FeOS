@@ -260,8 +260,8 @@ void KeSystemError()
 	int i;
 	for (i = 0; i < 8; i ++)
 		iprintf("  %s: %08X   %s: %08X\n",
-			registerNames[i],   exceptionRegisters[i],
-			registerNames[i+8], exceptionRegisters[i+8]);
+			registerNames[i],   (word_t)exceptionRegisters[i],
+			registerNames[i+8], (word_t)exceptionRegisters[i+8]);
 	iprintf("\n");
 
 	word_t* stack = (word_t*) exceptionRegisters[13];

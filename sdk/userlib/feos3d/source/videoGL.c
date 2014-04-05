@@ -369,11 +369,12 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 	// Values that hold which banks to examine
 	uint32 isNotMainBank = ( checkAddr >= (uint8*)VRAM_E ? 1 : 0 );
 	uint32 vramCtrl = ( isNotMainBank ? VRAM_EFG_CR : VRAM_CR );
+	int vramLock = glGlob->vramLock[ isNotMainBank ];
 	uint32 i = 0, iEnd = ( isNotMainBank ? 3 : 4 );
 	
 	// Fill in the array with only those banks that are not set for Textures or Texture Palettes
 	for( ; i < iEnd; i++ ) {
-		if(( vramCtrl & 0x83 ) != 0x83 ) {		// VRAM_ENABLE | ( VRAM_x_TEXTURE | VRAM_x_TEX_PALETTE )
+		if((( vramCtrl & 0x83 ) != 0x83 ) || ( vramLock & 0x1 )) {		// VRAM_ENABLE | ( VRAM_x_TEXTURE | VRAM_x_TEX_PALETTE )
 			if( isNotMainBank ) {
 				bankLock[ curBank ] = ( i == 0 ? (uint8*)VRAM_E : (uint8*)VRAM_F + (( i - 1 ) * 0x4000 ));
 				bankSize[ curBank ] = ( i == 0 ? 0x10000 : 0x4000 );
@@ -384,6 +385,7 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 			curBank++;
 		}
 		vramCtrl >>= 8;
+		vramLock >>= 1;
 	}
 	curBank = 0;
 
@@ -538,6 +540,9 @@ FEOS_EXPORT void glInit_C(void) {
 	// Allocate the designated layout for each memory block
 	glGlob->vramBlocks[ 0 ] = vramBlock_Construct( (uint8*)VRAM_A, (uint8*)VRAM_E );
 	glGlob->vramBlocks[ 1 ] = vramBlock_Construct( (uint8*)VRAM_E, (uint8*)VRAM_H );
+
+	glGlob->vramLock[ 0 ] = 0;
+	glGlob->vramLock[ 1 ] = 0;
 
 	// init texture globals
 	
@@ -771,6 +776,65 @@ uint16* vramGetBank(uint16 *addr) {
 }
 
 //---------------------------------------------------------------------------------
+// glLockVRAMBank locks a designated vram bank
+//  to prevent consideration of the bank when allocating
+//  This is not an actual openGL function
+//---------------------------------------------------------------------------------
+int glLockVRAMBank( uint16 *addr ) {
+//---------------------------------------------------------------------------------
+	uint16 *actualVRAMBank = vramGetBank( addr );
+	if( actualVRAMBank < VRAM_A || actualVRAMBank > VRAM_G )
+		return 0;
+
+	if( actualVRAMBank == VRAM_A )
+		glGlob->vramLock[ 0 ] |= BIT( 0 );
+	else if( actualVRAMBank == VRAM_B )
+		glGlob->vramLock[ 0 ] |= BIT( 1 );
+	else if( actualVRAMBank == VRAM_C )
+		glGlob->vramLock[ 0 ] |= BIT( 2 );
+	else if( actualVRAMBank == VRAM_D )
+		glGlob->vramLock[ 0 ] |= BIT( 3 );
+	else if( actualVRAMBank == VRAM_E )
+		glGlob->vramLock[ 1 ] |= BIT( 0 );
+	else if( actualVRAMBank == VRAM_F )
+		glGlob->vramLock[ 1 ] |= BIT( 1 );
+	else if( actualVRAMBank == VRAM_G )
+		glGlob->vramLock[ 1 ] |= BIT( 2 );
+
+	return 1;
+}
+
+
+//---------------------------------------------------------------------------------
+// glUnlockVRAMBank unlocks a designated vram bank
+//  to allow consideration of the bank when allocating
+//  This is not an actual openGL function
+//---------------------------------------------------------------------------------
+int glUnlockVRAMBank( uint16 *addr ) {
+//---------------------------------------------------------------------------------
+	uint16 *actualVRAMBank = vramGetBank( addr );
+	if( actualVRAMBank < VRAM_A || actualVRAMBank > VRAM_G )
+		return 0;
+
+	if( actualVRAMBank == VRAM_A )
+		glGlob->vramLock[ 0 ] &= ~BIT( 0 );
+	else if( actualVRAMBank == VRAM_B )
+		glGlob->vramLock[ 0 ] &= ~BIT( 1 );
+	else if( actualVRAMBank == VRAM_C )
+		glGlob->vramLock[ 0 ] &= ~BIT( 2 );
+	else if( actualVRAMBank == VRAM_D )
+		glGlob->vramLock[ 0 ] &= ~BIT( 3 );
+	else if( actualVRAMBank == VRAM_E )
+		glGlob->vramLock[ 1 ] &= ~BIT( 0 );
+	else if( actualVRAMBank == VRAM_F )
+		glGlob->vramLock[ 1 ] &= ~BIT( 1 );
+	else if( actualVRAMBank == VRAM_G )
+		glGlob->vramLock[ 1 ] &= ~BIT( 2 );
+
+	return 1;
+}
+
+//---------------------------------------------------------------------------------
 // glBindTexure sets the current named
 //	texture to the active texture.  Target 
 //	is ignored as all DS textures are 2D
@@ -849,7 +913,22 @@ FEOS_EXPORT void glColorTableEXT( int target, int empty1, uint16 width, int empt
 			palette->palSize = width << 1;
 			
 			// copy straight to VRAM, and assign a palette name
-			uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
+			uint32 tempVRAM = VRAM_EFG_CR;
+			uint16 *startBank = vramGetBank( (uint16*)palette->vramAddr );
+			uint16 *endBank = vramGetBank( (uint16*)( palette->vramAddr + ( width << 1 ) - 1));
+			do {
+				if( startBank == VRAM_E ) {
+					vramSetBankE( VRAM_E_LCD );
+					startBank += 0x8000;
+				} else if( startBank == VRAM_F ) {
+					vramSetBankF( VRAM_F_LCD );
+					startBank += 0x2000;
+				} else if( startBank == VRAM_G ) {
+					vramSetBankG( VRAM_G_LCD );
+					startBank += 0x2000;
+				}
+			} while ( startBank <= endBank );
+
 			swiCopy( table, palette->vramAddr, width | COPY_MODE_HWORD );
 			vramRestoreBanks_EFG( tempVRAM );
 
@@ -1098,7 +1177,22 @@ FEOS_EXPORT int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, 
 	
 	// Copy the texture data into either VRAM or main memory
 	if( type != GL_NOTEXTURE && texture ) {
-		uint32 vramTemp = vramSetPrimaryBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
+		uint32 vramTemp = VRAM_CR;
+		uint16 *startBank = vramGetBank( (uint16*)tex->vramAddr );
+		uint16 *endBank = vramGetBank(( uint16*)( tex->vramAddr + size - 1 ));
+
+		do {
+			if( startBank == VRAM_A )
+				vramSetBankA( VRAM_A_LCD );
+			else if( startBank == VRAM_B )
+				vramSetBankB( VRAM_B_LCD );
+			else if( startBank == VRAM_C )
+				vramSetBankC( VRAM_C_LCD );
+			else if( startBank == VRAM_D )
+				vramSetBankD( VRAM_D_LCD );
+			startBank += 0x10000;
+		} while ( startBank <= endBank );
+
 		if( type == GL_RGB ) {
 			uint16 *src = (uint16*)texture;
 			uint16 *dest = (uint16*)tex->vramAddr;
@@ -1108,11 +1202,13 @@ FEOS_EXPORT int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, 
 				src++;
 			}
 		} else {
-			swiCopy( texture, tex->vramAddr, ( size >> 2 ) | COPY_MODE_WORD );
-			if( type == GL_COMPRESSED )
-				swiCopy( texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), ( size >> 3 ) | COPY_MODE_WORD );
+			dmaCopyWords( 0, texture, tex->vramAddr, size );
+			if( type == GL_COMPRESSED ) {
+				vramSetBankB( VRAM_B_LCD );
+				dmaCopyWords( 0, texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), size >> 1 );
+			}
 		}
-		vramRestorePrimaryBanks(vramTemp);		
+		vramRestorePrimaryBanks(vramTemp);
 	}
 
 	return 1;

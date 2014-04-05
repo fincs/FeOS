@@ -234,9 +234,7 @@ static void error_die()
 #define WARNING ANSIESC_YELLOW "WARNING: " ANSIESC_DEFAULT
 #define MSG_FAIL ANSIESC_RED "FAIL\n\n" ANSIESC_DEFAULT
 
-#ifdef LIBFAT_FEOS_MULTICWD
 vu32* g_fatCwdClusterPtr;
-#endif
 
 int main()
 {
@@ -272,21 +270,11 @@ int main()
 			"  http://feos.mtheall.com/forum\n");
 		error_die();
 	}
-#ifdef LIBFAT_FEOS_MULTICWD
 	g_fatCwdClusterPtr = (vu32*) _FAT_getCwdClusterPtr("/");
 	KeInitDefaultExecStatus();
-#endif
 	ThrInit();
 	IoInstallThunks();
-#ifdef LIBFAT_FEOS_MULTICWD
 	iprintf(MSG_OK);
-#else
-	iprintf(
-		MSG_OK2
-		WARNING "Multi-CWD support is\n"
-		"disabled due to the usage of an\n"
-		"old version of libfat.\n\n");
-#endif
 
 	iprintf("Initializing user mode...  ");
 	KeInitUserMode();

@@ -29,9 +29,9 @@ static const char* meow[] =
 	NULL
 };
 
-void __attribute__((noreturn)) __assert2(const char* file, int line, const char* cond, const char* msg);
+void __attribute__((noreturn)) __assert2(const char* file, int line, const char* cond, const char* msg, ...);
 
-void __attribute__((noreturn)) __sassert(const char* file, int line, const char* cond, const char* msg)
+void __attribute__((noreturn)) __sassert(const char* file, int line, const char* cond, const char* msg, ...)
 {
 	if (isUserMode()) __assert2(file, line, cond, msg);
 

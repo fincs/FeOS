@@ -14,14 +14,6 @@ endif
 endif
 
 #---------------------------------------------------------------------------------
-# the prefix on the compiler executables
+# devkitARM configuration
 #---------------------------------------------------------------------------------
-PREFIX         := arm-none-eabi-
-
-export CC      := $(PREFIX)gcc
-export CXX     := $(PREFIX)g++
-export AS      := $(PREFIX)as
-export AR      := $(PREFIX)ar
-export OBJCOPY := $(PREFIX)objcopy
-export STRIP   := $(PREFIX)strip
-export NM      := $(PREFIX)nm
+include $(DEVKITARM)/base_tools

@@ -115,10 +115,8 @@ typedef struct
 	void *stdin_hook;
 	void *stdout_hook;
 	void *stderr_hook;
-#ifdef LIBFAT_FEOS_MULTICWD
 	u32 cwdCluster;
 	char* cwdBuffer;
-#endif
 } executeStatus_t;
 
 extern executeStatus_t* curExecStatus;
@@ -130,7 +128,6 @@ void KeExecStatusRelease(execstat_t hSt);
 void KeSetCurExecStatus(execstat_t hSt);
 execstat_t KeGetCurExecStatus();
 
-#ifdef LIBFAT_FEOS_MULTICWD
 char* _getCwdBuf();
 void _setCwdBuf(char* newBuf);
 
@@ -141,6 +138,5 @@ extern vu32* g_fatCwdClusterPtr;
 uint32_t* _FAT_getCwdClusterPtr(const char* name);
 
 void KeInitDefaultExecStatus();
-#endif
 
 #endif
