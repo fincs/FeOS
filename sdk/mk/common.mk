@@ -102,7 +102,7 @@ LIBDIRS += $(CONF_LIBDIRS)
 # no real need to edit anything past this point unless you need to add additional
 # rules for different file extensions
 #---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
+ifneq ($(__RECURSIVE__),1)
 #---------------------------------------------------------------------------------
 
 export PATH := $(FEOSBIN):$(PATH)
@@ -114,7 +114,8 @@ export OUTPUT := $(CURDIR)/lib/lib$(TARGET)
 endif
 
 export VPATH := $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-                $(foreach dir,$(DATA),$(CURDIR)/$(dir))
+                $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
+                $(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
 
 export DEPSDIR := $(CURDIR)/$(BUILD)
 
@@ -122,6 +123,7 @@ CFILES   := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES   := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+PNGFILES := $(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 
 ifneq ($(CONF_FSDIR),)
 export FSDIR := $(CURDIR)/$(CONF_FSDIR)
@@ -142,7 +144,7 @@ endif
 endif
 endif
 
-export OFILES   := $(addsuffix .o,$(BINFILES)) \
+export OFILES   := $(addsuffix .o,$(BINFILES)) $(PNGFILES:.png=.o) \
                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
 export INCLUDE  := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
@@ -151,21 +153,17 @@ export INCLUDE  := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-ifeq ($(strip $(THIS_MAKEFILE)),)
-	THIS_MAKEFILE := Makefile
-endif
+THIS_MAKEFILE := $(abspath $(firstword $(MAKEFILE_LIST)))
 
-.PHONY: $(BUILD) clean all
+.PHONY: all clean
 
 #---------------------------------------------------------------------------------
-all: $(BUILD)
-
-$(BUILD): $(CONF_PREREQUISITES)
-	@[ -d $@ ] || mkdir -p $@
+all: $(CONF_PREREQUISITES)
+	@mkdir -p $(BUILD)
 ifeq ($(strip $(CONF_TARGET)),staticlib)
 	@mkdir -p lib
 endif
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/$(THIS_MAKEFILE)
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(THIS_MAKEFILE) __RECURSIVE__=1
 ifneq ($(strip $(CONF_TARGET)),staticlib)
 	@$(NM) -CSn $(OUTPUT).elf > $(BUILD)/$(TARGET).alt.map
 else
@@ -282,6 +280,10 @@ endef
 %.bin.o: %.bin
 	@echo $(notdir $<)
 	@$(bin2o)
+
+#---------------------------------------------------------------------------------
+%.s %.h: %.png %.grit
+	@grit $< -fts -o$*
 
 -include $(DEPENDS)
 
