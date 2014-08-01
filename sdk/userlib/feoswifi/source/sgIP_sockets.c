@@ -445,6 +445,7 @@ int setsockopt(int socket, int level, int option_name, const void * data, int da
 		default:
 			retval=SGIP_ERROR(EINVAL);
 		}
+		break;
 	default:
 		retval=SGIP_ERROR(EINVAL);
 	}

@@ -88,11 +88,30 @@ int fflush(FILE*); //!< Flushes the write buffer of a  C stream.
 int ferror(FILE*); //!< Returns whether a C stream had an error.
 void clearerr(FILE*); //!< Clears the C stream error flag.
 
-#define _IOFBF 0 //!< Specifies full buffering.
-#define _IOLBF 1 //!< Specifies line buffering.
-#define _IONBF 2 //!< Disables buffering.
+#define _IOFBF 0    //!< Specifies full buffering.
+#define _IOLBF 1    //!< Specifies line buffering.
+#define _IONBF 2    //!< Disables buffering.
+#define BUFSIZ 1024 //!< Default buffer size.
 
 int setvbuf(FILE*, char*, int, size_t); //!< Sets the C stream buffering mode.
+
+//! Sets the C stream buffering mode.
+static inline int setbuffer(FILE *fp, char *buffer, size_t size)
+{
+	return setvbuf(fp, buffer, buffer ? _IOFBF : _IONBF, size);
+}
+
+//! Sets the C stream buffering mode.
+static inline int setbuf(FILE *fp, char *buffer)
+{
+	return setbuffer(fp, buffer, BUFSIZ);
+}
+
+//! Sets the C stream buffering mode to line buffering.
+static inline int setlinebuf(FILE *fp)
+{
+	return setvbuf(fp, NULL, _IOLBF, 0);
+}
 
 int vfprintf(FILE*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0))); //!< TODO: description
 int vsprintf(char*, const char*, va_list) __attribute__ ((format (__printf__, 2, 0))); //!< TODO: description
