@@ -446,6 +446,18 @@ int setsockopt(int socket, int level, int option_name, const void * data, int da
 			retval=SGIP_ERROR(EINVAL);
 		}
 		break;
+
+	case SOL_SOCKET:
+		switch (option_name) {
+		case SO_REUSEADDR:
+		case SO_BROADCAST:
+			break;
+
+		default:
+			retval=SGIP_ERROR(EINVAL);
+		}
+		break;
+
 	default:
 		retval=SGIP_ERROR(EINVAL);
 	}
