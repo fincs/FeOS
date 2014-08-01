@@ -8,7 +8,7 @@ FAKES := source/FEOSKRNL \
          source/FEOSDSHW \
          source7/FEOS7
 
-.PHONY: all clean $(TOOLS) $(FAKES)
+.PHONY: all clean dox $(TOOLS) $(FAKES)
 
 all: $(TOOLS) $(FAKES)
 	@$(MAKE) -f libfeos.mk
@@ -23,6 +23,10 @@ clean:
 	@$(MAKE) -f libfeos.mk DEBUGVER=1 clean
 	@$(MAKE) -f libfeos7.mk clean
 	@$(MAKE) -f libfeoscxx.mk clean
+	@$(RM) -r docs
+
+dox:
+	@doxygen Doxyfile
 
 $(TOOLS) $(FAKES):
 	@$(MAKE) -C $@
