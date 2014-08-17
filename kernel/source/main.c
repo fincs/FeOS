@@ -127,7 +127,8 @@ void videoInit()
 	dmaCopyHalfWords(3, hudiconsPal, SPRITE_PALETTE_SUB, hudiconsPalLen);
 	dmaCopyHalfWords(3, caretPal, SPRITE_PALETTE, caretPalLen);
 
-	irqSet(IRQ_VBLANK, KeVBlankISR);
+	if (hwOwned)
+		irqSet(IRQ_VBLANK, KeVBlankISR);
 
 	// Initialize the keyboard
 	Keyboard* kbd = keyboardDemoInit();
