@@ -73,7 +73,7 @@ int GetElfInfo(elf2fx2_cnvstruct_t* cs)
 
 					if(lastOff == 0)
 						cs->loaddata = sdata;
-					else if(lastOff != eswap_word(shdr->sh_addr) || (cs->loaddata + lastOff) != sdata)
+					else if((lastOff != eswap_word(shdr->sh_addr) || (cs->loaddata + lastOff) != sdata) && ssize != 0)
 					{
 						printf("{DEBUG0} %s\n", sname);
 						printf("{DEBUG1} %08X -- %08X\n", lastOff, eswap_word(shdr->sh_addr));

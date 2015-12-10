@@ -30,7 +30,7 @@ CFLAGS	:=	-g0 -Wall -O2 -save-temps\
 CFLAGS	+=	$(INCLUDE) -DARM7
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,-wrap,systemSleep -Wl,-Map,$(notdir $*).map
+LDFLAGS	=	-specs=ds_arm7.specs -g $(ARCH) -Wl,-wrap,systemSleep -Wl,-Map,$(notdir $*).map -Wl,--nmagic
 
 
 #---------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ all : $(BUILD)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:

@@ -43,7 +43,7 @@ fxe_runtime_header* LdrModuleListFind(const char* name)
 {
 	fxe_runtime_header* item;
 	for (item = mListHead; item != NULL; item = item->next)
-		if (stricmp(name, item->name) == 0) return item;
+		if (strcasecmp(name, item->name) == 0) return item;
 	return NULL;
 }
 
